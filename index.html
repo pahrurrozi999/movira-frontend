@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movira AI — Prototype</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#07111f;color:#f5f7ff}
+button,input,textarea{font:inherit}.app{min-height:100vh;display:flex}
+.sidebar{width:230px;background:#081426;border-right:1px solid #1b2b43;padding:24px 16px;display:flex;flex-direction:column}
+.logo{font-size:27px;font-weight:800;margin:0 12px 30px}.logo span{color:#8b5cf6}
+.nav button{width:100%;padding:13px 14px;margin:4px 0;border:0;border-radius:12px;background:transparent;color:#cbd5e1;text-align:left;cursor:pointer}
+.nav button.active,.nav button:hover{background:linear-gradient(90deg,#2948ff,#6d45ff);color:#fff}
+.credit{margin-top:auto;background:#101f35;border:1px solid #263b59;border-radius:16px;padding:16px}.credit b{display:block;margin:6px 0 12px}.upgrade{width:100%;border:0;border-radius:10px;padding:11px;background:#684cff;color:white;font-weight:700}
+.main{flex:1;padding:24px;overflow:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top h1{margin:0;font-size:27px}.pill{padding:10px 15px;border:1px solid #2b3e5b;border-radius:999px;background:#0d1b30}
+.grid{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:18px}.card{background:#0c1a2d;border:1px solid #213653;border-radius:18px;padding:18px}.step{font-size:17px;font-weight:750;margin-bottom:12px}.upload{height:170px;border:2px dashed #385070;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:#0a1729;overflow:hidden}.upload img{max-width:100%;max-height:100%;display:none}.muted{color:#94a3b8;font-size:13px}textarea{width:100%;min-height:120px;resize:vertical;background:#081526;border:1px solid #2b405d;border-radius:12px;color:#fff;padding:13px;outline:none}textarea:focus{border-color:#5878ff}
+.options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.options button{padding:11px 5px;border:1px solid #2b405d;border-radius:10px;background:#0a1729;color:#dbeafe;cursor:pointer}.options button.selected{border-color:#4d75ff;background:#152d66}
+.generate{width:100%;margin-top:18px;border:0;border-radius:12px;padding:14px;background:linear-gradient(90deg,#1987ff,#6d45ff);color:#fff;font-weight:800;cursor:pointer}.generate:disabled{opacity:.6}
+.preview{min-height:100%;display:flex;flex-direction:column}.videoBox{height:430px;border-radius:15px;background:#06101d;border:1px solid #203651;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}.videoBox img{max-width:100%;max-height:100%;display:none}.placeholder{text-align:center;color:#71839d}.play{position:absolute;display:none;border:0;width:62px;height:62px;border-radius:50%;background:#ffffffd9;color:#172033;font-size:25px}
+.resultbar{display:flex;gap:9px;margin-top:12px}.resultbar button{flex:1;padding:11px;border-radius:10px;border:1px solid #2a3e5c;background:#101f35;color:#fff;cursor:pointer}.resultbar button:first-child{background:#2868ff;border-color:#2868ff}
+.status{margin-top:12px;color:#9fb1c9;font-size:13px}
+.samples{margin-top:18px}.samples h2{font-size:19px}.samplegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.sample{height:105px;border-radius:12px;background:linear-gradient(135deg,#193d61,#49276c);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+@media(max-width:900px){
+  #menuBtn{display:block}
+  body{overflow-x:hidden}
+  .app{display:block;min-height:100vh}
+  .sidebar{position:sticky;top:0;z-index:20;width:100%;height:auto;padding:12px 14px;border-right:0;border-bottom:1px solid #1b2b43;display:flex;flex-direction:row;align-items:center;gap:10px}
+  .logo{font-size:22px;margin:0;white-space:nowrap}
+  .nav{display:none;position:absolute;left:10px;right:10px;top:58px;background:#0c1a2d;border:1px solid #263b59;border-radius:14px;padding:8px;box-shadow:0 12px 30px #0008}.nav.open{display:block}.nav button{display:block}
+  .credit{margin:0 0 0 auto;padding:7px 10px;border:0;background:transparent;display:flex;align-items:center;gap:6px}
+  .credit .muted,.credit .upgrade{display:none}
+  .credit b{margin:0;font-size:13px}
+  .main{padding:14px;overflow:visible}
+  .top{margin-bottom:14px}
+  .top h1{font-size:22px}
+  .pill{font-size:11px;padding:7px 9px}
+  .grid{display:flex;flex-direction:column;gap:14px}
+  .card{padding:14px;border-radius:15px}
+  .upload{height:145px}
+  textarea{min-height:105px}
+  .options{gap:6px}
+  .options button{padding:10px 3px;font-size:13px}
+  .generate{font-size:14px}
+  .videoBox{height:auto;aspect-ratio:16/9;max-height:none}
+  .resultbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .resultbar button{min-width:0;padding:10px;font-size:13px;cursor:pointer}
+  .samples{margin-top:14px}
+  .samplegrid{grid-template-columns:1fr 1fr;gap:8px}
+  .sample{height:90px;font-size:13px;text-align:center}
+}
+@media(max-width:430px){
+  .main{padding:10px}
+  .logo{font-size:19px}
+  .top h1{font-size:20px}
+  .pill{display:none}
+  .videoBox{height:auto;aspect-ratio:16/9;max-height:none}
+  .options button{font-size:12px}
+} 
+.videoBox.ratio-916{aspect-ratio:9/16}.videoBox.ratio-169{aspect-ratio:16/9}.videoBox.ratio-11{aspect-ratio:1/1}
+#resultVideo{object-fit:contain}
+@media(max-width:900px){.videoBox{width:100%}}
+.downloadNote{font-size:12px;color:#8fa4bf;margin-top:8px;text-align:center}.downloadNote{display:none}@media(max-width:900px){.downloadNote{display:block}} </style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <button id="menuBtn" style="display:none;background:none;border:0;color:#fff;font-size:24px;padding:0 4px">☰</button><div class="logo">Movira <span>AI</span></div>
+  <div class="nav">
+    <button>⌂ &nbsp; Beranda</button><button class="active">✦ &nbsp; Buat Video</button>
+    <button>▧ &nbsp; Galeri</button><button>▦ &nbsp; Template</button><button>◷ &nbsp; Riwayat</button>
+  </div>
+  <div class="credit">💰 <span class="muted">Kredit tersedia</span><b id="credits">120 Kredit</b><button class="upgrade">Upgrade</button></div>
+</aside>
+<main class="main">
+  <div class="top"><h1>Buat Video</h1><div class="pill">Movira AI • Backend Terhubung</div></div>
+  <div class="grid">
+    <section class="card">
+      <div class="step">1. Upload Gambar</div>
+      <label class="upload" for="file">
+        <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <div id="uploadText">🖼️<br><b>Klik untuk upload gambar</b><br><span class="muted">PNG, JPG, WEBP • maks. 10 MB</span></div>
+        <img id="thumb">
+      </label>
+      <br>
+      <div class="step">2. Tulis Prompt</div>
+      <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
+      <br><br>
+      <div class="step">3. Rasio Video</div>
+      <div class="options" id="ratios">
+        <button class="selected" data-value="16:9">16:9<br><small>YouTube</small></button>
+        <button data-value="9:16">9:16<br><small>Shorts</small></button>
+        <button data-value="1:1">1:1<br><small>Square</small></button>
+      </div>
+      <br>
+      <div class="step">4. Durasi</div>
+      <div class="options" id="durations">
+        <button class="selected" data-value="5">5 detik</button>
+        <button data-value="10">10 detik</button>
+        <button data-value="15">15 detik</button>
+      </div>
+      <button class="generate" id="generate">✨ Generate Video • 10 Kredit</button>
+      <div class="status" id="status">Mode demo: membuat video WebM nyata dari gambar.</div>
+    </section>
+    <section class="card preview">
+      <div class="step">Hasil Video</div>
+      <div class="videoBox" id="videoBox">
+        <div class="placeholder" id="placeholder">Video hasil akan muncul di sini<br><span class="muted">Upload gambar lalu klik Generate Video</span></div>
+        <video id="resultVideo" controls playsinline style="display:none;width:100%;height:100%;object-fit:contain;background:#000;border-radius:12px"></video>
+      </div>
+      <div class="downloadNote" id="downloadNote">📱 Download disimpan tanpa membuka tab baru. Cek folder Download HP.</div>
+      <div class="resultbar"><button id="download">⬇ Download</button><button id="share">↗ Bagikan</button><button id="save">♡ Simpan</button><button id="again">↻ Buat Lagi</button></div>
+    </section>
+  </div>
+  <section class="samples"><h2>Contoh Hasil Video</h2><div class="samplegrid">
+    <div class="sample">ANIMASI 3D</div><div class="sample">KARAKTER</div><div class="sample">FANTASI</div><div class="sample">CINEMATIC</div>
+  </div></section>
+</main>
+</div>
+<script>
+const API_BASE = "https://movira-backend-1.onrender.com";
+let imageData="", ratio="16:9", duration="5", generatedUrl="";
+
+const file=document.getElementById("file");
+const thumb=document.getElementById("thumb");
+const uploadText=document.getElementById("uploadText");
+const gen=document.getElementById("generate");
+const status=document.getElementById("status");
+const resultVideo=document.getElementById("resultVideo");
+const placeholder=document.getElementById("placeholder");
+const videoBox=document.getElementById("videoBox");
+
+file.onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  if(f.size>10*1024*1024){alert("Ukuran gambar maksimal 10 MB.");return}
+  if(!["image/png","image/jpeg","image/webp"].includes(f.type)){
+    alert("Format gambar harus PNG, JPG, atau WEBP.");
+    return;
+  }
+  const r=new FileReader();
+  r.onload=()=>{
+    imageData=r.result;
+    thumb.src=imageData;
+    thumb.style.display="block";
+    uploadText.style.display="none";
+    status.textContent="Gambar siap. Tulis prompt lalu tekan Generate Video.";
+  };
+  r.readAsDataURL(f);
+};
+
+document.getElementById("menuBtn").onclick=()=>document.querySelector(".nav").classList.toggle("open");
+
+document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#ratios button").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  ratio=b.dataset.value;
+});
+
+document.querySelectorAll("#durations button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#durations button").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  duration=b.dataset.value;
+});
+
+function setVideo(url){
+  if(generatedUrl && generatedUrl.startsWith("blob:")) URL.revokeObjectURL(generatedUrl);
+  generatedUrl=url || "";
+  if(!generatedUrl){
+    resultVideo.removeAttribute("src");
+    resultVideo.style.display="none";
+    placeholder.style.display="flex";
+    return;
+  }
+  resultVideo.src=generatedUrl;
+  videoBox.classList.remove("ratio-916","ratio-169","ratio-11");
+  videoBox.classList.add(ratio==="9:16"?"ratio-916":ratio==="1:1"?"ratio-11":"ratio-169");
+  resultVideo.style.display="block";
+  placeholder.style.display="none";
+}
+
+async function generateRealVideo(){
+  if(!imageData){alert("Upload gambar terlebih dahulu.");return}
+  const prompt=document.getElementById("prompt").value.trim();
+  if(prompt.length<3){alert("Tulis prompt terlebih dahulu.");return}
+
+  gen.disabled=true;
+  status.textContent="Mengirim gambar dan prompt ke Movira Backend...";
+
+  try{
+    const response=await fetch(`${API_BASE}/api/generate`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        prompt,
+        ratio,
+        duration:Number(duration),
+        resolution:"720p",
+        imageData,
+        audio:true
+      })
+    });
+
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok){
+      throw new Error(data.message || data.error || `Server error ${response.status}`);
+    }
+
+    const videoUrl=data.video?.url || data.video?.video_url || data.video || null;
+    if(!videoUrl) throw new Error("Server tidak mengembalikan video.");
+
+    setVideo(videoUrl);
+    status.textContent=`Video AI selesai • ${ratio} • ${duration} detik • Wan 3.0 Prime`;
+  }catch(err){
+    console.error(err);
+    status.textContent=`Gagal membuat video: ${err.message}`;
+    alert(`Generate gagal.\n\n${err.message}`);
+  }finally{
+    gen.disabled=false;
+  }
+}
+
+gen.textContent="✨ Generate Video";
+gen.onclick=generateRealVideo;
+
+document.getElementById("again").onclick=()=>{
+  resultVideo.pause();
+  resultVideo.removeAttribute("src");
+  resultVideo.load();
+  generatedUrl="";
+  resultVideo.style.display="none";
+  videoBox.classList.remove("ratio-916","ratio-169","ratio-11");
+  videoBox.classList.add("ratio-169");
+  placeholder.style.display="flex";
+  status.textContent="Siap membuat video baru.";
+};
+
+document.getElementById("download").onclick=async()=>{
+  if(!generatedUrl){alert("Belum ada video hasil.");return}
+  const btn=document.getElementById("download"), oldText=btn.textContent;
+  btn.disabled=true; btn.textContent="⏳ Menyimpan...";
+  try{
+    const res=await fetch(generatedUrl);
+    if(!res.ok) throw new Error("Video tidak bisa diambil.");
+    const blob=await res.blob();
+    const ext=blob.type.includes("webm")?"webm":"mp4";
+    const fileName=`movira-${ratio.replace(":","x")}-${duration}s.${ext}`;
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download=fileName; a.style.display="none";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
+    status.textContent="Download dimulai. Cek folder Download.";
+  }catch(e){
+    alert("Download langsung diblokir browser. Gunakan tombol Bagikan atau menu download pada pemutar video.");
+  }finally{
+    btn.disabled=false; btn.textContent=oldText;
+  }
+};
+
+const DB_NAME="MoviraAI_DB", STORE="videos";
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=()=>req.result.createObjectStore(STORE);
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function saveVideoBlob(blob){
+  const db=await openDB();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(STORE,"readwrite");
+    tx.objectStore(STORE).put(blob,"latest");
+    tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+  });
+}
+
+ document.getElementById("share").onclick=async()=>{
+  if(!generatedUrl){alert("Buat video terlebih dahulu.");return}
+  try{
+    const res=await fetch(generatedUrl);
+    if(!res.ok) throw new Error("Video tidak bisa diambil.");
+    const blob=await res.blob();
+    const ext=blob.type.includes("webm")?"webm":"mp4";
+    const file=new File([blob],`movira-${ratio.replace(":","x")}-${duration}s.${ext}`,{type:blob.type||"video/mp4"});
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      await navigator.share({title:"Video dari Movira AI",text:"Video dibuat dengan Movira AI",files:[file]});
+      status.textContent="Video berhasil dibagikan.";
+    }else if(navigator.share){
+      await navigator.share({title:"Video dari Movira AI",text:"Video dibuat dengan Movira AI"});
+    }else{
+      alert("Browser ini tidak mendukung menu Bagikan.");
+    }
+  }catch(e){
+    if(e.name!=="AbortError") alert("Bagikan belum didukung atau video tidak dapat diambil.");
+  }
+};
+
+document.getElementById("save").onclick=async()=>{
+  if(!generatedUrl){alert("Buat video terlebih dahulu.");return}
+  try{
+    const res=await fetch(generatedUrl);
+    if(!res.ok) throw new Error();
+    const blob=await res.blob();
+    await saveVideoBlob(blob);
+    document.getElementById("save").textContent="♥ Tersimpan";
+    status.textContent="Video tersimpan di perangkat ini.";
+  }catch(e){
+    alert("Video belum bisa disimpan di browser ini.");
+  }
+};
+
+status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
+</script>
+</body>
+</html>
