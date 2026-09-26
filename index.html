@@ -327,6 +327,165 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   );
 
   console.log("Movira AI: Supabase siap.");
+</script><!-- Movira AI - Login & Credits -->
+<div id="authBox" style="
+  position:fixed;
+  top:16px;
+  right:16px;
+  z-index:9999;
+  background:#101b31;
+  border:1px solid #29446d;
+  border-radius:14px;
+  padding:12px;
+  width:270px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  color:white;
+  font-family:Arial,sans-serif;
+">
+  <div id="authLoggedOut">
+    <div style="font-size:18px;font-weight:700;margin-bottom:10px;">
+      🔐 Masuk Movira
+    </div>
+
+    <input id="authEmail"
+      type="email"
+      placeholder="Email"
+      style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #38557e;background:#081426;color:white;">
+
+    <input id="authPassword"
+      type="password"
+      placeholder="Password"
+      style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #38557e;background:#081426;color:white;">
+
+    <div style="display:flex;gap:8px;">
+      <button id="loginBtn"
+        style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;">
+        Login
+      </button>
+
+      <button id="signupBtn"
+        style="flex:1;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:700;">
+        Daftar
+      </button>
+    </div>
+
+    <div id="authStatus" style="font-size:12px;margin-top:8px;color:#9fb4d8;"></div>
+  </div>
+
+  <div id="authLoggedIn" style="display:none;">
+    <div style="font-size:13px;color:#9fb4d8;">Akun Movira</div>
+
+    <div id="userEmail"
+      style="font-weight:700;margin:4px 0 10px;word-break:break-all;">
+    </div>
+
+    <div style="
+      background:#172744;
+      border-radius:10px;
+      padding:10px;
+      margin-bottom:10px;
+    ">
+      💰 <strong id="userCredits">0</strong> Kredit
+    </div>
+
+    <button id="logoutBtn"
+      style="width:100%;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:700;">
+      Keluar
+    </button>
+  </div>
+</div>
+
+<script>
+  const authLoggedOut = document.getElementById("authLoggedOut");
+  const authLoggedIn = document.getElementById("authLoggedIn");
+  const authEmail = document.getElementById("authEmail");
+  const authPassword = document.getElementById("authPassword");
+  const authStatus = document.getElementById("authStatus");
+  const userEmail = document.getElementById("userEmail");
+  const userCredits = document.getElementById("userCredits");
+
+  async function loadMoviraCredits(user) {
+    const { data, error } = await moviraSupabase
+      .from("user_credits")
+      .select("credits")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Gagal membaca kredit:", error);
+      userCredits.textContent = "0";
+      return;
+    }
+
+    userCredits.textContent = data.credits;
+  }
+
+  async function updateMoviraAuth() {
+    const {
+      data: { session }
+    } = await moviraSupabase.auth.getSession();
+
+    if (session?.user) {
+      authLoggedOut.style.display = "none";
+      authLoggedIn.style.display = "block";
+
+      userEmail.textContent = session.user.email || "";
+      await loadMoviraCredits(session.user);
+    } else {
+      authLoggedOut.style.display = "block";
+      authLoggedIn.style.display = "none";
+    }
+  }
+
+  document.getElementById("loginBtn").onclick = async () => {
+    authStatus.textContent = "Memproses...";
+
+    const { error } = await moviraSupabase.auth.signInWithPassword({
+      email: authEmail.value.trim(),
+      password: authPassword.value
+    });
+
+    if (error) {
+      authStatus.textContent = error.message;
+      return;
+    }
+
+    authStatus.textContent = "";
+    await updateMoviraAuth();
+  };
+
+  document.getElementById("signupBtn").onclick = async () => {
+    authStatus.textContent = "Membuat akun...";
+
+    const { data, error } = await moviraSupabase.auth.signUp({
+      email: authEmail.value.trim(),
+      password: authPassword.value
+    });
+
+    if (error) {
+      authStatus.textContent = error.message;
+      return;
+    }
+
+    if (data.session) {
+      authStatus.textContent = "";
+      await updateMoviraAuth();
+    } else {
+      authStatus.textContent =
+        "Akun dibuat. Silakan cek email untuk konfirmasi.";
+    }
+  };
+
+  document.getElementById("logoutBtn").onclick = async () => {
+    await moviraSupabase.auth.signOut();
+    await updateMoviraAuth();
+  };
+
+  moviraSupabase.auth.onAuthStateChange(() => {
+    updateMoviraAuth();
+  });
+
+  updateMoviraAuth();
 </script>
 </body>
 </html>
