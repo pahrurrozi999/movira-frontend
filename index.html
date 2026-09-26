@@ -311,6 +311,22 @@ document.getElementById("save").onclick=async()=>{
 };
 
 status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
+</script><!-- Movira AI - Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://gqnoloreqfxqpzbgoeak.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY = sb_publishable_-LNAyEv-eLav6VR3AMuYXw_38bDHJEv
+
+  const { createClient } = supabase;
+
+  const moviraSupabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  console.log("Movira AI: Supabase siap.");
 </script>
 </body>
 </html>
