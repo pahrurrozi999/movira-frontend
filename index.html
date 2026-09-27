@@ -414,21 +414,35 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   const userCredits = document.getElementById("userCredits");
 
   async function loadMoviraCredits(user) {
-    const { data, error } = await moviraSupabase
-      .from("user_credits")
-      .select("credits")
-      .eq("user_id", user.id)
-      .single();
+  try {
+    const {
+      data: { session }
+    } = await moviraSupabase.auth.getSession();
 
-    if (error) {
-      console.error("Gagal membaca kredit:", error);
+    if (!session) {
       userCredits.textContent = "0";
       return;
     }
 
-    userCredits.textContent = data.credits;
-  }
+    const response = await fetch(`${API_BASE}/api/credits`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${session.access_token}`
+      }
+    });
 
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Gagal membaca kredit.");
+    }
+
+    userCredits.textContent = data.credits ?? 0;
+  } catch (error) {
+    console.error("Gagal membaca kredit:", error);
+    userCredits.textContent = "0";
+  }
+  }
   async function updateMoviraAuth() {
     const {
       data: { session }
