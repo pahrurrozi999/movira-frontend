@@ -192,7 +192,21 @@ async function generateRealVideo(){
 if (!session) {
   throw new Error("Silakan login terlebih dahulu.");
 }
+const creditResponse = await fetch(`${API_BASE}/api/credits`, {
+  headers: {
+    "Authorization": `Bearer ${session.access_token}`
+  }
+});
 
+const creditData = await creditResponse.json().catch(() => ({}));
+
+if (!creditResponse.ok) {
+  throw new Error(creditData.error || "Gagal membaca kredit.");
+}
+
+if (Number(creditData.credits) <= 0) {
+  throw new Error("Kredit kamu sudah habis.");
+}
 const response=await fetch(`${API_BASE}/api/generate`,{
   method:"POST",
   headers:{
