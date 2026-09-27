@@ -218,6 +218,7 @@ const response=await fetch(`${API_BASE}/api/generate`,{
     if(!videoUrl) throw new Error("Server tidak mengembalikan video.");
 
     setVideo(videoUrl);
+    await loadMoviraCredits(session.user);
     status.textContent=`Video AI selesai • ${ratio} • ${duration} detik • Wan 3.0 Prime`;
   }catch(err){
     console.error(err);
