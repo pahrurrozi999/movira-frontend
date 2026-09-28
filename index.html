@@ -525,14 +525,117 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   });
 
   updateMoviraAuth();
-  document.querySelector(".upgrade").onclick = () => {
-  alert(
-    "Tambah Kredit\n\n" +
-    "50 Kredit\n" +
-    "120 Kredit\n" +
-    "300 Kredit\n\n" +
-    "Sistem pembayaran segera hadir."
-  );
+document.querySelectorAll(".upgrade").forEach(button => {
+  button.onclick = () => {
+    const overlay = document.createElement("div");
+
+    overlay.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.75);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding:20px;
+    `;
+
+    overlay.innerHTML = `
+      <div style="
+        width:100%;
+        max-width:360px;
+        background:#0c1a2d;
+        border:1px solid #394cff;
+        border-radius:18px;
+        padding:22px;
+        color:#fff;
+        text-align:center;
+        box-shadow:0 0 30px rgba(57,76,255,.35);
+      ">
+        <h2 style="margin:0 0 8px;">💎 Upgrade Kredit</h2>
+
+        <p style="color:#aeb9d6;margin-bottom:18px;">
+          Pilih paket kredit yang kamu inginkan
+        </p>
+
+        <button data-credit="50" style="
+          width:100%;
+          padding:14px;
+          margin:6px 0;
+          border:0;
+          border-radius:10px;
+          background:#243b8f;
+          color:#fff;
+          font-size:15px;
+        ">
+          50 Kredit
+        </button>
+
+        <button data-credit="120" style="
+          width:100%;
+          padding:14px;
+          margin:6px 0;
+          border:0;
+          border-radius:10px;
+          background:#2948ff;
+          color:#fff;
+          font-size:15px;
+        ">
+          ⭐ 120 Kredit
+        </button>
+
+        <button data-credit="300" style="
+          width:100%;
+          padding:14px;
+          margin:6px 0;
+          border:0;
+          border-radius:10px;
+          background:#6d35ff;
+          color:#fff;
+          font-size:15px;
+        ">
+          🔥 300 Kredit
+        </button>
+
+        <button id="closeUpgrade" style="
+          width:100%;
+          padding:12px;
+          margin-top:12px;
+          border:1px solid #394cff;
+          border-radius:10px;
+          background:transparent;
+          color:#fff;
+          font-size:14px;
+        ">
+          Tutup
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.querySelectorAll("[data-credit]").forEach(option => {
+      option.onclick = () => {
+        const credit = option.dataset.credit;
+
+        alert(
+          `Paket ${credit} Kredit dipilih.\\n\\n` +
+          `Sistem pembayaran akan kita hubungkan nanti.`
+        );
+      };
+    });
+
+    overlay.querySelector("#closeUpgrade").onclick = () => {
+      overlay.remove();
+    };
+
+    overlay.onclick = event => {
+      if (event.target === overlay) {
+        overlay.remove();
+      }
+    };
+  };
+});
 };
 </script>
 </body>
