@@ -205,7 +205,7 @@ if (!creditResponse.ok) {
 }
 
 if (Number(creditData.credits) <= 0) {
-  throw new Error("Kredit kamu sudah habis.");
+throw new Error("Kredit kamu sudah habis. Silakan tambah kredit untuk membuat video.");
 }
 const response=await fetch(`${API_BASE}/api/generate`,{
   method:"POST",
