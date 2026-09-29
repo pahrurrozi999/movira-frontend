@@ -159,7 +159,9 @@ navButtons.forEach(button => {
       createGrid.style.display = "none";
       samples.style.display = "none";
       historyPage.style.display = "block";
-
+      
+      loadMoviraHistory();
+      
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
@@ -520,7 +522,71 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
       authLoggedIn.style.display = "none";
     }
   }
+async function loadMoviraHistory() {
+  const historyList = document.getElementById("historyList");
 
+  if (!historyList) return;
+
+  historyList.innerHTML = `
+    <div class="muted">Memuat riwayat video...</div>
+  `;
+
+  try {
+    const {
+      data: { session }
+    } = await moviraSupabase.auth.getSession();
+
+    if (!session) {
+      historyList.innerHTML = `
+        <div class="muted">Silakan login untuk melihat riwayat video.</div>
+      `;
+      return;
+    }
+
+    const { data, error } = await moviraSupabase
+      .from("video_history")
+      .select("id,prompt,video_url,source_image_url,ratio,duration,resolution,created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      historyList.innerHTML = `
+        <div class="muted">Belum ada video di riwayat.</div>
+      `;
+      return;
+    }
+
+    historyList.innerHTML = data.map(item => `
+      <div class="card" style="padding:12px;">
+        <video
+          src="${item.video_url}"
+          controls
+          playsinline
+          style="width:100%;border-radius:10px;background:#000;">
+        </video>
+
+        <div style="margin-top:10px;font-size:14px;">
+          ${item.prompt || "Tanpa prompt"}
+        </div>
+
+        <div class="muted" style="margin-top:6px;">
+          ${item.ratio} • ${item.duration} detik • ${item.resolution}
+        </div>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Gagal membaca riwayat:", error);
+
+    historyList.innerHTML = `
+      <div class="muted">
+        Gagal memuat riwayat video.
+      </div>
+    `;
+  }
+}
   document.getElementById("loginBtn").onclick = async () => {
     authStatus.textContent = "Memproses...";
 
