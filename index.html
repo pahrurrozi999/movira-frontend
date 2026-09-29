@@ -538,7 +538,9 @@ async function loadMoviraHistory() {
 
     if (!session) {
       historyList.innerHTML = `
-        <div class="muted">Silakan login untuk melihat riwayat video.</div>
+        <div class="muted">
+          Silakan login untuk melihat riwayat video.
+        </div>
       `;
       return;
     }
@@ -553,11 +555,10 @@ async function loadMoviraHistory() {
 
     if (!data || data.length === 0) {
       historyList.innerHTML = `
-  <div class="muted">
-    Gagal memuat riwayat video.<br>
-    ${error.message || "Kesalahan tidak diketahui."}
-  </div>
-`;
+        <div class="muted">
+          Belum ada video di riwayat.
+        </div>
+      `;
       return;
     }
 
@@ -580,16 +581,16 @@ async function loadMoviraHistory() {
       </div>
     `).join("");
 
-catch (error) {
-  console.error("Gagal membaca riwayat:", error);
+  } catch (error) {
+    console.error("Gagal membaca riwayat:", error);
 
-  historyList.innerHTML = `
-    <div class="muted">
-      Gagal memuat riwayat video.<br>
-      ${error.message || "Kesalahan tidak diketahui."}
-    </div>
-  `;
-}
+    historyList.innerHTML = `
+      <div class="muted">
+        Gagal memuat riwayat video.<br>
+        ${error.message || "Kesalahan tidak diketahui."}
+      </div>
+    `;
+  }
 }
   document.getElementById("loginBtn").onclick = async () => {
     authStatus.textContent = "Memproses...";
