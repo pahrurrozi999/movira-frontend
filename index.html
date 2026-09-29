@@ -115,6 +115,19 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex}
   <section class="samples"><h2>Contoh Hasil Video</h2><div class="samplegrid">
     <div class="sample">ANIMASI 3D</div><div class="sample">KARAKTER</div><div class="sample">FANTASI</div><div class="sample">CINEMATIC</div>
   </div></section>
+  <section id="historyPage" class="card" style="display:none;">
+  <div class="step">◷ Riwayat Video</div>
+
+  <div id="historyList" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:12px;
+  ">
+    <div class="muted">
+      Belum ada video di riwayat.
+    </div>
+  </div>
+  </section>
 </main>
 </div>
 <script>
@@ -129,7 +142,39 @@ const status=document.getElementById("status");
 const resultVideo=document.getElementById("resultVideo");
 const placeholder=document.getElementById("placeholder");
 const videoBox=document.getElementById("videoBox");
+// Navigasi halaman Movira
+const historyPage = document.getElementById("historyPage");
+const createTop = document.querySelector(".top");
+const createGrid = document.querySelector(".grid");
+const samples = document.querySelector(".samples");
 
+const navButtons = document.querySelectorAll(".nav button");
+
+navButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const text = button.textContent.trim();
+
+    if (text.includes("Riwayat")) {
+      createTop.style.display = "none";
+      createGrid.style.display = "none";
+      samples.style.display = "none";
+      historyPage.style.display = "block";
+
+      navButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+    }
+
+    if (text.includes("Buat Video")) {
+      createTop.style.display = "";
+      createGrid.style.display = "";
+      samples.style.display = "";
+      historyPage.style.display = "none";
+
+      navButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+    }
+  });
+});
 file.onchange=e=>{
   const f=e.target.files[0];
   if(!f)return;
