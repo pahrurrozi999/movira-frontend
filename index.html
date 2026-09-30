@@ -649,15 +649,6 @@ async function loadMoviraHistory() {
 
     if (error) throw error;
 
-    if (!data || data.length === 0) {
-      galleryList.innerHTML = `
-        <div class="muted">
-          Belum ada video di galeri.
-        </div>
-      `;
-      return;
-    }
-
     galleryList.innerHTML = data.map(item => `
       <div class="card" style="padding:12px;">
         <video
@@ -688,6 +679,7 @@ async function loadMoviraHistory() {
     `;
   }
   }
+  
   document.getElementById("loginBtn").onclick = async () => {
     authStatus.textContent = "Memproses...";
 
