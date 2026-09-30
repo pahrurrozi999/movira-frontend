@@ -261,7 +261,19 @@ const navButtons = document.querySelectorAll(".nav button");
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
     const text = button.textContent.trim();
+    
+if (text.includes("Beranda")) {
+  createTop.style.display = "none";
+  createGrid.style.display = "none";
+  samples.style.display = "none";
+  historyPage.style.display = "none";
+  galleryPage.style.display = "none";
+  homePage.style.display = "block";
 
+  navButtons.forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+  }
+    
     if (text.includes("Riwayat")) {
       createTop.style.display = "none";
       createGrid.style.display = "none";
@@ -291,6 +303,7 @@ if (text.includes("Galeri")) {
       samples.style.display = "";
       historyPage.style.display = "none";
       galleryPage.style.display = "none";
+      homePage.style.display = "none";
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
