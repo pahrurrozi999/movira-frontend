@@ -185,7 +185,9 @@ if (text.includes("Galeri")) {
   samples.style.display = "none";
   historyPage.style.display = "none";
   galleryPage.style.display = "block";
-
+  
+  loadMoviraGallery();
+  
   navButtons.forEach(btn => btn.classList.remove("active"));
   button.classList.add("active");
     }
