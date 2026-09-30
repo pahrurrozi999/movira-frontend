@@ -762,6 +762,15 @@ async function loadMoviraHistory() {
     ⬇️ Download
   </a>
 </div>
+
+<div style="margin-top:8px;">
+  <button
+    onclick="deleteSavedVideo('${item.id}')"
+    style="padding:8px 12px;border-radius:8px;background:#d83b5b;color:white;border:0;font-size:12px;">
+    🗑️ Hapus
+  </button>
+</div>
+
     `).join("");
 
   } catch (error) {
@@ -773,6 +782,27 @@ async function loadMoviraHistory() {
         ${error.message || "Kesalahan tidak diketahui."}
       </div>
     `;
+  }
+  }
+
+  async function deleteSavedVideo(videoId) {
+  const yakin = confirm("Hapus video ini dari Galeri?");
+  if (!yakin) return;
+
+  try {
+    const { error } = await moviraSupabase
+      .from("saved_videos")
+      .delete()
+      .eq("id", videoId);
+
+    if (error) throw error;
+
+    alert("Video berhasil dihapus.");
+    loadMoviraGallery();
+
+  } catch (error) {
+    console.error("Gagal menghapus video:", error);
+    alert(`Gagal menghapus video.\n\n${error.message}`);
   }
   }
   
