@@ -615,6 +615,77 @@ async function loadMoviraHistory() {
     `;
   }
 }
+  
+  async function loadMoviraGallery() {
+  const galleryList = document.getElementById("galleryList");
+
+  if (!galleryList) return;
+
+  galleryList.innerHTML = `
+    <div class="muted">Memuat galeri video...</div>
+  `;
+
+  try {
+    const {
+      data: { session }
+    } = await moviraSupabase.auth.getSession();
+
+    if (!session) {
+      galleryList.innerHTML = `
+        <div class="muted">
+          Silakan login untuk melihat galeri video.
+        </div>
+      `;
+      return;
+    }
+
+    const { data, error } = await moviraSupabase
+      .from("video_history")
+      .select("id,prompt,video_url,ratio,duration,resolution,created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      galleryList.innerHTML = `
+        <div class="muted">
+          Belum ada video di galeri.
+        </div>
+      `;
+      return;
+    }
+
+    galleryList.innerHTML = data.map(item => `
+      <div class="card" style="padding:12px;">
+        <video
+          src="${item.video_url}"
+          controls
+          playsinline
+          style="width:100%;border-radius:10px;background:#000;">
+        </video>
+
+        <div style="margin-top:10px;font-size:14px;">
+          ${item.prompt || "Tanpa prompt"}
+        </div>
+
+        <div class="muted" style="margin-top:6px;">
+          ${item.ratio} • ${item.duration} detik • ${item.resolution}
+        </div>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Gagal membaca galeri:", error);
+
+    galleryList.innerHTML = `
+      <div class="muted">
+        Gagal memuat galeri video.<br>
+        ${error.message || "Kesalahan tidak diketahui."}
+      </div>
+    `;
+  }
+  }
   document.getElementById("loginBtn").onclick = async () => {
     authStatus.textContent = "Memproses...";
 
