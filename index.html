@@ -112,9 +112,35 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex}
       <div class="resultbar"><button id="download">⬇ Download</button><button id="share">↗ Bagikan</button><button id="save">♡ Simpan</button><button id="again">↻ Buat Lagi</button></div>
     </section>
   </div>
-  <section class="samples"><h2>Contoh Hasil Video</h2><div class="samplegrid">
-    <div class="sample">ANIMASI 3D</div><div class="sample">KARAKTER</div><div class="sample">FANTASI</div><div class="sample">CINEMATIC</div>
-  </div></section>
+  <section class="samples">
+  <h2>Template Video</h2>
+
+  <div class="samplegrid">
+    <div class="sample" data-template="3d">
+      🎬<br>
+      <b>ANIMASI 3D</b>
+      <small>Gaya animasi 3D cute</small>
+    </div>
+
+    <div class="sample" data-template="character">
+      🧍<br>
+      <b>KARAKTER</b>
+      <small>Gerakan karakter</small>
+    </div>
+
+    <div class="sample" data-template="fantasy">
+      ✨<br>
+      <b>FANTASI</b>
+      <small>Dunia fantasi cinematic</small>
+    </div>
+
+    <div class="sample" data-template="cinematic">
+      🎥<br>
+      <b>CINEMATIC</b>
+      <small>Gaya film cinematic</small>
+    </div>
+  </div>
+  </section>
   <section id="historyPage" class="card" style="display:none;">
   <div class="step">◷ Riwayat Video</div>
 
@@ -841,7 +867,33 @@ document.querySelectorAll(".upgrade").forEach(button => {
   };
 });
 
-  
+  document.querySelectorAll(".sample[data-template]").forEach(template => {
+  template.addEventListener("click", () => {
+    const prompt = document.getElementById("prompt");
+    if (!prompt) return;
+
+    const type = template.dataset.template;
+
+    const prompts = {
+      "3d": "Buat animasi 3D cute dengan gerakan halus dan ekspresi ceria.",
+      "character": "Buat karakter bergerak secara natural dengan ekspresi wajah yang hidup.",
+      "fantasy": "Buat adegan dunia fantasi cinematic dengan suasana ajaib dan gerakan kamera halus.",
+      "cinematic": "Buat video cinematic dengan gerakan kamera halus, pencahayaan dramatis, dan suasana film."
+    };
+
+    prompt.value = prompts[type] || "";
+
+    document.querySelector(".grid")?.scrollIntoView({
+      behavior: "smooth"
+    });
+
+    document.querySelectorAll(".sample").forEach(item => {
+      item.style.borderColor = "";
+    });
+
+    template.style.borderColor = "#6d4aff";
+  });
+});
 </script>
 </body>
 </html>
