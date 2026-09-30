@@ -887,12 +887,18 @@ document.querySelectorAll(".upgrade").forEach(button => {
   if (!prompt) return;
 
   const prompts = {
-    "3d": "Buat animasi 3D cute dengan gerakan halus dan ekspresi ceria.",
-    "character": "Buat karakter bergerak secara natural dengan ekspresi wajah yang hidup.",
-    "fantasy": "Buat adegan dunia fantasi cinematic dengan suasana ajaib dan gerakan kamera halus.",
-    "cinematic": "Buat video cinematic dengan gerakan kamera halus, pencahayaan dramatis, dan suasana film."
-  };
-
+  "3d": "Buat animasi 3D cute dengan gerakan halus dan ekspresi ceria.",
+  "character": "Buat karakter bergerak secara natural dengan ekspresi wajah yang hidup.",
+  "fantasy": "Buat adegan dunia fantasi cinematic dengan suasana ajaib dan gerakan kamera halus.",
+  "cinematic": "Buat video cinematic dengan gerakan kamera halus, pencahayaan dramatis, dan suasana film.",
+  "action": "Buat adegan action yang dinamis dengan gerakan cepat, kamera mengikuti aksi, dan suasana penuh energi.",
+  "adventure": "Buat adegan petualangan seru dengan karakter menjelajah lingkungan yang indah dan kamera bergerak halus.",
+  "cute": "Buat animasi lucu dan menggemaskan dengan gerakan lembut, ekspresi ceria, dan suasana menyenangkan.",
+  "nature": "Buat video suasana alam yang indah dengan gerakan kamera perlahan dan lingkungan yang hidup.",
+  "magic": "Buat adegan dunia ajaib dengan efek cahaya magis, suasana misterius, dan gerakan kamera cinematic.",
+  "story": "Buat adegan cerita cinematic dengan karakter yang ekspresif, gerakan natural, dan suasana seperti film."
+};
+    
   prompt.value = prompts[template.dataset.template] || "";
 
   document.querySelector(".grid")?.scrollIntoView({
