@@ -867,33 +867,27 @@ document.querySelectorAll(".upgrade").forEach(button => {
   };
 });
 
-  document.querySelectorAll(".sample[data-template]").forEach(template => {
-  template.addEventListener("click", () => {
-    const prompt = document.getElementById("prompt");
-    if (!prompt) return;
+  document.querySelector(".samples")?.addEventListener("click", (event) => {
+  const template = event.target.closest(".sample[data-template]");
+  if (!template) return;
 
-    const type = template.dataset.template;
+  const prompt = document.getElementById("prompt");
+  if (!prompt) return;
 
-    const prompts = {
-      "3d": "Buat animasi 3D cute dengan gerakan halus dan ekspresi ceria.",
-      "character": "Buat karakter bergerak secara natural dengan ekspresi wajah yang hidup.",
-      "fantasy": "Buat adegan dunia fantasi cinematic dengan suasana ajaib dan gerakan kamera halus.",
-      "cinematic": "Buat video cinematic dengan gerakan kamera halus, pencahayaan dramatis, dan suasana film."
-    };
+  const prompts = {
+    "3d": "Buat animasi 3D cute dengan gerakan halus dan ekspresi ceria.",
+    "character": "Buat karakter bergerak secara natural dengan ekspresi wajah yang hidup.",
+    "fantasy": "Buat adegan dunia fantasi cinematic dengan suasana ajaib dan gerakan kamera halus.",
+    "cinematic": "Buat video cinematic dengan gerakan kamera halus, pencahayaan dramatis, dan suasana film."
+  };
 
-    prompt.value = prompts[type] || "";
+  prompt.value = prompts[template.dataset.template] || "";
 
-    document.querySelector(".grid")?.scrollIntoView({
-      behavior: "smooth"
-    });
-
-    document.querySelectorAll(".sample").forEach(item => {
-      item.style.borderColor = "";
-    });
-
-    template.style.borderColor = "#6d4aff";
+  document.querySelector(".grid")?.scrollIntoView({
+    behavior: "smooth"
   });
 });
+  
 </script>
 </body>
 </html>
