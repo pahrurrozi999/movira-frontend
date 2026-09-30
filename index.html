@@ -431,17 +431,39 @@ async function saveVideoBlob(blob){
   }
 };
 
-document.getElementById("save").onclick=async()=>{
-  if(!generatedUrl){alert("Buat video terlebih dahulu.");return}
-  try{
-    const res=await fetch(generatedUrl);
-    if(!res.ok) throw new Error();
-    const blob=await res.blob();
-    await saveVideoBlob(blob);
-    document.getElementById("save").textContent="♥ Tersimpan";
-    status.textContent="Video tersimpan di perangkat ini.";
-  }catch(e){
-    alert("Video belum bisa disimpan di browser ini.");
+document.getElementById("save").onclick = async () => {
+  if (!generatedUrl) {
+    alert("Buat video terlebih dahulu.");
+    return;
+  }
+
+  try {
+    const { data: { session } } = await moviraSupabase.auth.getSession();
+
+    if (!session) {
+      alert("Silakan login terlebih dahulu.");
+      return;
+    }
+
+    const { error } = await moviraSupabase
+      .from("saved_videos")
+      .insert({
+        user_id: session.user.id,
+        prompt: document.getElementById("prompt").value.trim(),
+        video_url: generatedUrl,
+        ratio: ratio,
+        duration: Number(duration),
+        resolution: "720p"
+      });
+
+    if (error) throw error;
+
+    document.getElementById("save").textContent = "♥ Tersimpan";
+    status.textContent = "Video berhasil disimpan ke akun Movira.";
+    
+  } catch (error) {
+    console.error("Gagal menyimpan video:", error);
+    alert(`Gagal menyimpan video.\n\n${error.message}`);
   }
 };
 
