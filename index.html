@@ -29,26 +29,42 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
   #homePage .samplegrid{
   grid-template-columns:repeat(2,1fr);
   }
-@media(max-width:900px#authBox{
+  
+@media(max-width:900px){
+
+#authBox{
   top:72px !important;
   right:10px !important;
   width:calc(100% - 20px) !important;
   max-width:360px;
   transform:scale(.88);
-  transform-origin:top right;                                                                                                                              }){
-  #menuBtn{display:block}
-  body{overflow-x:hidden}
-  .app{
+  transform-origin:top right;
+}
+
+#menuBtn{display:block}
+body{overflow-x:hidden}
+
+.app{
   display:block !important;
   width:100% !important;
   min-height:100vh;
   height:auto !important;
-  }
-  .sidebar{
+}
+
+.sidebar{
   position:sticky;
   top:0;
   z-index:20;
-  width:100% !important;:auto;padding:12px 14px;border-right:0;border-bottom:1px solid #1b2b43;display:flex;flex-direction:row;align-items:center;gap:10px}
+  width:100% !important;
+  height:auto;
+  padding:12px 14px;
+  border-right:0;
+  border-bottom:1px solid #1b2b43;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:10px;
+}
   .logo{font-size:22px;margin:0;white-space:nowrap}
   .nav{display:none;position:absolute;left:10px;right:10px;top:58px;background:#0c1a2d;border:1px solid #263b59;border-radius:14px;padding:8px;box-shadow:0 12px 30px #0008}.nav.open{display:block}.nav button{display:block}
   .credit{margin:0;padding:7px 10px;border:0;background:transparent;display:flex;align-items:center;gap:6px}
