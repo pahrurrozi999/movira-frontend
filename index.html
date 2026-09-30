@@ -128,6 +128,19 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex}
     </div>
   </div>
   </section>
+  <section id="galleryPage" class="card" style="display:none;">
+  <div class="step">▧ Galeri Video</div>
+
+  <div id="galleryList" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:12px;
+  ">
+    <div class="muted">
+      Belum ada video di galeri.
+    </div>
+  </div>
+  </section>
 </main>
 </div>
 <script>
@@ -144,6 +157,7 @@ const placeholder=document.getElementById("placeholder");
 const videoBox=document.getElementById("videoBox");
 // Navigasi halaman Movira
 const historyPage = document.getElementById("historyPage");
+const galleryPage = document.getElementById("galleryPage");
 const createTop = document.querySelector(".top");
 const createGrid = document.querySelector(".grid");
 const samples = document.querySelector(".samples");
@@ -159,19 +173,28 @@ navButtons.forEach(button => {
       createGrid.style.display = "none";
       samples.style.display = "none";
       historyPage.style.display = "block";
-      
+      galleryPage.style.display = "none";
       loadMoviraHistory();
       
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
+if (text.includes("Galeri")) {
+  createTop.style.display = "none";
+  createGrid.style.display = "none";
+  samples.style.display = "none";
+  historyPage.style.display = "none";
+  galleryPage.style.display = "block";
 
+  navButtons.forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+    }
     if (text.includes("Buat Video")) {
       createTop.style.display = "";
       createGrid.style.display = "";
       samples.style.display = "";
       historyPage.style.display = "none";
-
+      galleryPage.style.display = "none";
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
