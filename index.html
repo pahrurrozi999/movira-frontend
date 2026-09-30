@@ -75,6 +75,16 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
   grid-template-columns:repeat(2,1fr);
   }
   .sample{height:90px;font-size:13px;text-align:center}
+  #galleryPage .samplegrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+#galleryPage .samplegrid > *{
+  width:100%;
+  min-width:0;
+}
 }
 @media(max-width:430px){
   .main{padding:10px}
