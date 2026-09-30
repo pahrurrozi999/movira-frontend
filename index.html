@@ -29,7 +29,13 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
   #homePage .samplegrid{
   grid-template-columns:repeat(2,1fr);
   }
-@media(max-width:900px){
+@media(max-width:900px#authBox{
+  top:72px !important;
+  right:10px !important;
+  width:calc(100% - 20px) !important;
+  max-width:360px;
+  transform:scale(.88);
+  transform-origin:top right;                                                                                                                              }){
   #menuBtn{display:block}
   body{overflow-x:hidden}
   .app{display:block;min-height:100vh;height:auto}
