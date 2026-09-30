@@ -684,13 +684,12 @@ async function loadMoviraHistory() {
   if (!galleryList) return;
 
   galleryList.innerHTML = `
-    <div class="muted">Memuat galeri video...</div>
+    <div class="muted">Memuat video tersimpan...</div>
   `;
 
   try {
-    const {
-      data: { session }
-    } = await moviraSupabase.auth.getSession();
+    const { data: { session } } =
+      await moviraSupabase.auth.getSession();
 
     if (!session) {
       galleryList.innerHTML = `
@@ -702,12 +701,21 @@ async function loadMoviraHistory() {
     }
 
     const { data, error } = await moviraSupabase
-      .from("video_history")
+      .from("saved_videos")
       .select("id,prompt,video_url,ratio,duration,resolution,created_at")
       .order("created_at", { ascending: false })
       .limit(50);
 
     if (error) throw error;
+
+    if (!data || data.length === 0) {
+      galleryList.innerHTML = `
+        <div class="muted">
+          Belum ada video yang disimpan.
+        </div>
+      `;
+      return;
+    }
 
     galleryList.innerHTML = data.map(item => `
       <div class="card" style="padding:12px;">
@@ -724,6 +732,10 @@ async function loadMoviraHistory() {
 
         <div class="muted" style="margin-top:6px;">
           ${item.ratio} • ${item.duration} detik • ${item.resolution}
+        </div>
+
+        <div style="margin-top:6px;font-size:12px;">
+          ♥ Tersimpan
         </div>
       </div>
     `).join("");
