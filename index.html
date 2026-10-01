@@ -345,6 +345,10 @@ const API_BASE = "https://movira-backend-1.onrender.com";
 
   const isHidden = getComputedStyle(box).display === "none";
 
+  if (upgrade && upgrade.parentElement !== box) {
+    box.appendChild(upgrade);
+  }
+
   box.style.setProperty(
     "display",
     isHidden ? "block" : "none",
@@ -355,6 +359,7 @@ const API_BASE = "https://movira-backend-1.onrender.com";
     upgrade.style.display = isHidden ? "block" : "none";
   }
   }
+  
 let imageData="", ratio="16:9", duration="5", generatedUrl="";
 
 const file=document.getElementById("file");
