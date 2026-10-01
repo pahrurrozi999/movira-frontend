@@ -1062,6 +1062,21 @@ document.querySelectorAll(".upgrade").forEach(button => {
         <p style="color:#aeb9d6;margin-bottom:18px;">
           Pilih paket kredit yang kamu inginkan
         </p>
+        
+<select id="currencySelect" style="
+  width:100%;
+  padding:12px;
+  margin-bottom:14px;
+  border-radius:10px;
+  background:#101a2d;
+  color:#fff;
+  border:1px solid #394cff;
+  font-size:15px;
+">
+  <option value="IDR">🇮🇩 IDR — Rupiah</option>
+  <option value="MYR">🇲🇾 MYR — Ringgit</option>
+  <option value="USD">🇺🇸 USD — Dollar</option>
+</select>
 
         <button data-credit="50" style="
           width:100%;
@@ -1118,7 +1133,41 @@ document.querySelectorAll(".upgrade").forEach(button => {
     `;
 
     document.body.appendChild(overlay);
+    
+const currencySelect = overlay.querySelector("#currencySelect");
 
+const currencyPrices = {
+  IDR: { 50: 5000, 120: 10000, 300: 20000 },
+  MYR: { 50: 5, 120: 10, 300: 20 },
+  USD: { 50: 2, 120: 5, 300: 10 }
+};
+
+const currencySymbols = {
+  IDR: "Rp",
+  MYR: "RM",
+  USD: "$"
+};
+
+function updateCurrencyPrices() {
+  const currency = currencySelect.value;
+
+  overlay.querySelectorAll("[data-credit]").forEach(option => {
+    const credit = option.dataset.credit;
+    const price = currencyPrices[currency][credit];
+
+    const label =
+      credit === "50" ? "50 Kredit" :
+      credit === "120" ? "⭐ 120 Kredit" :
+      "🔥 300 Kredit";
+
+    option.textContent =
+      `${label} — ${currencySymbols[currency]}${price.toLocaleString("id-ID")}`;
+  });
+}
+
+currencySelect.addEventListener("change", updateCurrencyPrices);
+updateCurrencyPrices();
+    
     overlay.querySelectorAll("[data-credit]").forEach(option => {
       option.onclick = async () => {
   const credit = Number(option.dataset.credit);
@@ -1142,7 +1191,7 @@ document.querySelectorAll(".upgrade").forEach(button => {
         },
         body: JSON.stringify({
           credits: credit,
-          currency: "IDR"
+          currency: currencySelect.value
         })
       }
     );
