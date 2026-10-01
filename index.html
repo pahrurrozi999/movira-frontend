@@ -1120,14 +1120,54 @@ document.querySelectorAll(".upgrade").forEach(button => {
     document.body.appendChild(overlay);
 
     overlay.querySelectorAll("[data-credit]").forEach(option => {
-      option.onclick = () => {
-        const credit = option.dataset.credit;
+      option.onclick = async () => {
+  const credit = Number(option.dataset.credit);
 
-        alert(
-          `Paket ${credit} Kredit dipilih.\\n\\n` +
-          `Sistem pembayaran akan kita hubungkan nanti.`
-        );
-      };
+  try {
+    const { data: { session } } =
+      await moviraSupabase.auth.getSession();
+
+    if (!session) {
+      alert("Silakan login terlebih dahulu.");
+      return;
+    }
+
+    const response = await fetch(
+      `${API_BASE}/api/credit-orders`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          credits: credit,
+          currency: "IDR"
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Gagal membuat pesanan kredit."
+      );
+    }
+
+    alert(
+      `Pesanan ${credit} Kredit berhasil dibuat.\n\n` +
+      `Status: ${data.order.status}\n` +
+      `Mata uang: ${data.order.currency}`
+    );
+
+  } catch (error) {
+    console.error("Gagal membuat order:", error);
+    alert(
+      `Gagal membuat pesanan.\n\n${error.message}`
+    );
+  }
+};
     });
 
     overlay.querySelector("#closeUpgrade").onclick = () => {
