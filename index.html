@@ -166,10 +166,9 @@ body{overflow-x:hidden}
     <button>⌂ &nbsp; Beranda</button><button class="active">✦ &nbsp; Buat Video</button>
     <button>▧ &nbsp; Galeri</button><button>▦ &nbsp; Template</button><button>◷ &nbsp; Riwayat</button>
   </div>
-<button id="profileBtn" class="profileBtn">
-  👤 Profil
-</button>
 
+<button id="profileBtn" class="profileBtn" onclick="toggleProfile()">
+  
 <button class="upgrade" style="display:none;margin:10px 12px 0;padding:10px 14px;border:0;border-radius:10px;background:linear-gradient(90deg,#2948ff,#6d45ff);color:#fff;font-weight:700;">
   Upgrade
 </button>
@@ -340,6 +339,22 @@ body{overflow-x:hidden}
 </div>
 <script>
 const API_BASE = "https://movira-backend-1.onrender.com";
+  function toggleProfile() {
+  const box = document.getElementById("authBox");
+  const upgrade = document.querySelector(".upgrade");
+
+  const isHidden = getComputedStyle(box).display === "none";
+
+  box.style.setProperty(
+    "display",
+    isHidden ? "block" : "none",
+    "important"
+  );
+
+  if (upgrade) {
+    upgrade.style.display = isHidden ? "block" : "none";
+  }
+  }
 let imageData="", ratio="16:9", duration="5", generatedUrl="";
 
 const file=document.getElementById("file");
