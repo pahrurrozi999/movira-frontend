@@ -1008,20 +1008,33 @@ async function loadMoviraHistory() {
   const authEmail = document.getElementById("authEmail");
   const authPassword = document.getElementById("authPassword");
 
-  authStatus.textContent = "Memproses...";
+  authStatus.textContent = "Memproses login...";
 
-  const { error } = await moviraSupabase.auth.signInWithPassword({
-    email: authEmail.value.trim(),
-    password: authPassword.value
-  });
+  try {
+    const { data, error } = await moviraSupabase.auth.signInWithPassword({
+      email: authEmail.value.trim(),
+      password: authPassword.value
+    });
 
-  if (error) {
-    authStatus.textContent = error.message;
-    return;
+    if (error) {
+      authStatus.textContent = "Login gagal: " + error.message;
+      alert("Login gagal: " + error.message);
+      return;
+    }
+
+    if (data && data.session) {
+      authStatus.textContent = "Login berhasil!";
+      await updateMoviraAuth();
+    } else {
+      authStatus.textContent = "Login gagal: session tidak ditemukan.";
+      alert("Login gagal: session tidak ditemukan.");
+    }
+
+  } catch (error) {
+    console.error("Login error:", error);
+    authStatus.textContent = "Error: " + error.message;
+    alert("Error Login: " + error.message);
   }
-
-  authStatus.textContent = "Login berhasil.";
-  await updateMoviraAuth();
   }
       
   document.getElementById("signupBtn").onclick = async () => {
