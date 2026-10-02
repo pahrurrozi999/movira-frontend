@@ -818,20 +818,21 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
       authLoggedIn.style.display = "block";
       
 const authAvatar = document.getElementById("authAvatar");
+const headerAvatar = document.getElementById("headerAvatar");
+
+const avatarUrl =
+  session.user.user_metadata?.avatar_url ||
+  session.user.user_metadata?.picture ||
+  "https://ui-avatars.com/api/?name=User";
 
 if (authAvatar) {
-  authAvatar.src =
-    session.user.user_metadata?.avatar_url ||
-    session.user.user_metadata?.picture ||
-    "https://ui-avatars.com/api/?name=User";
-    }
-      userEmail.textContent = session.user.email || "";
-      await loadMoviraCredits(session.user);
-    } else {
-      authLoggedOut.style.display = "block";
-      authLoggedIn.style.display = "none";
-    }
-  }
+  authAvatar.src = avatarUrl;
+}
+
+if (headerAvatar) {
+  headerAvatar.src = avatarUrl;
+}
+      
 async function loadMoviraHistory() {
   const historyList = document.getElementById("historyList");
 
