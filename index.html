@@ -721,7 +721,18 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   </div>
 
   <div id="authLoggedIn" style="display:none;">
-    <div style="font-size:13px;color:#9fb4d8;">Akun Movira</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <img
+      id="authAvatar"
+      src=""
+      alt="Foto profil"
+      style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #394cff;"
+    >
+    <div>
+      <div style="font-size:13px;color:#9fb4d8;">Akun Movira</div>
+      <div id="userEmail" style="font-size:12px;color:#fff;"></div>
+    </div>
+  </div>
 
     <div id="userEmail"
       style="font-weight:700;margin:4px 0 10px;word-break:break-all;">
@@ -790,7 +801,15 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
     if (session?.user) {
       authLoggedOut.style.display = "none";
       authLoggedIn.style.display = "block";
+      
+const authAvatar = document.getElementById("authAvatar");
 
+if (authAvatar) {
+  authAvatar.src =
+    session.user.user_metadata?.avatar_url ||
+    session.user.user_metadata?.picture ||
+    "https://ui-avatars.com/api/?name=User";
+    }
       userEmail.textContent = session.user.email || "";
       await loadMoviraCredits(session.user);
     } else {
