@@ -805,7 +805,7 @@ Login
     if (session?.user) {
       authLoggedOut.style.display = "none";
       authLoggedIn.style.display = "block";
-      
+      await loadMoviraCredits(session.user);
 const authAvatar = document.getElementById("authAvatar");
 const headerAvatar = document.getElementById("headerAvatar");
 
