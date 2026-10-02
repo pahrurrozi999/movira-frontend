@@ -1036,7 +1036,7 @@ async function loadMoviraHistory() {
     alert("Error Login: " + error.message);
   }
   }
-      
+      window.loginMovira = loginMovira;
   document.getElementById("signupBtn").onclick = async () => {
     authStatus.textContent = "Membuat akun...";
 
