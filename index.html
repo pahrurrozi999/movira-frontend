@@ -709,8 +709,7 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
     <div style="display:flex;gap:8px;">
       <button id="loginBtn"
   type="button"
-  onpointerdown="alert('Tombol Login tertekan')"
-        style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;">
+   style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;">
         Login
       </button>
 
@@ -1005,25 +1004,34 @@ async function loadMoviraHistory() {
   }
   
 document.getElementById("loginBtn").onclick = async () => {
-  alert("Handler Login berjalan");
+  document.getElementById("loginBtn").onclick = async () => {
   const authStatus = document.getElementById("authStatus");
   const authEmail = document.getElementById("authEmail");
   const authPassword = document.getElementById("authPassword");
 
   authStatus.textContent = "Memproses...";
 
-  const { error } = await moviraSupabase.auth.signInWithPassword({
-    email: authEmail.value.trim(),
-    password: authPassword.value
-  });
+  try {
+    const { data, error } =
+      await moviraSupabase.auth.signInWithPassword({
+        email: authEmail.value.trim(),
+        password: authPassword.value
+      });
 
-  if (error) {
-    authStatus.textContent = error.message;
-    return;
+    if (error) {
+      authStatus.textContent = error.message;
+      return;
+    }
+
+    authStatus.textContent = "Login berhasil.";
+
+    await updateMoviraAuth();
+
+  } catch (error) {
+    console.error("Login error:", error);
+    authStatus.textContent =
+      "Login gagal: " + (error.message || "Kesalahan tidak diketahui.");
   }
-
-  authStatus.textContent = "";
-  await updateMoviraAuth();
 };
 
   document.getElementById("signupBtn").onclick = async () => {
