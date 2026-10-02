@@ -1003,22 +1003,26 @@ async function loadMoviraHistory() {
   }
   }
   
-  document.getElementById("loginBtn").onclick = async () => {
-    authStatus.textContent = "Memproses...";
+document.getElementById("loginBtn").onclick = async () => {
+  const authStatus = document.getElementById("authStatus");
+  const authEmail = document.getElementById("authEmail");
+  const authPassword = document.getElementById("authPassword");
 
-    const { error } = await moviraSupabase.auth.signInWithPassword({
-      email: authEmail.value.trim(),
-      password: authPassword.value
-    });
+  authStatus.textContent = "Memproses...";
 
-    if (error) {
-      authStatus.textContent = error.message;
-      return;
-    }
+  const { error } = await moviraSupabase.auth.signInWithPassword({
+    email: authEmail.value.trim(),
+    password: authPassword.value
+  });
 
-    authStatus.textContent = "";
-    await updateMoviraAuth();
-  };
+  if (error) {
+    authStatus.textContent = error.message;
+    return;
+  }
+
+  authStatus.textContent = "";
+  await updateMoviraAuth();
+};
 
   document.getElementById("signupBtn").onclick = async () => {
     authStatus.textContent = "Membuat akun...";
