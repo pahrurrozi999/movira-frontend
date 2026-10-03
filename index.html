@@ -482,6 +482,30 @@ document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#models button").forEach(x=>x.classList.remove("selected"));
   b.classList.add("selected");
   model=b.dataset.value;
+
+  const resolutionButtons=document.querySelectorAll("#resolutions button");
+
+  resolutionButtons.forEach(btn=>{
+    btn.disabled=false;
+    btn.style.opacity="1";
+    btn.style.cursor="pointer";
+  });
+
+  if(model==="wan/v2.6/image-to-video"){
+    resolutionButtons.forEach(btn=>{
+      if(btn.dataset.value==="480p"){
+        btn.disabled=true;
+        btn.style.opacity="0.35";
+        btn.style.cursor="not-allowed";
+      }
+    });
+
+    if(resolution==="480p"){
+      resolution="720p";
+      resolutionButtons.forEach(x=>x.classList.remove("selected"));
+      document.querySelector('#resolutions button[data-value="720p"]').classList.add("selected");
+    }
+  }
 });
   document.querySelectorAll("#resolutions button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#resolutions button").forEach(x=>x.classList.remove("selected"));
