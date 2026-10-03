@@ -1264,6 +1264,32 @@ document.querySelectorAll(".upgrade").forEach(button => {
         ">
           🔥 300 Kredit — Rp20.000
         </button>
+        
+<button data-credit="500" style="
+  width:100%;
+  padding:14px;
+  margin:6px 0;
+  border:0;
+  border-radius:10px;
+  background:#f59e0b;
+  color:#fff;
+  font-size:15px;
+">
+  💎 500 Kredit — Rp135.000
+</button>
+
+<button data-credit="1000" style="
+  width:100%;
+  padding:14px;
+  margin:6px 0;
+  border:0;
+  border-radius:10px;
+  background:#ef4444;
+  color:#fff;
+  font-size:15px;
+">
+  👑 1.000 Kredit — Rp250.000
+</button>
 
         <button id="closeUpgrade" style="
           width:100%;
@@ -1285,9 +1311,9 @@ document.querySelectorAll(".upgrade").forEach(button => {
 const currencySelect = overlay.querySelector("#currencySelect");
 
 const currencyPrices = {
-  IDR: { 50: 5000, 120: 10000, 300: 20000 },
-  MYR: { 50: 5, 120: 10, 300: 20 },
-  USD: { 50: 2, 120: 5, 300: 10 }
+  IDR: { 50: 15000, 120: 35000, 300: 85000, 500: 135000, 1000: 250000 },
+  MYR: { 50: 5, 120: 10, 300: 20, 500: 35, 1000: 65 },
+  USD: { 50: 1, 120: 2, 300: 5, 500: 8, 1000: 14 }
 };
 
 const currencySymbols = {
@@ -1304,9 +1330,11 @@ function updateCurrencyPrices() {
     const price = currencyPrices[currency][credit];
 
     const label =
-      credit === "50" ? "50 Kredit" :
-      credit === "120" ? "⭐ 120 Kredit" :
-      "🔥 300 Kredit";
+  credit === "50" ? "50 Kredit" :
+  credit === "120" ? "⭐ 120 Kredit" :
+  credit === "300" ? "🔥 300 Kredit" :
+  credit === "500" ? "💎 500 Kredit" :
+  "👑 1.000 Kredit";
 
     option.textContent =
       `${label} — ${currencySymbols[currency]}${price.toLocaleString("id-ID")}`;
