@@ -534,14 +534,14 @@ const response=await fetch(`${API_BASE}/api/generate`,{
     "Authorization":`Bearer ${session.access_token}`
   },
   body:JSON.stringify({
-    prompt,
-    ratio,
-    duration:Number(duration),
-    resolution:"720p",
-    model:"alibaba/wan-3.0-prime/image-to-video",
-    imageData,
-    audio:true
-  })
+  prompt,
+  ratio,
+  duration:Number(duration),
+  resolution:"720p",
+  model,
+  imageData,
+  audio:true
+})
 });
 
     const data=await response.json().catch(()=>({}));
