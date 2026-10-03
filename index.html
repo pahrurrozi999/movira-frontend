@@ -471,7 +471,11 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
   b.classList.add("selected");
   ratio=b.dataset.value;
 });
-
+document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#models button").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  model=b.dataset.value;
+});
 document.querySelectorAll("#durations button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#durations button").forEach(x=>x.classList.remove("selected"));
   b.classList.add("selected");
