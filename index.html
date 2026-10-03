@@ -478,35 +478,46 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
   b.classList.add("selected");
   ratio=b.dataset.value;
 });
-document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#models button").forEach(x=>x.classList.remove("selected"));
-  b.classList.add("selected");
-  model=b.dataset.value;
-
-  const resolutionButtons=document.querySelectorAll("#resolutions button");
+function updateResolutionOptions(){
+  const resolutionButtons = document.querySelectorAll("#resolutions button");
 
   resolutionButtons.forEach(btn=>{
-    btn.disabled=false;
-    btn.style.opacity="1";
-    btn.style.cursor="pointer";
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
   });
 
-  if(model==="wan/v2.6/image-to-video"){
-    resolutionButtons.forEach(btn=>{
-      if(btn.dataset.value==="480p"){
-        btn.disabled=true;
-        btn.style.opacity="0.35";
-        btn.style.cursor="not-allowed";
-      }
-    });
+  if(model === "wan/v2.6/image-to-video"){
+    const btn480 = document.querySelector('#resolutions button[data-value="480p"]');
 
-    if(resolution==="480p"){
-      resolution="720p";
+    if(btn480){
+      btn480.disabled = true;
+      btn480.style.opacity = "0.35";
+      btn480.style.cursor = "not-allowed";
+    }
+
+    if(resolution === "480p"){
+      resolution = "720p";
+
       resolutionButtons.forEach(x=>x.classList.remove("selected"));
-      document.querySelector('#resolutions button[data-value="720p"]').classList.add("selected");
+
+      const btn720 = document.querySelector('#resolutions button[data-value="720p"]');
+      if(btn720) btn720.classList.add("selected");
     }
   }
+}
+
+document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#models button").forEach(x=>x.classList.remove("selected"));
+
+  b.classList.add("selected");
+
+  model = b.dataset.value;
+
+  updateResolutionOptions();
 });
+
+updateResolutionOptions();
   document.querySelectorAll("#resolutions button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#resolutions button").forEach(x=>x.classList.remove("selected"));
   b.classList.add("selected");
