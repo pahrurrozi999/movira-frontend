@@ -188,14 +188,27 @@ body{overflow-x:hidden}
       <div class="step">2. Tulis Prompt</div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
       <br><br>
-      <div class="step">3. Rasio Video</div>
+      <div class="step">3. Model AI</div>
+<div class="options" id="models">
+  <button class="selected" data-value="alibaba/wan-3.0-prime/image-to-video">
+    Wan 3.0 Prime
+  </button>
+  <button data-value="alibaba/wan-3.0/image-to-video">
+    Wan 3.0
+  </button>
+  <button data-value="wan/v2.6/image-to-video">
+    Wan 2.6
+  </button>
+</div>
+<br>
+      <div class="step">4. Rasio Video</div>
       <div class="options" id="ratios">
         <button class="selected" data-value="16:9">16:9<br><small>YouTube</small></button>
         <button data-value="9:16">9:16<br><small>Shorts</small></button>
         <button data-value="1:1">1:1<br><small>Square</small></button>
       </div>
       <br>
-      <div class="step">4. Durasi</div>
+      <div class="step">5. Durasi</div>
       <div class="options" id="durations">
         <button class="selected" data-value="5">5 detik</button>
         <button data-value="10">10 detik</button>
