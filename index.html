@@ -521,6 +521,7 @@ const response=await fetch(`${API_BASE}/api/generate`,{
     ratio,
     duration:Number(duration),
     resolution:"720p",
+    model:"alibaba/wan-3.0-prime/image-to-video",
     imageData,
     audio:true
   })
