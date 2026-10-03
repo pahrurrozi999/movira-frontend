@@ -221,6 +221,9 @@ body{overflow-x:hidden}
         <button data-value="10">10 detik</button>
         <button data-value="15">15 detik</button>
       </div>
+      <div id="creditCostInfo" style="margin:10px 0;padding:10px 12px;border-radius:10px;background:#101d35;color:#b9c7e8;text-align:center;font-size:14px;">
+  💰 Biaya: <strong>63 Kredit</strong>
+      </div>
       <button class="generate" id="generate">✨ Generate Video • 10 Kredit</button>
       <div class="status" id="status">Mode demo: membuat video WebM nyata dari gambar.</div>
     </section>
@@ -478,6 +481,43 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
   b.classList.add("selected");
   ratio=b.dataset.value;
 });
+  
+  function updateCreditCost(){
+  const creditCosts = {
+    "alibaba/wan-3.0/image-to-video": {
+      "480p": {5:23, 10:45, 15:68},
+      "720p": {5:45, 10:90, 15:135},
+      "1080p": {5:90, 10:179, 15:269}
+    },
+
+    "alibaba/wan-3.0-prime/image-to-video": {
+      "480p": {5:31, 10:61, 15:92},
+      "720p": {5:63, 10:126, 15:188},
+      "1080p": {5:126, 10:251, 15:376}
+    },
+
+    "wan/v2.6/image-to-video": {
+      "720p": {5:45, 10:90, 15:135},
+      "1080p": {5:68, 10:135, 15:202}
+    }
+  };
+
+  const cost = creditCosts[model]?.[resolution]?.[Number(duration)];
+
+  const costInfo = document.getElementById("creditCostInfo");
+  const generateButton = document.getElementById("generate");
+
+  if(cost){
+    costInfo.innerHTML = `💰 Biaya: <strong>${cost} Kredit</strong>`;
+    generateButton.textContent = `✨ Generate Video • ${cost} Kredit`;
+  }else{
+    costInfo.innerHTML = `⚠️ Kombinasi pilihan belum tersedia`;
+    generateButton.textContent = "✨ Generate Video";
+  }
+}
+
+updateCreditCost();
+  
 function updateResolutionOptions(){
   const resolutionButtons = document.querySelectorAll("#resolutions button");
 
@@ -515,6 +555,7 @@ document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
   model = b.dataset.value;
 
   updateResolutionOptions();
+  updateCreditCost();
 });
 
 updateResolutionOptions();
@@ -522,11 +563,13 @@ updateResolutionOptions();
   document.querySelectorAll("#resolutions button").forEach(x=>x.classList.remove("selected"));
   b.classList.add("selected");
   resolution=b.dataset.value;
+    updateCreditCost();
 });
 document.querySelectorAll("#durations button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#durations button").forEach(x=>x.classList.remove("selected"));
   b.classList.add("selected");
   duration=b.dataset.value;
+  updateCreditCost();
 });
 
 function setVideo(url){
