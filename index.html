@@ -566,7 +566,7 @@ const response=await fetch(`${API_BASE}/api/generate`,{
 
     setVideo(videoUrl);
     await loadMoviraCredits(session.user);
-    status.textContent=`Video AI selesai • ${ratio} • ${duration} detik • Wan 3.0 Prime`;
+    status.textContent=`Video AI selesai • ${ratio} • ${duration} detik • ${model} • ${resolution}`;
   }catch(err){
     console.error(err);
     status.textContent=`Gagal membuat video: ${err.message}`;
