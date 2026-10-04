@@ -917,11 +917,16 @@ Login
 const authAvatar = document.getElementById("authAvatar");
 const headerAvatar = document.getElementById("headerAvatar");
 
+const googleIdentity =
+  session.user.identities?.find(
+    identity => identity.provider === "google"
+  );
+
 const avatarUrl =
   session.user.user_metadata?.avatar_url ||
   session.user.user_metadata?.picture ||
-  session.user.identities?.[0]?.identity_data?.avatar_url ||
-  session.user.identities?.[0]?.identity_data?.picture ||
+  googleIdentity?.identity_data?.avatar_url ||
+  googleIdentity?.identity_data?.picture ||
   "https://ui-avatars.com/api/?name=User";
 
 if (authAvatar) {
