@@ -920,6 +920,8 @@ const headerAvatar = document.getElementById("headerAvatar");
 const avatarUrl =
   session.user.user_metadata?.avatar_url ||
   session.user.user_metadata?.picture ||
+  session.user.identities?.[0]?.identity_data?.avatar_url ||
+  session.user.identities?.[0]?.identity_data?.picture ||
   "https://ui-avatars.com/api/?name=User";
 
 if (authAvatar) {
