@@ -917,17 +917,40 @@ Login
 const authAvatar = document.getElementById("authAvatar");
 const headerAvatar = document.getElementById("headerAvatar");
 
-const googleIdentity =
-  session.user.identities?.find(
-    identity => identity.provider === "google"
-  );
-
-const avatarUrl =
+let avatarUrl =
   session.user.user_metadata?.avatar_url ||
   session.user.user_metadata?.picture ||
-  googleIdentity?.identity_data?.avatar_url ||
-  googleIdentity?.identity_data?.picture ||
-  "https://ui-avatars.com/api/?name=User";
+  session.user.identities?.find(
+    identity => identity.provider === "google"
+  )?.identity_data?.avatar_url ||
+  session.user.identities?.find(
+    identity => identity.provider === "google"
+  )?.identity_data?.picture ||
+  "";
+
+if (!avatarUrl && session.provider_token) {
+  try {
+    const googleResponse = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${session.provider_token}`
+        }
+      }
+    );
+
+    if (googleResponse.ok) {
+      const googleUser = await googleResponse.json();
+      avatarUrl = googleUser.picture || "";
+    }
+  } catch (error) {
+    console.log("Gagal mengambil foto Google:", error);
+  }
+}
+
+if (!avatarUrl) {
+  avatarUrl = "https://ui-avatars.com/api/?name=User";
+}
 
 if (authAvatar) {
   authAvatar.src = avatarUrl;
