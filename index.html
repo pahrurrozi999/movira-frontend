@@ -654,7 +654,7 @@ const response=await fetch(`${API_BASE}/api/generate`,{
   }
 }
 
-gen.textContent="✨ Generate Video";
+updateCreditCost();
 gen.onclick=generateRealVideo;
 
 document.getElementById("again").onclick=()=>{
