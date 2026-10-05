@@ -1187,9 +1187,11 @@ async function loadMoviraHistory() {
   async function loginWithGoogle() {
   try {
     const { error } = await moviraSupabase.auth.signInWithOAuth({
-      provider: "google"
-    });
-
+  provider: "google",
+  options: {
+    redirectTo: "https://pahrurrozi999.github.io/movira-frontend/"
+  }
+});
     if (error) {
       alert("Login Google gagal: " + error.message);
     }
