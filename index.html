@@ -822,6 +822,12 @@ type="button"
 onclick="window.loginMovira()"
 style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;position:relative;z-index:10001;pointer-events:auto;touch-action:manipulation;">
 Login
+ <button
+  type="button"
+  onclick="loginWithGoogle()"
+  style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#fff;color:#222;font-weight:700;">
+  Masuk dengan Google
+</button>       
       </button>
       <button id="signupBtn"
         style="flex:1;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:700;">
@@ -1177,6 +1183,21 @@ async function loadMoviraHistory() {
     alert("Error Login: " + error.message);
   }
   }
+
+  async function loginWithGoogle() {
+  try {
+    const { error } = await moviraSupabase.auth.signInWithOAuth({
+      provider: "google"
+    });
+
+    if (error) {
+      alert("Login Google gagal: " + error.message);
+    }
+  } catch (error) {
+    alert("Login Google gagal: " + error.message);
+  }
+  }
+  
       window.loginMovira = loginMovira;
   document.getElementById("signupBtn").onclick = async () => {
     authStatus.textContent = "Membuat akun...";
