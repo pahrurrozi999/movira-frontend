@@ -235,7 +235,7 @@ body{overflow-x:hidden}
     <section class="card preview">
       <div class="step" data-i18n="result">Hasil Video</div>
       <div class="videoBox" id="videoBox">
-        <div class="placeholder" id="placeholder">Video hasil akan muncul di sini<br><span class="muted">Upload gambar lalu klik Generate Video</span></div>
+        <div class="placeholder" id="placeholder"><span data-i18n="videoPlaceholder">Video hasil akan muncul di sini</span><br><span class="muted">Upload gambar lalu klik Generate Video</span></div>
         <video id="resultVideo" controls playsinline style="display:none;width:100%;height:100%;object-object-fit:cover;background:#000;border-radius:12px"></video>
       </div>
       <div class="downloadNote" id="downloadNote">📱 Download disimpan tanpa membuka tab baru. Cek folder Download HP.</div>
@@ -408,7 +408,8 @@ const moviraLang =
     gallery: "Galeri",
     template: "Template",
     history: "Riwayat",
-    result: "Hasil Video"
+    result: "Hasil Video",
+    videoPlaceholder: "Video hasil akan muncul di sini"
   },
 
   ms: {
@@ -423,7 +424,8 @@ const moviraLang =
     gallery: "Galeri",
     template: "Templat",
     history: "Sejarah",
-    result: "Hasil Video"
+    result: "Hasil Video",
+    videoPlaceholder: "Video hasil akan muncul di sini"
   },
 
   en: {
@@ -438,7 +440,8 @@ const moviraLang =
     gallery: "Gallery",
     template: "Templates",
     history: "History",
-    result: "Video Result"
+    result: "Video Result",
+    videoPlaceholder: "Generated video will appear here"
   }
 };
 
