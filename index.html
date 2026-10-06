@@ -385,6 +385,13 @@ const API_BASE = "https://movira-backend-1.onrender.com";
     upgrade.style.display = isHidden ? "block" : "none";
   }
   }
+// Bahasa otomatis Movira
+const browserLang = (navigator.language || "en").toLowerCase();
+
+const moviraLang =
+  browserLang.startsWith("id") ? "id" :
+  browserLang.startsWith("ms") ? "ms" :
+  "en";
   
 let imageData="", model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generatedUrl="";
   
