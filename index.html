@@ -163,10 +163,13 @@ body{overflow-x:hidden}
 <aside class="sidebar">
   <button id="menuBtn" style="display:block;background:none;border:0;color:#fff;font-size:24px;padding:0 4px">☰</button><div class="logo">Movira <span>AI</span></div>
   
-  <div class="nav">
-    <button>⌂ &nbsp; Beranda</button><button class="active">✦ &nbsp; Buat Video</button>
-    <button>▧ &nbsp; Galeri</button><button>▦ &nbsp; Template</button><button>◷ &nbsp; Riwayat</button>
-  </div>
+<div class="nav">
+  <button class="active" data-i18n="home">Beranda</button>
+  <button data-i18n="create">Buat Video</button>
+  <button data-i18n="gallery">Galeri</button>
+  <button data-i18n="template">Template</button>
+  <button data-i18n="history">Riwayat</button>
+</div>
 
 <button id="profileBtn" class="profileBtn" onclick="toggleProfile()" style="width:42px;height:42px;min-width:42px;min-height:42px;padding:0;border:0;background:transparent;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
   <img id="headerAvatar" src="https://ui-avatars.com/api/?name=User&background=394cff&color=fff" alt="Profil" style="width:42px;height:42px;min-width:42px;min-height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;">
@@ -392,6 +395,43 @@ const moviraLang =
   browserLang.startsWith("id") ? "id" :
   browserLang.startsWith("ms") ? "ms" :
   "en";
+  const moviraTexts = {
+  id: {
+    home: "Beranda",
+    create: "Buat Video",
+    gallery: "Galeri",
+    template: "Template",
+    history: "Riwayat"
+  },
+
+  ms: {
+    home: "Laman Utama",
+    create: "Buat Video",
+    gallery: "Galeri",
+    template: "Templat",
+    history: "Sejarah"
+  },
+
+  en: {
+    home: "Home",
+    create: "Create Video",
+    gallery: "Gallery",
+    template: "Templates",
+    history: "History"
+  }
+};
+
+  function applyMoviraLanguage() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent =
+      moviraTexts[moviraLang][key] ||
+      moviraTexts.en[key] ||
+      el.textContent;
+  });
+}
+
+applyMoviraLanguage();
   
 let imageData="", model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generatedUrl="";
   
@@ -415,9 +455,9 @@ const navButtons = document.querySelectorAll(".nav button");
 
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
-    const text = button.textContent.trim();
+    const text = button.dataset.i18n;
     
-if (text.includes("Beranda")) {
+if (text === "home") {
   createTop.style.display = "none";
   createGrid.style.display = "none";
   samples.style.display = "none";
@@ -429,7 +469,7 @@ if (text.includes("Beranda")) {
   button.classList.add("active");
   }
     
-    if (text.includes("Riwayat")) {
+    if (text === "history") {
       createTop.style.display = "none";
       createGrid.style.display = "none";
       samples.style.display = "none";
@@ -440,7 +480,7 @@ if (text.includes("Beranda")) {
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
-if (text.includes("Galeri")) {
+if (text === "gallery") {
   createTop.style.display = "none";
   createGrid.style.display = "none";
   samples.style.display = "none";
@@ -452,7 +492,7 @@ if (text.includes("Galeri")) {
   navButtons.forEach(btn => btn.classList.remove("active"));
   button.classList.add("active");
     }
-    if (text.includes("Buat Video")) {
+    if (text === "create") {
       createTop.style.display = "";
       createGrid.style.display = "";
       samples.style.display = "";
