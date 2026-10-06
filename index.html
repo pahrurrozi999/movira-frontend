@@ -180,20 +180,20 @@ body{overflow-x:hidden}
 </button>
 </aside>
 <main class="main">
-  <div class="top"><h1>Buat Video</h1><div class="pill">Movira AI • Backend Terhubung</div></div>
+  <div class="top"><h1 data-i18n="create">Buat Video</h1><div class="pill">Movira AI • Backend Terhubung</div></div>
   <div class="grid">
     <section class="card">
-      <div class="step">1. Upload Gambar</div>
+      <div class="step">1. <span data-i18n="upload">Upload Gambar</span></div>
       <label class="upload" for="file">
         <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
         <div id="uploadText">🖼️<br><b>Klik untuk upload gambar</b><br><span class="muted">PNG, JPG, WEBP • maks. 10 MB</span></div>
         <img id="thumb">
       </label>
       <br>
-      <div class="step">2. Tulis Prompt</div>
+      <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
       <br><br>
-      <div class="step">3. Model AI</div>
+      <div class="step">3. <span data-i18n="model">Model AI</span></div>
 <div class="options" id="models">
   <button class="selected" data-value="alibaba/wan-3.0-prime/image-to-video">
     Wan 3.0 Prime
@@ -206,21 +206,21 @@ body{overflow-x:hidden}
   </button>
 </div>
 <br>
-      <div class="step">4. Resolusi</div>
+      <div class="step">4. <span data-i18n="resolution">Resolusi</span></div>
 <div class="options" id="resolutions">
   <button class="selected" data-value="720p">720p</button>
   <button data-value="480p">480p</button>
   <button data-value="1080p">1080p</button>
 </div>
 <br>
-      <div class="step">5. Rasio Video</div>
+      <div class="step">5. <span data-i18n="ratio">Rasio Video</span></div>
       <div class="options" id="ratios">
         <button class="selected" data-value="16:9">16:9<br><small>YouTube</small></button>
         <button data-value="9:16">9:16<br><small>Shorts</small></button>
         <button data-value="1:1">1:1<br><small>Square</small></button>
       </div>
       <br>
-      <div class="step">6. Durasi</div>
+      <div class="step">6. <span data-i18n="duration">Durasi</span></div>
       <div class="options" id="durations">
         <button class="selected" data-value="5">5 detik</button>
         <button data-value="10">10 detik</button>
@@ -399,6 +399,12 @@ const moviraLang =
   id: {
     home: "Beranda",
     create: "Buat Video",
+    upload: "Upload Gambar",
+    promptTitle: "Tulis Prompt",
+    model: "Model AI",
+    resolution: "Resolusi",
+    ratio: "Rasio Video",
+    duration: "Durasi",
     gallery: "Galeri",
     template: "Template",
     history: "Riwayat"
@@ -407,6 +413,12 @@ const moviraLang =
   ms: {
     home: "Laman Utama",
     create: "Buat Video",
+    upload: "Muat Naik Gambar",
+    promptTitle: "Tulis Prompt",
+    model: "Model AI",
+    resolution: "Resolusi",
+    ratio: "Nisbah Video",
+    duration: "Tempoh",
     gallery: "Galeri",
     template: "Templat",
     history: "Sejarah"
@@ -415,6 +427,12 @@ const moviraLang =
   en: {
     home: "Home",
     create: "Create Video",
+    upload: "Upload Image",
+    promptTitle: "Video Prompt",
+    model: "AI Model",
+    resolution: "Resolution",
+    ratio: "Video Ratio",
+    duration: "Duration",
     gallery: "Gallery",
     template: "Templates",
     history: "History"
