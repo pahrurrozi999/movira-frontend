@@ -133,7 +133,13 @@ body{overflow-x:hidden}
   #homePage .samplegrid{
   grid-template-columns:repeat(2,1fr);
   }
-  .sample{height:90px;font-size:13px;text-align:center}
+  .sample{
+  height:90px;
+  font-size:13px;
+  text-align:center;
+  grid-column:auto !important;
+  width:auto !important;
+}
   .sample b{
   display:block;
   text-align:center;
