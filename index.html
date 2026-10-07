@@ -668,6 +668,24 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
 });
   
  function updateCreditCost(){
+   const creditCosts = {
+  "alibaba/wan-3.0/image-to-video": {
+    "480p": {5:23,10:45,15:68},
+    "720p": {5:45,10:90,15:135},
+    "1080p": {5:90,10:179,15:269}
+  },
+
+  "alibaba/wan-3.0-prime/image-to-video": {
+    "480p": {5:31,10:61,15:92},
+    "720p": {5:63,10:126,15:188},
+    "1080p": {5:126,10:251,15:376}
+  },
+
+  "wan/v2.6/image-to-video": {
+    "720p": {5:45,10:90,15:135},
+    "1080p": {5:68,10:135,15:202}
+  }
+};
   const selectedModel =
     document.querySelector("#models button.selected")?.dataset.value || model;
 
