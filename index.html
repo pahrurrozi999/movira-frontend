@@ -667,27 +667,22 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
   ratio=b.dataset.value;
 });
   
-  function updateCreditCost(){
-  const creditCosts = {
-    "alibaba/wan-3.0/image-to-video": {
-      "480p": {5:23, 10:45, 15:68},
-      "720p": {5:45, 10:90, 15:135},
-      "1080p": {5:90, 10:179, 15:269}
-    },
+ function updateCreditCost(){
+  const selectedModel =
+    document.querySelector("#models button.selected")?.dataset.value || model;
 
-    "alibaba/wan-3.0-prime/image-to-video": {
-      "480p": {5:31, 10:61, 15:92},
-      "720p": {5:63, 10:126, 15:188},
-      "1080p": {5:126, 10:251, 15:376}
-    },
+  const selectedResolution =
+    document.querySelector("#resolutions button.selected")?.dataset.value || resolution;
 
-    "wan/v2.6/image-to-video": {
-      "720p": {5:45, 10:90, 15:135},
-      "1080p": {5:68, 10:135, 15:202}
-    }
-  };
+  const selectedDuration =
+    document.querySelector("#durations button.selected")?.dataset.value || duration;
 
-  const cost = creditCosts[model]?.[resolution]?.[Number(duration)];
+  model = selectedModel;
+  resolution = selectedResolution;
+  duration = selectedDuration;
+
+  const cost =
+    creditCosts[selectedModel]?.[selectedResolution]?.[Number(selectedDuration)];
 
   const costInfo = document.getElementById("creditCostInfo");
   const generateButton = document.getElementById("generate");
@@ -697,9 +692,9 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
     generateButton.textContent = `✨ Generate Video • ${cost} Kredit`;
   }else{
     costInfo.innerHTML = `⚠️ Kombinasi pilihan belum tersedia`;
-    generateButton.textContent = "✨ Generate Video";
+    generateButton.textContent = `✨ Generate Video`;
   }
-}
+ } 
 
 updateCreditCost();
 alert("Lewat updateCreditCost");
