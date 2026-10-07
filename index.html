@@ -258,9 +258,11 @@ body{overflow-x:hidden}
       <br>
       <div class="step">6. <span data-i18n="duration">Durasi</span></div>
       <div class="options" id="durations">
-        <button class="selected" data-value="5">5 detik</button>
-        <button data-value="10">10 detik</button>
-        <button data-value="15">15 detik</button>
+       <button type="button" class="selected" data-value="5" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='5'; updateCreditCost();">5 detik</button>
+
+<button type="button" data-value="10" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='10'; updateCreditCost();">10 detik</button>
+
+<button type="button" data-value="15" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='15'; updateCreditCost();">15 detik</button> 
       </div>
       <div id="creditCostInfo" style="margin:10px 0;padding:10px 12px;border-radius:10px;background:#101d35;color:#b9c7e8;text-align:center;font-size:14px;">
   💰 Biaya: <strong>63 Kredit</strong>
