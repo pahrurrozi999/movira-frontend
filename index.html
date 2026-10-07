@@ -249,9 +249,11 @@ body{overflow-x:hidden}
 <br>
       <div class="step">5. <span data-i18n="ratio">Rasio Video</span></div>
       <div class="options" id="ratios">
-        <button class="selected" data-value="16:9">16:9<br><small>YouTube</small></button>
-        <button data-value="9:16">9:16<br><small>Shorts</small></button>
-        <button data-value="1:1">1:1<br><small>Square</small></button>
+       <button type="button" class="selected" data-value="16:9" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='16:9'; updateCreditCost();">16:9<br><small>YouTube</small></button>
+
+<button type="button" data-value="9:16" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='9:16'; updateCreditCost();">9:16<br><small>Shorts</small></button>
+
+<button type="button" data-value="1:1" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='1:1'; updateCreditCost();">1:1<br><small>Square</small></button> 
       </div>
       <br>
       <div class="step">6. <span data-i18n="duration">Durasi</span></div>
