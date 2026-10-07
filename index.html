@@ -1084,8 +1084,7 @@ Login
     } = await moviraSupabase.auth.getSession();
 
     if (!session) {
-  userCredits.textContent = "—";
-  return;
+   return;
     }
 
     const response = await fetch(`${API_BASE}/api/credits`, {
