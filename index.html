@@ -719,6 +719,7 @@ function updateResolutionOptions(){
 }
 
 document.querySelectorAll("#models button").forEach(b=>b.onclick=()=>{
+  alert("JS Model aktif");
   document.querySelectorAll("#models button").forEach(x=>x.classList.remove("selected"));
 
   b.classList.add("selected");
