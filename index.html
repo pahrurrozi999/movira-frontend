@@ -241,6 +241,8 @@ Wan 3.0
 onclick="document.querySelectorAll('#models button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); model=this.dataset.value; updateResolutionOptions(); updateCreditCost();">
 Wan 2.6
 </button>
+  <button type="button" data-value="fal-ai/veo3.1/lite/image-to-video">
+Veo 3.1 Lite ⭐
   </button>
 </div>
 <br>
@@ -681,10 +683,14 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
     "1080p": {5:126,10:251,15:376}
   },
 
-  "wan/v2.6/image-to-video": {
-    "720p": {5:45,10:90,15:135},
-    "1080p": {5:68,10:135,15:202}
-  }
+"wan/v2.6/image-to-video": {
+  "720p": {5:45,10:90,15:135},
+  "1080p": {5:68,10:135,15:202}
+},
+
+"fal-ai/veo3.1/lite/image-to-video": {
+  "720p": {4:20,6:30,8:40}
+           }
 };
   const selectedModel =
     document.querySelector("#models button.selected")?.dataset.value || model;
@@ -716,6 +722,7 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
 updateCreditCost();
 function updateResolutionOptions(){
   const resolutionButtons = document.querySelectorAll("#resolutions button");
+  const durationButtons = document.querySelectorAll("#durations button");
 
   resolutionButtons.forEach(btn=>{
     btn.disabled = false;
@@ -739,6 +746,34 @@ function updateResolutionOptions(){
 
       const btn720 = document.querySelector('#resolutions button[data-value="720p"]');
       if(btn720) btn720.classList.add("selected");
+    }
+  }
+
+  if(model === "fal-ai/veo3.1/lite/image-to-video"){
+    const veoDurations = ["4","6","8"];
+
+    durationButtons.forEach((btn,index)=>{
+      btn.dataset.value = veoDurations[index];
+      btn.textContent = veoDurations[index] + " detik";
+    });
+
+    if(!veoDurations.includes(String(duration))){
+      duration = "4";
+      durationButtons.forEach(x=>x.classList.remove("selected"));
+      durationButtons[0].classList.add("selected");
+    }
+  }else{
+    const wanDurations = ["5","10","15"];
+
+    durationButtons.forEach((btn,index)=>{
+      btn.dataset.value = wanDurations[index];
+      btn.textContent = wanDurations[index] + " detik";
+    });
+
+    if(!wanDurations.includes(String(duration))){
+      duration = "5";
+      durationButtons.forEach(x=>x.classList.remove("selected"));
+      durationButtons[0].classList.add("selected");
     }
   }
 }
