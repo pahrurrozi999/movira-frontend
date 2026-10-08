@@ -1099,7 +1099,7 @@ Login
       throw new Error(data.error || "Gagal membaca kredit.");
     }
 
-    userCredits.textContent = "120";
+    userCredits.textContent = String(data.credits ?? 0);
   } catch (error) {
     console.error("Gagal membaca kredit:", error);
   }
