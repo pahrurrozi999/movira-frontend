@@ -875,7 +875,9 @@ const response=await fetch(`${API_BASE}/api/generate`,{
   body:JSON.stringify({
   prompt,
   ratio,
-  duration:Number(duration),
+  duration:model === "fal-ai/veo3.1/lite/image-to-video"
+  ? `${Number(duration)}s`
+  : Number(duration),
   resolution,
   model,
   imageData,
