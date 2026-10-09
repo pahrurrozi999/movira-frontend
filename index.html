@@ -689,8 +689,9 @@ document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
 },
 
 "fal-ai/veo3.1/lite/image-to-video": {
-  "720p": {4:20,6:30,8:40}
-           }
+  "720p": {4:20,6:30,8:40},
+  "1080p": {4:32,6:48,8:64}
+},
 };
   const selectedModel =
     document.querySelector("#models button.selected")?.dataset.value || model;
@@ -748,29 +749,23 @@ function updateResolutionOptions(){
       if(btn720) btn720.classList.add("selected");
     }
   }
-  
-if(model === "fal-ai/veo3.1/lite/image-to-video"){
-const btn480 = document.querySelector('#resolutions button[data-value="480p"]');
-const btn1080 = document.querySelector('#resolutions button[data-value="1080p"]');
 
-if(btn480){
-btn480.disabled = true;
-btn480.style.opacity = "0.35";
-btn480.style.cursor = "not-allowed";
-}
+if (model === "fal-ai/veo3.1/lite/image-to-video") {
+  const btn480 = document.querySelector('#resolutions button[data-value="480p"]');
 
-if(btn1080){
-btn1080.disabled = true;
-btn1080.style.opacity = "0.35";
-btn1080.style.cursor = "not-allowed";
-}
+  if (btn480) {
+    btn480.disabled = true;
+    btn480.style.opacity = "0.35";
+    btn480.style.cursor = "not-allowed";
+  }
 
-if(resolution !== "720p"){
-resolution = "720p";
-resolutionButtons.forEach(x=>x.classList.remove("selected"));
-const btn720 = document.querySelector('#resolutions button[data-value="720p"]');
-if(btn720) btn720.classList.add("selected");
-}
+  if (resolution === "480p") {
+    resolution = "720p";
+    resolutionButtons.forEach(x => x.classList.remove("selected"));
+
+    const btn720 = document.querySelector('#resolutions button[data-value="720p"]');
+    if (btn720) btn720.classList.add("selected");
+  }
   }
   
   if(model === "fal-ai/veo3.1/lite/image-to-video"){
