@@ -663,10 +663,14 @@ file.onchange=e=>{
 
 document.getElementById("menuBtn").onclick=()=>document.querySelector(".nav").classList.toggle("open");
 
-document.querySelectorAll("#ratios button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#ratios button").forEach(x=>x.classList.remove("selected"));
+document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
+  if (model === "fal-ai/veo3.1/lite/image-to-video" && b.dataset.value === "1:1") {
+    return;
+  }
+
+  document.querySelectorAll("#ratios button").forEach(x => x.classList.remove("selected"));
   b.classList.add("selected");
-  ratio=b.dataset.value;
+  ratio = b.dataset.value;
 });
   
  function updateCreditCost(){
@@ -767,7 +771,20 @@ if (model === "fal-ai/veo3.1/lite/image-to-video") {
     if (btn720) btn720.classList.add("selected");
   }
   }
-  
+const squareButton = document.querySelector('#ratios button[data-value="1:1"]');
+
+if (squareButton) {
+  squareButton.disabled = model === "fal-ai/veo3.1/lite/image-to-video";
+  squareButton.style.opacity = squareButton.disabled ? "0.35" : "1";
+  squareButton.style.cursor = squareButton.disabled ? "not-allowed" : "pointer";
+
+  if (squareButton.disabled && ratio === "1:1") {
+    ratio = "16:9";
+    document.querySelectorAll('#ratios button').forEach(x => x.classList.remove("selected"));
+    const wideButton = document.querySelector('#ratios button[data-value="16:9"]');
+    if (wideButton) wideButton.classList.add("selected");
+  }
+}
   if(model === "fal-ai/veo3.1/lite/image-to-video"){
     const veoDurations = ["4","6","8"];
 
