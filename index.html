@@ -728,6 +728,11 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   "720p": {4:20,6:30,8:40},
   "1080p": {4:32,6:48,8:64}
 },
+     
+ "wan/v2.6/reference-to-video/flash": {
+  "720p": {5:50,10:100},
+  "1080p": {5:75,10:150}
+},    
 };
   const selectedModel =
     document.querySelector("#models button.selected")?.dataset.value || model;
@@ -767,7 +772,10 @@ function updateResolutionOptions(){
     btn.style.cursor = "pointer";
   });
 
-  if(model === "wan/v2.6/image-to-video"){
+  if (
+model === "wan/v2.6/image-to-video" ||
+model === "wan/v2.6/reference-to-video/flash"
+) {
     const btn480 = document.querySelector('#resolutions button[data-value="480p"]');
 
     if(btn480){
@@ -806,7 +814,9 @@ if (model === "fal-ai/veo3.1/lite/image-to-video") {
 const squareButton = document.querySelector('#ratios button[data-value="1:1"]');
 
 if (squareButton) {
-  squareButton.disabled = model === "fal-ai/veo3.1/lite/image-to-video";
+  squareButton.disabled =
+model === "fal-ai/veo3.1/lite/image-to-video" ||
+model === "wan/v2.6/reference-to-video/flash";
   squareButton.style.opacity = squareButton.disabled ? "0.35" : "1";
   squareButton.style.cursor = squareButton.disabled ? "not-allowed" : "pointer";
 
@@ -830,19 +840,29 @@ if (squareButton) {
       durationButtons.forEach(x=>x.classList.remove("selected"));
       durationButtons[0].classList.add("selected");
     }
-  }else{
-    const wanDurations = ["5","10","15"];
+} else {
+const isReference = model === "wan/v2.6/reference-to-video/flash";
+const wanDurations = isReference
+? ["5", "10"]
+: ["5", "10", "15"];
 
-    durationButtons.forEach((btn,index)=>{
-      btn.dataset.value = wanDurations[index];
-      btn.textContent = wanDurations[index] + " detik";
-    });
+durationButtons.forEach((btn, index) => {
+if (index < wanDurations.length) {
+btn.style.display = "";
+btn.disabled = false;
+btn.dataset.value = wanDurations[index];
+btn.textContent = wanDurations[index] + " detik";
+} else {
+btn.style.display = isReference ? "none" : "";
+}
+});
 
-    if(!wanDurations.includes(String(duration))){
-      duration = "5";
-      durationButtons.forEach(x=>x.classList.remove("selected"));
-      durationButtons[0].classList.add("selected");
-    }
+if (!wanDurations.includes(String(duration))) {
+duration = "5";
+durationButtons.forEach(x => x.classList.remove("selected"));
+durationButtons[0].classList.add("selected");
+}
+  }
   }
 }
 
@@ -864,10 +884,11 @@ updateResolutionOptions();
     updateCreditCost();
 });
 document.querySelectorAll("#durations button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#durations button").forEach(x=>x.classList.remove("selected"));
-  b.classList.add("selected");
-  duration=b.dataset.value;
-  updateCreditCost();
+if (b.style.display === "none" || b.disabled) return;
+document.querySelectorAll("#durations button").forEach(x=>x.classList.remove("selected"));
+b.classList.add("selected");
+duration=b.dataset.value;
+updateCreditCost();
 });
 
 function setVideo(url){
@@ -905,7 +926,7 @@ if (selectedModel === "wan/v2.6/reference-to-video/flash") {
     alert("Maksimal 5 file referensi gabungan.");
     return;
   }
-} else if (!imageData) {
+} else if (selectedModel !== "wan/v2.6/reference-to-video/flash" && !imageData) {
   alert("Upload gambar terlebih dahulu.");
   return;
                             }
