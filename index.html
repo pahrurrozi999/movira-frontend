@@ -221,6 +221,17 @@ body{overflow-x:hidden}
         <div id="uploadText">🖼️<br><b>Klik untuk upload gambar</b><br><span class="muted">PNG, JPG, WEBP • maks. 10 MB</span></div>
         <img id="thumb">
       </label>
+      <div class="step">Reference to Video</div>
+<label>
+  Gambar referensi
+  <input id="referenceImageFiles" type="file"
+    accept="image/jpeg,image/png,image/webp,image/bmp" multiple>
+</label>
+<label>
+  Video referensi
+  <input id="referenceVideoFiles" type="file"
+    accept="video/mp4,video/quicktime" multiple>
+</label>
       <br>
       <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
@@ -243,6 +254,10 @@ Wan 2.6
 </button>
   <button type="button" data-value="fal-ai/veo3.1/lite/image-to-video">
 Veo 3.1 Lite ⭐
+  </button>
+  <button type="button" data-value="wan/v2.6/reference-to-video/flash"
+onclick="document.querySelectorAll('#models button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected');">
+Reference to Video
   </button>
 </div>
 <br>
@@ -571,8 +586,25 @@ storyDesc:"Film storytelling style"
 
 applyMoviraLanguage();
   
-let imageData="", model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generatedUrl="";
-  
+ let imageData="",
+referenceImages=[],
+referenceVideos=[],
+model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generateAudio=true;resolution="720p", ratio="16:9", duration="5", generatedUrl="";
+  const referenceImageFiles = document.getElementById("referenceImageFiles");
+const referenceVideoFiles = document.getElementById("referenceVideoFiles");
+
+function readReferenceFiles(input) {
+  return Promise.all(
+    Array.from(input.files || []).map(file =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Gagal membaca file referensi."));
+        reader.readAsDataURL(file);
+      })
+    )
+  );
+      }
 const file=document.getElementById("file");
 const thumb=document.getElementById("thumb");
 const uploadText=document.getElementById("uploadText");
@@ -855,10 +887,28 @@ function setVideo(url){
 }
 
 async function generateRealVideo(){
-  if(!imageData){alert("Upload gambar terlebih dahulu.");return}
+
   const prompt=document.getElementById("prompt").value.trim();
   if(prompt.length<3){alert("Tulis prompt terlebih dahulu.");return}
+const selectedModel = document.querySelector("#models button.selected")?.dataset.value || model;
 
+if (selectedModel === "wan/v2.6/reference-to-video/flash") {
+  referenceImages = await readReferenceFiles(referenceImageFiles);
+  referenceVideos = await readReferenceFiles(referenceVideoFiles);
+
+  if (referenceImages.length + referenceVideos.length === 0) {
+    alert("Pilih minimal satu gambar atau video referensi.");
+    return;
+  }
+
+  if (referenceImages.length + referenceVideos.length > 5) {
+    alert("Maksimal 5 file referensi gabungan.");
+    return;
+  }
+} else if (!imageData) {
+  alert("Upload gambar terlebih dahulu.");
+  return;
+                            }
   gen.disabled=true;
   status.textContent="Mengirim gambar dan prompt ke Movira Backend...";
 
@@ -896,9 +946,11 @@ const response=await fetch(`${API_BASE}/api/generate`,{
   ? `${Number(duration)}s`
   : Number(duration),
   resolution,
-  model,
-  imageData,
-  audio:true
+model,
+imageData,
+referenceImages,
+referenceVideos,
+audio: true
 })
 });
 
