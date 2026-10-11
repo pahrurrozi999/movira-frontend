@@ -772,7 +772,13 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
  "wan/v2.6/reference-to-video/flash": {
   "720p": {5:50,10:100},
   "1080p": {5:75,10:150}
-},    
+},
+  
+"fal-ai/wan/v2.2-a14b/video-to-video": {
+  "480p": {5:20,10:40},
+  "580p": {5:25,10:50},
+  "720p": {5:35,10:70}
+},
 };
   const selectedModel =
     document.querySelector("#models button.selected")?.dataset.value || model;
