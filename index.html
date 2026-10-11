@@ -222,16 +222,28 @@ body{overflow-x:hidden}
         <img id="thumb">
       </label>
       <div class="step">Reference to Video</div>
-<label>
+
+<div>
   Gambar referensi
   <input id="referenceImageFiles" type="file"
     accept="image/jpeg,image/png,image/webp,image/bmp" multiple>
-</label>
-<label>
-  Video referensi
+</div>
+
+<div id="videoToVideoUpload" style="display:none;margin:12px 0;">
+  <label>
+    Upload Video Sumber (MP4)
+    <input id="sourceVideoFile" type="file" accept="video/mp4">
+  </label>
+  <small class="muted">
+    Pilih satu video MP4, maksimal 100 MB.
+  </small>
+</div>
+
+<div>
+  Video Referensi
   <input id="referenceVideoFiles" type="file"
     accept="video/mp4,video/quicktime" multiple>
-</label>
+</div>
       <br>
       <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
@@ -258,6 +270,9 @@ Veo 3.1 Lite ⭐
   <button type="button" data-value="wan/v2.6/reference-to-video/flash"
 onclick="document.querySelectorAll('#models button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected');">
 Reference to Video
+  </button>
+  <button type="button" data-value="fal-ai/wan/v2.2-a14b/video-to-video"
+  Video to Video
   </button>
 </div>
 <br>
@@ -589,10 +604,34 @@ applyMoviraLanguage();
  let imageData="",
 referenceImages=[],
 referenceVideos=[],
+ let sourceVideo = "";
 model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generateAudio=true;resolution="720p", ratio="16:9", duration="5", generatedUrl="";
   const referenceImageFiles = document.getElementById("referenceImageFiles");
 const referenceVideoFiles = document.getElementById("referenceVideoFiles");
+const sourceVideoFile = document.getElementById("sourceVideoFile");
 
+sourceVideoFile.addEventListener("change", async () => {
+  const file = sourceVideoFile.files[0];
+  if (!file) {
+    sourceVideo = "";
+    return;
+  }
+
+  if (file.size > 100 * 1024 * 1024) {
+    alert("Ukuran video maksimal 100 MB.");
+    sourceVideoFile.value = "";
+    sourceVideo = "";
+    return;
+  }
+
+  sourceVideo = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Gagal membaca video."));
+    reader.readAsDataURL(file);
+  });
+});
+  
 function readReferenceFiles(input) {
   return Promise.all(
     Array.from(input.files || []).map(file =>
@@ -766,6 +805,14 @@ function updateResolutionOptions(){
   const resolutionButtons = document.querySelectorAll("#resolutions button");
   const durationButtons = document.querySelectorAll("#durations button");
 
+const videoUpload = document.getElementById("videoToVideoUpload");
+if (videoUpload) {
+  videoUpload.style.display =
+    model === "fal-ai/wan/v2.2-a14b/video-to-video"
+      ? "block"
+      : "none";
+    }
+  
   resolutionButtons.forEach(btn=>{
     btn.disabled = false;
     btn.style.opacity = "1";
@@ -926,7 +973,11 @@ if (selectedModel === "wan/v2.6/reference-to-video/flash") {
     alert("Maksimal 5 file referensi gabungan.");
     return;
   }
-} else if (selectedModel !== "wan/v2.6/reference-to-video/flash" && !imageData) {
+} else if (
+  selectedModel !== "wan/v2.6/reference-to-video/flash" &&
+  selectedModel !== "fal-ai/wan/v2.2-a14b/video-to-video" &&
+  !imageData
+) {
   alert("Upload gambar terlebih dahulu.");
   return;
                             }
@@ -971,6 +1022,7 @@ model,
 imageData,
 referenceImages,
 referenceVideos,
+sourceVideo,
 audio: true
 })
 });
