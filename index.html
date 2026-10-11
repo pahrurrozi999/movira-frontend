@@ -278,17 +278,17 @@ Reference to Video
 <br>
       <div class="step">4. <span data-i18n="resolution">Resolusi</span></div>
 <div class="options" id="resolutions">
+
 <button type="button" class="selected" data-value="720p" onclick="document.querySelectorAll('#resolutions button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); resolution='720p'; updateCreditCost();">720p</button>
-
 <button type="button" data-value="480p" onclick="document.querySelectorAll('#resolutions button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); resolution='480p'; updateCreditCost();">480p</button>
-
+<button type="button" data-value="580p" onclick="document.querySelectorAll('#resolutions button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); resolution='580p'; updateCreditCost();">580p</button>
 <button type="button" data-value="1080p" onclick="document.querySelectorAll('#resolutions button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); resolution='1080p'; updateCreditCost();">1080p</button>
 </div>
 <br>
       <div class="step">5. <span data-i18n="ratio">Rasio Video</span></div>
       <div class="options" id="ratios">
        <button type="button" class="selected" data-value="16:9" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='16:9'; updateCreditCost();">16:9<br><small>YouTube</small></button>
-
+        
 <button type="button" data-value="9:16" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='9:16'; updateCreditCost();">9:16<br><small>Shorts</small></button>
 
 <button type="button" data-value="1:1" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='1:1'; updateCreditCost();">1:1<br><small>Square</small></button> 
@@ -819,6 +819,24 @@ if (videoUpload) {
     btn.style.cursor = "pointer";
   });
 
+if (model === "fal-ai/wan/v2.2-a14b/video-to-video") {
+  const allowedVideoResolutions = ["480p", "580p", "720p"];
+
+  resolutionButtons.forEach(btn => {
+    const allowed = allowedVideoResolutions.includes(btn.dataset.value);
+    btn.disabled = !allowed;
+    btn.style.opacity = allowed ? "1" : "0.35";
+    btn.style.cursor = allowed ? "pointer" : "not-allowed";
+  });
+
+  if (!allowedVideoResolutions.includes(resolution)) {
+    resolution = "720p";
+    resolutionButtons.forEach(btn => btn.classList.remove("selected"));
+    const btn720 = document.querySelector('#resolutions button[data-value="720p"]');
+    if (btn720) btn720.classList.add("selected");
+  }
+  }
+  
   if (
 model === "wan/v2.6/image-to-video" ||
 model === "wan/v2.6/reference-to-video/flash"
@@ -981,6 +999,13 @@ if (selectedModel === "wan/v2.6/reference-to-video/flash") {
   alert("Upload gambar terlebih dahulu.");
   return;
                             }
+  if (
+  selectedModel === "fal-ai/wan/v2.2-a14b/video-to-video" &&
+  !sourceVideo
+) {
+  alert("Unggah video sumber terlebih dahulu.");
+  return;
+  }
   gen.disabled=true;
   status.textContent="Mengirim gambar dan prompt ke Movira Backend...";
 
