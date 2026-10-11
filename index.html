@@ -793,8 +793,7 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   resolution = selectedResolution;
   duration = selectedDuration;
 
-  const cost =
-    creditCosts[selectedModel]?.[selectedResolution]?.[Number(selectedDuration)];
+  const cost = creditCosts[model]?.[resolution]?.[Number(duration)];
   const costInfo = document.getElementById("creditCostInfo");
   const generateButton = document.getElementById("generate");
 
