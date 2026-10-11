@@ -602,11 +602,17 @@ storyDesc:"Film storytelling style"
 
 applyMoviraLanguage();
   
- let imageData="",
-referenceImages=[],
-referenceVideos=[],
- let sourceVideo = "";
-model="alibaba/wan-3.0-prime/image-to-video", resolution="720p", ratio="16:9", duration="5", generateAudio=true;resolution="720p", ratio="16:9", duration="5", generatedUrl="";
+let imageData = "";
+let referenceImages = [];
+let referenceVideos = [];
+let sourceVideo = "";
+let model = "alibaba/wan-3.0-prime/image-to-video";
+let resolution = "720p";
+let ratio = "16:9";
+let duration = "5";
+let generateAudio = true;
+let generatedUrl = "";
+  
   const referenceImageFiles = document.getElementById("referenceImageFiles");
 const referenceVideoFiles = document.getElementById("referenceVideoFiles");
 const sourceVideoFile = document.getElementById("sourceVideoFile");
