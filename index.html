@@ -241,12 +241,18 @@ body{overflow-x:hidden}
   <div class="top"><h1 data-i18n="create">Buat Video</h1><div class="pill">Movira AI • Backend Terhubung</div></div>
   <div class="grid">
     <section class="card">
+      
+<div class="subcard">
+  
       <div class="step">1. <span data-i18n="upload">Upload Gambar</span></div>
       <label class="upload" for="file">
         <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
         <div id="uploadText">🖼️<br><b>Klik untuk upload gambar</b><br><span class="muted">PNG, JPG, WEBP • maks. 10 MB</span></div>
         <img id="thumb">
       </label>
+  
+</div>
+      
       <div class="step">Reference to Video</div>
 
 <div>
@@ -271,8 +277,14 @@ body{overflow-x:hidden}
     accept="video/mp4,video/quicktime" multiple>
 </div>
       <br>
+      
+<div class="subcard">
+  
       <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
+      
+  </div>
+  
       <br><br>
       <div class="step">3. <span data-i18n="model">Model AI</span></div>
 <div class="options" id="models">
