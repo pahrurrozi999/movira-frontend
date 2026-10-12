@@ -29,6 +29,23 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
   #homePage .samplegrid{
   grid-template-columns:repeat(2,1fr);
   }
+
+  /* Tata letak kartu Movira */
+#models {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.card {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  #models {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
   
   @media(min-width:901px){
   .credit{
