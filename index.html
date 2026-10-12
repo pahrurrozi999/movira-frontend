@@ -279,12 +279,13 @@ body{overflow-x:hidden}
   <div class="step">Reference to Video</div>
 
   <label class="upload" for="referenceImageFiles">
-    <div id="referenceImageText">
-      🖼️<br>
-      <b>Add Reference Images</b><br>
-      <span class="muted">Klik untuk menambahkan gambar referensi</span><br>
-      <span class="muted">PNG, JPG, WEBP</span>
-    </div>
+ <div id="referenceImageText">
+  <br>
+  <b>Add Reference Images</b><br>
+  <span class="muted">Klik untuk menambahkan gambar referensi</span><br>
+  <span class="muted">PNG, JPG, WEBP</span>
+</div>
+<div id="referenceImagePreview" style="display:none;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
   </label>
   <input id="referenceImageFiles" type="file"
     accept="image/jpeg,image/png,image/webp,image/bmp"
@@ -2015,7 +2016,8 @@ modeCards.forEach((card, index) => {
     }
   });
 });
-  // Tampilkan nama file yang dipilih
+
+// Tampilkan pratinjau gambar dan nama file video
 function showSelectedFile(inputId, textId) {
   const input = document.getElementById(inputId);
   const text = document.getElementById(textId);
@@ -2023,12 +2025,36 @@ function showSelectedFile(inputId, textId) {
   if (!input || !text) return;
 
   input.addEventListener("change", () => {
-    if (input.files.length > 0) {
+    if (!input.files.length) return;
+
+    if (inputId === "referenceImageFiles") {
+      const preview = document.getElementById("referenceImagePreview");
+      if (!preview) return;
+
+      preview.innerHTML = "";
+      preview.style.display = "flex";
+
+      Array.from(input.files).forEach(file => {
+        if (!file.type.startsWith("image/")) return;
+
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.style.cssText =
+          "width:90px;height:90px;object-fit:cover;border-radius:10px;border:1px solid #385070;";
+
+        preview.appendChild(img);
+      });
+
+      text.innerHTML =
+        "<b>" + input.files.length +
+        " gambar dipilih</b><br><span class='muted'>Pratinjau gambar tersedia</span>";
+    } else {
       text.innerHTML =
         "<b>" + Array.from(input.files)
           .map(file => file.name)
-          .join("<br>") + "</b><br>" +
-        '<span class="muted">File berhasil dipilih</span>';
+          .join("<br>") +
+        "</b><br><span class='muted'>File berhasil dipilih</span>";
     }
   });
 }
@@ -2036,6 +2062,7 @@ function showSelectedFile(inputId, textId) {
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
 showSelectedFile("referenceVideoFiles", "referenceVideoText");
+
 </script>
 </body>
 </html>
