@@ -291,19 +291,6 @@ body{overflow-x:hidden}
     accept="image/jpeg,image/png,image/webp,image/bmp"
     multiple hidden>
 
-  <div id="videoToVideoUpload" style="display:none;margin:12px 0;">
-    <label class="upload" for="sourceVideoFile">
-      <div id="sourceVideoText">
-  🎬<br>
-  <b>Add Source Video</b><br>
-  <span class="muted">Klik untuk mengunggah video sumber</span><br>
-  <span class="muted">MP4, maksimal 100 MB</span>
-      </div>
-    </label>
-    <input id="sourceVideoFile" type="file"
-      accept="video/mp4" hidden>
-  </div>
-
   <div style="margin-top:12px">
     <label class="upload" for="referenceVideoFiles">
       <div id="referenceVideoText">
@@ -316,6 +303,19 @@ body{overflow-x:hidden}
     <input id="referenceVideoFiles" type="file"
       accept="video/mp4,video/quicktime" multiple hidden>
   </div>
+</div>
+  
+<div class="subcard" id="videoToVideoUpload" style="display:none;margin:12px 0;">
+  <div class="step">Video to Video</div>
+  <label class="upload" for="sourceVideoFile">
+    <div id="sourceVideoText">
+      <br>
+      <b>Add Source Video</b><br>
+      <span class="muted">Klik untuk mengunggah video sumber</span><br>
+      <span class="muted">MP4, maksimal 100 MB</span>
+    </div>
+  </label>
+  <input id="sourceVideoFile" type="file" accept="video/mp4" hidden>
 </div>
       
     <br>
