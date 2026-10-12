@@ -49,6 +49,28 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
 .card {
   min-width: 0;
 }
+  
+.mode-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:14px;
+}
+.mode-card{
+  min-width:0;
+  padding:10px 5px;
+  border:1px solid #2b405d;
+  border-radius:12px;
+  background:#0a1729;
+  color:#dbeafe;
+  text-align:center;
+  font-size:12px;
+  cursor:pointer;
+}
+.mode-card.selected{
+  border-color:#4d75ff;
+  background:#152d66;
+}
 
 @media (max-width: 600px) {
   #models {
@@ -253,9 +275,12 @@ body{overflow-x:hidden}
   
 </div>
       
+<div class="subcard" id="referenceModeBox">
+  
       <div class="step">Reference to Video</div>
 
 <div>
+  
   Gambar referensi
   <input id="referenceImageFiles" type="file"
     accept="image/jpeg,image/png,image/webp,image/bmp" multiple>
@@ -275,8 +300,9 @@ body{overflow-x:hidden}
   Video Referensi
   <input id="referenceVideoFiles" type="file"
     accept="video/mp4,video/quicktime" multiple>
-</div>
-      <br>
+</div>   
+  </div>
+    <br>
       
 <div class="subcard">
   
@@ -286,6 +312,19 @@ body{overflow-x:hidden}
   </div>
   
       <br><br>
+      
+<div class="mode-grid">
+  <button type="button" class="mode-card selected">
+    🖼️<br>Image to Video
+  </button>
+  <button type="button" class="mode-card">
+    🗂️<br>Reference to Video
+  </button>
+  <button type="button" class="mode-card">
+    🎬<br>Video to Video
+  </button>
+</div>
+      
       <div class="step">3. <span data-i18n="model">Model AI</span></div>
 <div class="options" id="models">
   <button type="button" class="selected" data-value="alibaba/wan-3.0-prime/image-to-video"
