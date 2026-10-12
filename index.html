@@ -275,7 +275,9 @@ body{overflow-x:hidden}
   
 </div>
       
-<div class="subcard" id="referenceModeBox">
+
+<div class="subcard" id="referenceModeBox" style="display:none">
+  
   
       <div class="step">Reference to Video</div>
 
@@ -1988,6 +1990,25 @@ updateCurrencyPrices();
 };
     
   prompt.value = prompts[template.dataset.template] || "";
+});
+
+const modeCards = document.querySelectorAll(".mode-card");
+const referenceModeBox = document.getElementById("referenceModeBox");
+const videoToVideoUpload = document.getElementById("videoToVideoUpload");
+
+modeCards.forEach((card, index) => {
+  card.addEventListener("click", () => {
+    modeCards.forEach(item => item.classList.remove("selected"));
+    card.classList.add("selected");
+
+    if (referenceModeBox) {
+      referenceModeBox.style.display = index === 1 ? "block" : "none";
+    }
+
+    if (videoToVideoUpload) {
+      videoToVideoUpload.style.display = index === 2 ? "block" : "none";
+    }
+  });
 });
   
 </script>
