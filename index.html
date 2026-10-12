@@ -264,7 +264,7 @@ body{overflow-x:hidden}
   <div class="grid">
     <section class="card">
       
-<div class="subcard">
+<div class="subcard" id="imageToVideoUpload">
   
       <div class="step">1. <span data-i18n="upload">Upload Gambar</span></div>
       <label class="upload" for="file">
@@ -1999,6 +1999,7 @@ updateCurrencyPrices();
 });
 
 const modeCards = document.querySelectorAll(".mode-card");
+const imageToVideoUpload = document.getElementById("imageToVideoUpload");
 const referenceModeBox = document.getElementById("referenceModeBox");
 const videoToVideoUpload = document.getElementById("videoToVideoUpload");
 
@@ -2010,7 +2011,9 @@ modeCards.forEach((card, index) => {
     if (referenceModeBox) {
       referenceModeBox.style.display = index === 1 ? "block" : "none";
     }
-
+    if (imageToVideoUpload) {
+      imageToVideoUpload.style.display = index === 0 ? "block" : "none";
+    }
     if (videoToVideoUpload) {
       videoToVideoUpload.style.display = index === 2 ? "block" : "none";
     }
