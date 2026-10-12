@@ -2040,8 +2040,7 @@ function showSelectedFile(inputId, textId) {
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
         img.alt = file.name;
-        img.style.cssText =
-          "width:90px;height:90px;object-fit:cover;border-radius:10px;border:1px solid #385070;";
+        img.style.cssText = "display:block;width:120px;height:120px;object-fit:contain;border-radius:10px;border:1px solid #385070;background:#0a1729;";
 
         preview.appendChild(img);
       });
