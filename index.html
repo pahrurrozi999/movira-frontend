@@ -275,35 +275,48 @@ body{overflow-x:hidden}
   
 </div>
       
-
 <div class="subcard" id="referenceModeBox" style="display:none">
-  
-  
-      <div class="step">Reference to Video</div>
+  <div class="step">Reference to Video</div>
 
-<div>
-  
-  Gambar referensi
-  <input id="referenceImageFiles" type="file"
-    accept="image/jpeg,image/png,image/webp,image/bmp" multiple>
-</div>
-
-<div id="videoToVideoUpload" style="display:none;margin:12px 0;">
-  <label>
-    Upload Video Sumber (MP4)
-    <input id="sourceVideoFile" type="file" accept="video/mp4">
+  <label class="upload" for="referenceImageFiles">
+    <div id="referenceImageText">
+      🖼️<br>
+      <b>Add Reference Images</b><br>
+      <span class="muted">Klik untuk menambahkan gambar referensi</span><br>
+      <span class="muted">PNG, JPG, WEBP</span>
+    </div>
   </label>
-  <small class="muted">
-    Pilih satu video MP4, maksimal 100 MB.
-  </small>
-</div>
+  <input id="referenceImageFiles" type="file"
+    accept="image/jpeg,image/png,image/webp,image/bmp"
+    multiple hidden>
 
-<div>
-  Video Referensi
-  <input id="referenceVideoFiles" type="file"
-    accept="video/mp4,video/quicktime" multiple>
-</div>   
+  <div id="videoToVideoUpload" style="display:none;margin:12px 0;">
+    <label class="upload" for="sourceVideoFile">
+      <div id="sourceVideoText">
+  🎬<br>
+  <b>Add Source Video</b><br>
+  <span class="muted">Klik untuk mengunggah video sumber</span><br>
+  <span class="muted">MP4, maksimal 100 MB</span>
+      </div>
+    </label>
+    <input id="sourceVideoFile" type="file"
+      accept="video/mp4" hidden>
   </div>
+
+  <div style="margin-top:12px">
+    <label class="upload" for="referenceVideoFiles">
+      <div id="referenceVideoText">
+        🎞️<br>
+        <b>Add Reference Video</b><br>
+        <span class="muted">Klik untuk menambahkan video referensi</span><br>
+        <span class="muted">MP4 atau MOV</span>
+      </div>
+    </label>
+    <input id="referenceVideoFiles" type="file"
+      accept="video/mp4,video/quicktime" multiple hidden>
+  </div>
+</div>
+      
     <br>
       
 <div class="subcard">
@@ -2002,7 +2015,27 @@ modeCards.forEach((card, index) => {
     }
   });
 });
-  
+  // Tampilkan nama file yang dipilih
+function showSelectedFile(inputId, textId) {
+  const input = document.getElementById(inputId);
+  const text = document.getElementById(textId);
+
+  if (!input || !text) return;
+
+  input.addEventListener("change", () => {
+    if (input.files.length > 0) {
+      text.innerHTML =
+        "<b>" + Array.from(input.files)
+          .map(file => file.name)
+          .join("<br>") + "</b><br>" +
+        '<span class="muted">File berhasil dipilih</span>';
+    }
+  });
+}
+
+showSelectedFile("referenceImageFiles", "referenceImageText");
+showSelectedFile("sourceVideoFile", "sourceVideoText");
+showSelectedFile("referenceVideoFiles", "referenceVideoText");
 </script>
 </body>
 </html>
