@@ -1016,10 +1016,14 @@ model === "wan/v2.6/reference-to-video/flash";
     }
 } else {
 const isReference = model === "wan/v2.6/reference-to-video/flash";
-const wanDurations = isReference
-? ["5", "10"]
-: ["5", "10", "15"];
+const isVideoToVideo = isVideoToVideoMode;
 
+const wanDurations = isReference
+  ? ["5", "10"]
+  : isVideoToVideo
+  ? ["5", "10"]
+  : ["5", "10", "15"];
+    
 durationButtons.forEach((btn, index) => {
 if (index < wanDurations.length) {
 btn.style.display = "";
