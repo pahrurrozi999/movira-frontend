@@ -2069,7 +2069,7 @@ function showSelectedFile(inputId, textId) {
 
       selectedFiles.forEach((file, index) => {
         const item = document.createElement("div");
-        item.style.cssText = "position:relative;flex:0 0 100px;width:100px;";
+        item.style.cssText = "position:relative;flex:0 0 100px;width:100px;height:100px;box-sizing:border-box;";
 
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
@@ -2093,7 +2093,10 @@ function showSelectedFile(inputId, textId) {
         const add = document.createElement("button");
         add.type = "button";
         add.textContent = "+ Tambah Gambar";
-        add.style.cssText = "min-width:100px;min-height:100px;padding:8px;border:1px dashed #64748b;border-radius:8px;background:#0f172a;color:white;";
+        add.style.cssText =
+  "flex:0 0 100px;width:100px;height:100px;box-sizing:border-box;" +
+  "padding:6px;border:1px dashed #64748b;border-radius:8px;" +
+  "background:#0f172a;color:white;font-size:12px;white-space:normal;";
         add.onclick = () => input.click();
         preview.appendChild(add);
       }
