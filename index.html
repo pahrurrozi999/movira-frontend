@@ -2069,8 +2069,9 @@ function showSelectedFile(inputId, textId) {
 
       selectedFiles.forEach((file, index) => {
         const item = document.createElement("div");
-        item.style.cssText = "position:relative;flex:0 0 100px;width:100px;height:100px;box-sizing:border-box;";
-
+        item.style.cssText =
+  "position:relative;flex:0 0 100px;width:100px;height:100px;" +
+  "box-sizing:border-box;margin:0;";
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
         img.alt = file.name;
@@ -2080,7 +2081,10 @@ function showSelectedFile(inputId, textId) {
         const remove = document.createElement("button");
         remove.type = "button";
         remove.textContent = "×";
-        remove.style.cssText = "position:absolute;top:2px;right:2px;width:26px;height:26px;border:0;border-radius:50%;background:#dc2626;color:white;font-size:18px;";
+        remove.style.cssText =
+  "position:absolute;top:-6px;right:-6px;width:22px;height:22px;" +
+  "border:0;border-radius:50%;background:#dc2626;color:white;" +
+  "font-size:15px;z-index:2;";
         remove.onclick = () => {
           selectedFiles.splice(index, 1);
           syncFiles();
