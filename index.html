@@ -927,6 +927,30 @@ if (videoUpload) {
 
 const isVideoToVideoMode = document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
 
+const modelButtons = document.querySelectorAll("#models button");
+const veoButton = Array.from(modelButtons).find(btn =>
+  btn.dataset.value === "fal-ai/veo3.1/lite/image-to-video"
+);
+
+if (veoButton) {
+  veoButton.disabled = isVideoToVideoMode;
+  veoButton.style.opacity = isVideoToVideoMode ? "0.35" : "1";
+  veoButton.style.cursor = isVideoToVideoMode ? "not-allowed" : "pointer";
+
+  if (isVideoToVideoMode && veoButton.classList.contains("selected")) {
+    veoButton.classList.remove("selected");
+
+    const wan26Button = Array.from(modelButtons).find(btn =>
+      btn.dataset.value === "wan/v2.6/image-to-video"
+    );
+
+    if (wan26Button) {
+      wan26Button.classList.add("selected");
+      model = wan26Button.dataset.value;
+    }
+  }
+}
+  
 let allowedResolutions = null;
 
 if (isVideoToVideoMode) {
