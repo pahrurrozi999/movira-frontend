@@ -1025,16 +1025,17 @@ const wanDurations = isReference
   : ["5", "10", "15"];
     
 durationButtons.forEach((btn, index) => {
-if (index < wanDurations.length) {
-btn.style.display = "";
-btn.disabled = false;
-btn.dataset.value = wanDurations[index];
-btn.textContent = wanDurations[index] + " detik";
-} else {
-btn.style.display = isReference ? "none" : "";
-}
+  if (index < wanDurations.length) {
+    btn.style.display = "";
+    btn.disabled = false;
+    btn.dataset.value = wanDurations[index];
+    btn.textContent = wanDurations[index] + " detik";
+  } else {
+    btn.style.display = "none";
+    btn.classList.remove("selected");
+  }
 });
-
+    
 if (!wanDurations.includes(String(duration))) {
 duration = "5";
 durationButtons.forEach(x => x.classList.remove("selected"));
