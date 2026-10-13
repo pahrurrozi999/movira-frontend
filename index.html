@@ -957,13 +957,18 @@ let allowedResolutions = null;
 if (isVideoToVideoMode) {
   allowedResolutions = ["480p", "580p", "720p"];
 } else if (
+  model === "alibaba/wan-3.0/image-to-video" ||
+  model === "alibaba/wan-3.0-prime/image-to-video"
+) {
+  allowedResolutions = ["480p", "720p", "1080p"];
+} else if (
   model === "wan/v2.6/image-to-video" ||
   model === "wan/v2.6/reference-to-video/flash" ||
   model === "fal-ai/veo3.1/lite/image-to-video"
 ) {
   allowedResolutions = ["720p", "1080p"];
 }
-
+  
 if (allowedResolutions) {
   resolutionButtons.forEach(btn => {
     const allowed = allowedResolutions.includes(btn.dataset.value);
