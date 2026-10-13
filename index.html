@@ -876,8 +876,12 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   "720p": {5:35,10:70}
 },
 };
-  const selectedModel =
-    document.querySelector("#models button.selected")?.dataset.value || model;
+  const isVideoToVideoMode =
+  document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
+
+const selectedModel = isVideoToVideoMode
+  ? "fal-ai/wan/v2.2-a14b/video-to-video"
+  : document.querySelector("#models button.selected")?.dataset.value || model;
 
   const selectedResolution =
     document.querySelector("#resolutions button.selected")?.dataset.value || resolution;
