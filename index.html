@@ -912,20 +912,20 @@ function updateResolutionOptions(){
   const durationButtons = document.querySelectorAll("#durations button");
 
 const videoUpload = document.getElementById("videoToVideoUpload");
+
+const isVideoToVideoMode =
+  document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
+
 if (videoUpload) {
-  videoUpload.style.display =
-    model === "fal-ai/wan/v2.2-a14b/video-to-video"
-      ? "block"
-      : "none";
-    }
+  videoUpload.style.display = isVideoToVideoMode ? "block" : "none";
+}
+  
   
   resolutionButtons.forEach(btn=>{
     btn.disabled = false;
     btn.style.opacity = "1";
     btn.style.cursor = "pointer";
   });
-
-const isVideoToVideoMode = document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
 
 const modelButtons = document.querySelectorAll("#models button");
 const veoButton = Array.from(modelButtons).find(btn =>
@@ -947,6 +947,7 @@ if (veoButton) {
     if (wan26Button) {
       wan26Button.classList.add("selected");
       model = wan26Button.dataset.value;
+      updateCreditCost();
     }
   }
 }
