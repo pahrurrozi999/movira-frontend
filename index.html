@@ -2039,143 +2039,140 @@ updateCreditCost();
 });
 
 // Tampilkan pratinjau gambar dan nama file video
-
 function showSelectedFile(inputId, textId) {
   const input = document.getElementById(inputId);
   const text = document.getElementById(textId);
   if (!input || !text) return;
 
+  if (inputId === "referenceImageFiles") {
+    const preview = document.getElementById("referenceImagePreview");
+    if (!preview) return;
 
-if (inputId === "referenceImageFiles") {
-  const preview = document.getElementById("referenceImagePreview");
-  if (!preview) return;
+    let selectedFiles = [];
 
-  let selectedFiles = [];
- function syncFiles() {
-  const transfer = new DataTransfer();
+    function syncFiles() {
+      const transfer = new DataTransfer();
+      selectedFiles.forEach(file => transfer.items.add(file));
+      input.files = transfer.files;
+      renderImages();
+    }
 
-  selectedFiles.forEach(file => {
-    transfer.items.add(file);
-  });
+    function renderImages() {
+      preview.innerHTML = "";
+      preview.style.display = "flex";
+      preview.style.flexWrap = "nowrap";
+      preview.style.gap = "8px";
+      preview.style.maxHeight = "90px";
+      preview.style.overflowX = "auto";
+      preview.style.overflowY = "hidden";
 
-  input.files = transfer.files;
- }
+      selectedFiles.forEach((file, index) => {
+        const item = document.createElement("div");
+        item.style.cssText =
+          "position:relative;flex:0 0 70px;width:70px;height:70px;";
 
-  text.innerHTML =
-    "<b>" + selectedFiles.length +
-    " gambar dipilih</b><br><span class='muted'>Maksimal 5 gambar</span>";
-}
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.style.cssText =
+          "width:70px;height:70px;object-fit:cover;" +
+          "border-radius:8px;border:1px solid #334155;";
 
-function renderImages() {
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.style.cssText =
+          "position:absolute;top:-4px;right:-4px;width:24px;height:24px;" +
+          "border:0;border-radius:50%;background:#dc2626;color:white;" +
+          "font-size:17px;z-index:2;";
 
-preview.style.display = "flex";
-preview.style.flexWrap = "nowrap";
-preview.style.gap = "8px";
-preview.style.maxHeight = "90px";
-preview.style.overflowX = "auto";
-preview.style.overflowY = "hidden";
-    
-    selectedFiles.forEach((file, index) => {
-      const item = document.createElement("div");
-      item.style.cssText =
-  "position:relative;flex:0 0 70px;width:70px;height:70px;" +
-  "box-sizing:border-box;margin:0;";
-  
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.alt = file.name;
-img.style.cssText =
-  "display:block;width:70px;height:70px;object-fit:cover;" +
-  "border-radius:8px;border:1px solid #334155;";
-      
+        remove.onclick = () => {
+          selectedFiles.splice(index, 1);
+          syncFiles();
+        };
 
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.textContent = "×";
-      remove.style.cssText =
-        "position:absolute;top:-6px;right:-6px;width:24px;height:24px;" +
-        "border:0;border-radius:50%;background:#dc2626;color:white;" +
-        "font-size:17px;z-index:2;";
+        item.append(img, remove);
+        preview.appendChild(item);
+      });
 
-      remove.onclick = () => {
-        selectedFiles.splice(index, 1);
-        syncFiles();
-      };
+      if (selectedFiles.length < 5) {
+        const add = document.createElement("button");
+        add.type = "button";
+        add.textContent = "+ Tambah";
+        add.style.cssText =
+          "flex:0 0 80px;width:80px;height:70px;" +
+          "border:1px dashed #64748b;border-radius:8px;" +
+          "background:#0f172a;color:white;font-size:11px;";
+        add.onclick = () => input.click();
+        preview.appendChild(add);
+      }
 
-      item.append(img, remove);
-      preview.appendChild(item);
+      text.innerHTML =
+        "<b>" + selectedFiles.length +
+        " gambar dipilih</b><br>" +
+        "<span class='muted'>Maksimal 5 gambar</span>";
+    }
+
+    input.addEventListener("change", () => {
+      Array.from(input.files || []).forEach(file => {
+        if (
+          file.type.startsWith("image/") &&
+          selectedFiles.length < 5 &&
+          !selectedFiles.some(existing =>
+            existing.name === file.name &&
+            existing.size === file.size &&
+            existing.lastModified === file.lastModified
+          )
+        ) {
+          selectedFiles.push(file);
+        }
+      });
+
+      syncFiles();
     });
 
-    if (selectedFiles.length < 5) {
-      const add = document.createElement("button");
-      add.type = "button";
-      add.textContent = "+ Tambah Gambar";
-      add.style.cssText =
-        "flex:0 0 90px;width:90px;height:90px;box-sizing:border-box;" +
-        "padding:5px;border:1px dashed #64748b;border-radius:8px;" +
-        "background:#0f172a;color:white;font-size:11px;";
-
-      add.onclick = () => input.click();
-      preview.appendChild(add);
-    }
-
-    text.innerHTML =
-      "<b>" + selectedFiles.length +
-      " gambar dipilih</b><br><span class='muted'>Maksimal 5 gambar</span>";
+    renderImages();
+    return;
   }
 
-input.addEventListener("change", () => {
-  Array.from(input.files || []).forEach(file => {
-    if (
-      file.type.startsWith("image/") &&
-      selectedFiles.length < 5 &&
-      !selectedFiles.some(existing =>
-        existing.name === file.name &&
-        existing.size === file.size &&
-        existing.lastModified === file.lastModified
-      )
-    ) {
-      selectedFiles.push(file);
-    }
-  });
-
-  syncFiles();
-});
-  
-  return;
-}
-  
   input.addEventListener("change", () => {
     const files = Array.from(input.files || []);
     if (!files.length) return;
 
     if (inputId === "referenceVideoFiles") {
       const file = files[0];
+
       if (!file.type.startsWith("video/")) {
         text.textContent = "Pilih file video yang valid.";
         return;
       }
 
       text.innerHTML = "";
+
       const name = document.createElement("div");
       name.textContent = file.name;
-      name.style.cssText = "margin-bottom:8px;overflow-wrap:anywhere;";
+      name.style.cssText =
+        "margin-bottom:8px;overflow-wrap:anywhere;";
 
       const video = document.createElement("video");
       video.src = URL.createObjectURL(file);
       video.controls = true;
       video.playsInline = true;
       video.preload = "metadata";
-      video.style.cssText = "display:block;width:100%;max-height:220px;object-fit:contain;border-radius:8px;";
+      video.style.cssText =
+        "display:block;width:100%;max-height:220px;" +
+        "object-fit:contain;border-radius:8px;";
 
       text.append(name, video);
       return;
     }
 
-    text.innerHTML = "<b>" + files.map(file => file.name).join("<br>") +
+    text.innerHTML =
+      "<b>" + files.map(file => file.name).join("<br>") +
       "</b><br><span class='muted'>File berhasil dipilih</span>";
   });
-  }
+                    }
+
   
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
