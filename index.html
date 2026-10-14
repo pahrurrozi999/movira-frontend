@@ -2060,14 +2060,12 @@ if (inputId === "referenceImageFiles") {
   }
 
   function renderImages() {
-    preview.innerHTML = "";
-    preview.style.display = "flex";
-    preview.style.flexWrap = "wrap";
-    preview.style.alignItems = "flex-start";
-    preview.style.gap = "10px";
-    preview.style.maxHeight = "300px";
-    preview.style.overflowY = "auto";
-    preview.style.overflowX = "hidden";
+preview.style.display = "grid";
+preview.style.gridTemplateColumns = "repeat(3, 70px)";
+preview.style.gap = "8px";
+preview.style.maxHeight = "240px";
+preview.style.overflowY = "auto";
+preview.style.overflowX = "hidden";
 
     selectedFiles.forEach((file, index) => {
       const item = document.createElement("div");
