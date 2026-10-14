@@ -2052,7 +2052,13 @@ if (inputId === "referenceImageFiles") {
 
   let selectedFiles = [];
  function syncFiles() {
-  renderImages();
+  const transfer = new DataTransfer();
+
+  selectedFiles.forEach(file => {
+    transfer.items.add(file);
+  });
+
+  input.files = transfer.files;
  }
 
   text.innerHTML =
