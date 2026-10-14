@@ -2051,13 +2051,21 @@ if (inputId === "referenceImageFiles") {
   if (!preview) return;
 
   let selectedFiles = [];
+ 
+function syncFiles() {
+  const transfer = new DataTransfer();
 
-  function syncFiles() {
-    const transfer = new DataTransfer();
-    selectedFiles.forEach(file => transfer.items.add(file));
-    input.files = transfer.files;
-    renderImages();
-  }
+  selectedFiles.forEach(file => {
+    transfer.items.add(file);
+  });
+
+  input.files = transfer.files;
+  renderImages();
+
+  text.innerHTML =
+    "<b>" + selectedFiles.length +
+    " gambar dipilih</b><br><span class='muted'>Maksimal 5 gambar</span>";
+}
 
 function renderImages() {
 
