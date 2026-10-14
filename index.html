@@ -2051,16 +2051,9 @@ if (inputId === "referenceImageFiles") {
   if (!preview) return;
 
   let selectedFiles = [];
- 
-function syncFiles() {
-  const transfer = new DataTransfer();
-
-  selectedFiles.forEach(file => {
-    transfer.items.add(file);
-  });
-
-  input.files = transfer.files;
+ function syncFiles() {
   renderImages();
+ }
 
   text.innerHTML =
     "<b>" + selectedFiles.length +
@@ -2129,23 +2122,21 @@ input.addEventListener("change", () => {
   const files = Array.from(input.files || []);
 
   files.forEach(file => {
-    if (
-      file.type.startsWith("image/") &&
-      selectedFiles.length < 5
-    ) {
-      const duplicate = selectedFiles.some(existing =>
-        existing.name === file.name &&
-        existing.size === file.size &&
-        existing.lastModified === file.lastModified
-      );
+    if (!file.type.startsWith("image/")) return;
 
-      if (!duplicate) {
-        selectedFiles.push(file);
-      }
+    const duplicate = selectedFiles.some(existing =>
+      existing.name === file.name &&
+      existing.size === file.size &&
+      existing.lastModified === file.lastModified
+    );
+
+    if (!duplicate && selectedFiles.length < 5) {
+      selectedFiles.push(file);
     }
   });
 
   syncFiles();
+  input.value = "";
 });
   
   return;
