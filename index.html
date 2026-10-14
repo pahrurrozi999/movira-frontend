@@ -1093,9 +1093,7 @@ const selectedModel = document.querySelector("#models button.selected")?.dataset
 
 if (selectedModel === "wan/v2.6/reference-to-video/flash") {
   referenceImages = await readReferenceFiles(referenceImageFiles);
-  referenceVideos = await readReferenceFiles(
-  referenceVideoFiles._selectedVideos || referenceVideoFiles.files
-);
+  referenceVideos = await readReferenceFiles(referenceVideoFiles);
   
   if (referenceImages.length + referenceVideos.length === 0) {
     alert("Pilih minimal satu gambar atau video referensi.");
