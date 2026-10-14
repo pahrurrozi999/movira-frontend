@@ -2059,26 +2059,28 @@ if (inputId === "referenceImageFiles") {
     renderImages();
   }
 
-  function renderImages() {
-preview.style.display = "grid";
-preview.style.gridTemplateColumns = "repeat(3, 70px)";
-preview.style.gap = "8px";
-preview.style.maxHeight = "240px";
-preview.style.overflowY = "auto";
-preview.style.overflowX = "hidden";
+function renderImages() {
 
+preview.style.display = "flex";
+preview.style.flexWrap = "nowrap";
+preview.style.gap = "8px";
+preview.style.maxHeight = "90px";
+preview.style.overflowX = "auto";
+preview.style.overflowY = "hidden";
+    
     selectedFiles.forEach((file, index) => {
       const item = document.createElement("div");
       item.style.cssText =
-        "position:relative;flex:0 0 90px;width:90px;height:90px;" +
-        "box-sizing:border-box;margin:0;";
-
+  "position:relative;flex:0 0 70px;width:70px;height:70px;" +
+  "box-sizing:border-box;margin:0;";
+  
       const img = document.createElement("img");
       img.src = URL.createObjectURL(file);
       img.alt = file.name;
-      img.style.cssText =
-        "display:block;width:90px;height:90px;object-fit:cover;" +
-        "border-radius:8px;border:1px solid #334155;";
+img.style.cssText =
+  "display:block;width:70px;height:70px;object-fit:cover;" +
+  "border-radius:8px;border:1px solid #334155;";
+      
 
       const remove = document.createElement("button");
       remove.type = "button";
