@@ -2125,23 +2125,28 @@ img.style.cssText =
       " gambar dipilih</b><br><span class='muted'>Maksimal 5 gambar</span>";
   }
 
-  input.addEventListener("change", () => {
-    Array.from(input.files || []).forEach(file => {
-      if (
-        file.type.startsWith("image/") &&
-        selectedFiles.length < 5 &&
-        !selectedFiles.some(existing =>
-          existing.name === file.name &&
-          existing.size === file.size &&
-          existing.lastModified === file.lastModified
-        )
-      ) {
+input.addEventListener("change", () => {
+  const files = Array.from(input.files || []);
+
+  files.forEach(file => {
+    if (
+      file.type.startsWith("image/") &&
+      selectedFiles.length < 5
+    ) {
+      const duplicate = selectedFiles.some(existing =>
+        existing.name === file.name &&
+        existing.size === file.size &&
+        existing.lastModified === file.lastModified
+      );
+
+      if (!duplicate) {
         selectedFiles.push(file);
       }
-    });
-
-    syncFiles();
+    }
   });
+
+  syncFiles();
+});
   
   return;
 }
