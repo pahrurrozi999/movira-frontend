@@ -2187,6 +2187,13 @@ if (inputId === "referenceVideoFiles") {
     // Tampilkan semua video terpilih
     text.replaceChildren();
 
+text.style.display = "flex";
+text.style.flexDirection = "column";
+text.style.gap = "12px";
+text.style.maxHeight = "360px";
+text.style.overflowY = "auto";
+text.style.overflowX = "hidden";
+  
     if (selectedReferenceVideoFiles.length === 0) {
         text.textContent = "Belum ada video referensi.";
         return;
