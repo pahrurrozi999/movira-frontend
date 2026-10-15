@@ -2192,11 +2192,11 @@ text.style.flexDirection = "column";
 text.style.alignItems = "stretch";
 text.style.gap = "12px";
 text.style.width = "100%";
-text.style.maxHeight = "none";
-text.style.overflowY = "visible";
+text.style.maxHeight = "360px";
+text.style.overflowY = "auto";
 text.style.overflowX = "hidden";
 text.style.boxSizing = "border-box";
-    
+     
     if (selectedReferenceVideoFiles.length === 0) {
         text.textContent = "Belum ada video referensi.";
         return;
@@ -2230,16 +2230,19 @@ video.style.cssText =
       
 card.style.cssText =
     "display:block;" +
+    "position:relative;" +
+    "flex:0 0 auto;" +
     "width:100%;" +
     "height:auto;" +
     "min-height:0;" +
     "box-sizing:border-box;" +
-    "margin:6px 0 12px;" +
-    "padding:8px;" +
+    "margin:0 0 12px 0;" +
+    "padding:10px;" +
     "border:1px solid #334155;" +
-    "border-radius:8px;" +
-    "overflow:visible;";
-                
+    "border-radius:12px;" +
+    "background:#0b1729;" +
+    "overflow:hidden;";
+                 
         card.append(name, video);
         text.appendChild(card);
     });
