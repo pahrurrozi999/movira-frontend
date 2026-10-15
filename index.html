@@ -2189,11 +2189,14 @@ if (inputId === "referenceVideoFiles") {
 
 text.style.display = "flex";
 text.style.flexDirection = "column";
+text.style.alignItems = "stretch";
 text.style.gap = "12px";
-text.style.maxHeight = "360px";
-text.style.overflowY = "auto";
+text.style.width = "100%";
+text.style.maxHeight = "none";
+text.style.overflowY = "visible";
 text.style.overflowX = "hidden";
-  
+text.style.boxSizing = "border-box";
+    
     if (selectedReferenceVideoFiles.length === 0) {
         text.textContent = "Belum ada video referensi.";
         return;
