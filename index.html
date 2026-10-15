@@ -2215,10 +2215,16 @@ text.style.overflowX = "hidden";
         video.controls = true;
         video.playsInline = true;
         video.preload = "metadata";
-        video.style.cssText =
-            "display:block;width:100%;max-height:180px;" +
-            "object-fit:contain;border-radius:8px;";
-
+        
+video.style.cssText =
+    "display:block;width:100%;height:auto;" +
+    "max-height:none;aspect-ratio:9/16;" +
+    "object-fit:contain;border-radius:8px;";
+card.style.cssText =
+    "width:100%;box-sizing:border-box;" +
+    "padding:10px;margin:0;" +
+    "border:1px solid #334155;border-radius:8px;";
+      
         card.append(name, video);
         text.appendChild(card);
     });
