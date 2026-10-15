@@ -2151,44 +2151,83 @@ item.append(img, remove);
   }
 
   input.addEventListener("change", () => {
-    const files = Array.from(input.files || []);
-    if (!files.length) return;
+   const files = Array.from(input.files || []);
 
-    if (inputId === "referenceVideoFiles") {
-      const file = files[0];
+if (!files.length && inputId === "referenceVideoFiles") {
+  referenceVideoFiles = [];
+  text.innerHTML = "";
+  return;
+}
 
-      if (!file.type.startsWith("video/")) {
-        text.textContent = "Pilih file video yang valid.";
-        return;
-      }
+if (!files.length) return; 
 
-      text.innerHTML = "";
+    
+if (inputId === "referenceVideoFiles") {
+  const maxVideos = 3;
+  const validFiles = files.filter(file =>
+    file.type.startsWith("video/")
+  );
 
-      const name = document.createElement("div");
-      name.textContent = file.name;
-      name.style.cssText =
-        "margin-bottom:8px;overflow-wrap:anywhere;";
-
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(file);
-      video.controls = true;
-      video.playsInline = true;
-      video.preload = "metadata";
-      video.style.cssText =
-        "display:block;width:100%;max-height:220px;" +
-        "object-fit:contain;border-radius:8px;";
-
-      text.append(name, video);
-      return;
-    }
-
-    text.innerHTML =
-      "<b>" + files.map(file => file.name).join("<br>") +
-      "</b><br><span class='muted'>File berhasil dipilih</span>";
-  });
+  if (validFiles.length === 0) {
+    text.textContent = "Pilih file video yang valid.";
+    return;
   }
-            
+
+  if (validFiles.length > maxVideos) {
+    text.textContent = "Maksimal 3 video referensi.";
+    return;
+  }
+
+  referenceVideoFiles = validFiles;
+  text.innerHTML = "";
+
+  validFiles.forEach((file, index) => {
+    const item = document.createElement("div");
+    item.style.cssText =
+      "margin-bottom:12px;padding:10px;border:1px solid #64748b;" +
+      "border-radius:8px;overflow-wrap:anywhere;";
+
+    const name = document.createElement("div");
+    name.textContent = file.name;
+    name.style.marginBottom = "8px";
+
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(file);
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.style.cssText =
+      "display:block;width:100%;max-height:220px;" +
+      "object-fit:contain;border-radius:8px;";
+
+    const remove = document.createElement("button");
+    remove.textContent = "Hapus video";
+    remove.type = "button";
+    remove.style.cssText =
+      "margin-top:8px;padding:8px 12px;border:0;" +
+      "border-radius:6px;background:#b91c1c;color:white;";
+
+    remove.onclick = () => {
+      referenceVideoFiles = referenceVideoFiles.filter(
+        (_, i) => i !== index
+      );
+
+      const transfer = new DataTransfer();
+      referenceVideoFiles.forEach(videoFile =>
+        transfer.items.add(videoFile)
+      );
+      input.files = transfer.files;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+
+    item.append(name, video, remove);
+    text.appendChild(item);
+  });
+
+  return;
+  }
   
+            
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
 showSelectedFile("referenceVideoFiles", "referenceVideoText");
