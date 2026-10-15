@@ -2070,28 +2070,36 @@ function showSelectedFile(inputId, textId) {
         const item = document.createElement("div");
         item.style.cssText =
           "position:relative;flex:0 0 70px;width:70px;height:70px;";
+       
+const img = document.createElement("img");
+const imageUrl = URL.createObjectURL(file);
 
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        img.alt = file.name;
-        img.style.cssText =
-          "width:70px;height:70px;object-fit:cover;" +
-          "border-radius:8px;border:1px solid #334155;";
+img.setAttribute("src", imageUrl);
+img.setAttribute("alt", file.name);
+img.style.cssText =
+  "display:block;width:70px;height:70px;min-width:70px;" +
+  "object-fit:cover;border-radius:8px;" +
+  "border:1px solid #334155;background:#ffffff;";
 
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.textContent = "×";
-        remove.style.cssText =
-          "position:absolute;top:-4px;right:-4px;width:24px;height:24px;" +
-          "border:0;border-radius:50%;background:#dc2626;color:white;" +
-          "font-size:17px;z-index:2;";
+img.onerror = () => {
+  console.error("Gagal memuat gambar:", file.name);
+};
 
-        remove.onclick = () => {
-          selectedFiles.splice(index, 1);
-          syncFiles();
-        };
+const remove = document.createElement("button");
+remove.type = "button";
+remove.textContent = "×";
+remove.style.cssText =
+  "position:absolute;top:-4px;right:-4px;width:24px;height:24px;" +
+  "border:0;border-radius:50%;background:#dc2626;color:white;" +
+  "font-size:17px;z-index:2;";
 
-        item.append(img, remove);
+remove.onclick = () => {
+  selectedFiles.splice(index, 1);
+  syncFiles();
+};
+
+item.append(img, remove);
+        
         preview.appendChild(item);
       });
 
