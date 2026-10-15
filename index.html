@@ -2162,53 +2162,49 @@ if (!files.length && inputId === "referenceVideoFiles") {
 if (!files.length) return; 
  
 if (inputId === "referenceVideoFiles") {
-    const input = document.getElementById(inputId);
+    const input = document.getElementById("referenceVideoFiles");
 
-    // Izinkan maksimal 3 video referensi
-    const selectedFiles = Array.from(files || []);
-    const validFiles = selectedFiles.filter(file =>
-        file.type.startsWith("video/")
-    );
+    referenceVideoFiles = files
+        .filter(file => file.type.startsWith("video/"))
+        .slice(0, 3);
 
-    if (validFiles.length === 0) {
-        referenceVideoFiles = [];
-        text.innerHTML = "";
-        return;
-    }
-
-    referenceVideoFiles = validFiles.slice(0, 3);
-
-    text.innerHTML = "";
+    text.replaceChildren();
 
     referenceVideoFiles.forEach((file, index) => {
-        const item = document.createElement("div");
-        item.style.cssText =
-            "margin:10px 0;padding:10px;border:1px solid #334155;border-radius:10px;";
+        const card = document.createElement("div");
+        card.style.cssText =
+            "padding:12px;margin:10px 0;border:1px solid #334155;border-radius:12px;";
 
-        const name = document.createElement("div");
-        name.textContent = `${index + 1}. ${file.name}`;
-        name.style.cssText =
-            "overflow-wrap:anywhere;margin-bottom:8px;";
+        const title = document.createElement("p");
+        title.textContent = `Video ${index + 1}: ${file.name}`;
 
         const preview = document.createElement("video");
-        preview.src = URL.createObjectURL(file);
         preview.controls = true;
         preview.playsInline = true;
+        preview.preload = "metadata";
         preview.style.cssText =
-            "width:100%;max-height:220px;border-radius:8px;";
+            "display:block;width:100%;max-height:220px;border-radius:8px;";
+
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+
+        preview.addEventListener("loadedmetadata", () => {
+            URL.revokeObjectURL(url);
+        }, { once: true });
 
         const remove = document.createElement("button");
         remove.type = "button";
         remove.textContent = "Hapus video";
-        remove.style.cssText =
-            "margin-top:8px;padding:8px 12px;cursor:pointer;";
 
         remove.addEventListener("click", () => {
-            referenceVideoFiles =
-                referenceVideoFiles.filter((_, i) => i !== index);
+            const remaining = referenceVideoFiles.filter(
+                (_, i) => i !== index
+            );
+
+            referenceVideoFiles = remaining;
 
             const transfer = new DataTransfer();
-            referenceVideoFiles.forEach(f => transfer.items.add(f));
+            remaining.forEach(item => transfer.items.add(item));
             input.files = transfer.files;
 
             input.dispatchEvent(
@@ -2216,12 +2212,13 @@ if (inputId === "referenceVideoFiles") {
             );
         });
 
-        item.append(name, preview, remove);
-        text.appendChild(item);
+        card.append(title, preview, remove);
+        text.appendChild(card);
     });
 
     return;
 }
+    
           
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
