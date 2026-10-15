@@ -2222,29 +2222,30 @@ text.style.boxSizing = "border-box";
         video.preload = "metadata";
          
 video.style.cssText =
-    "display:block;" +
-    "width:100%;" +
-    "height:auto;" +
-    "max-height:260px;" +
-    "object-fit:contain;" +
-    "border-radius:8px;" +
-    "background:#000;";
-      
+  "display:block;" +
+  "width:100%;" +
+  "height:auto;" +
+  "max-height:none;" +
+  "aspect-ratio:auto;" +
+  "object-fit:contain;" +
+  "border-radius:8px;" +
+  "background:#000;";
+ 
 card.style.cssText =
-    "display:block;" +
-    "position:relative;" +
-    "flex:0 0 auto;" +
-    "width:100%;" +
-    "height:auto;" +
-    "min-height:0;" +
-    "box-sizing:border-box;" +
-    "margin:0 0 12px 0;" +
-    "padding:10px;" +
-    "border:1px solid #334155;" +
-    "border-radius:12px;" +
-    "background:#0b1729;" +
-    "overflow:hidden;";
-                 
+  "display:block;" +
+  "position:relative;" +
+  "flex:0 0 auto;" +
+  "width:100%;" +
+  "height:auto;" +
+  "min-height:0;" +
+  "box-sizing:border-box;" +
+  "margin:0;" +
+  "padding:10px;" +
+  "border:1px solid #334155;" +
+  "border-radius:12px;" +
+  "background:#0b1729;" +
+  "overflow:visible;";
+                       
         card.append(name, video);
         text.appendChild(card);
     });
