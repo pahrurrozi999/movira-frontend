@@ -2160,74 +2160,69 @@ if (!files.length && inputId === "referenceVideoFiles") {
 }
 
 if (!files.length) return; 
-
-    
+ 
 if (inputId === "referenceVideoFiles") {
-  const maxVideos = 3;
-  const validFiles = files.filter(file =>
-    file.type.startsWith("video/")
-  );
+    const input = document.getElementById(inputId);
 
-  if (validFiles.length === 0) {
-    text.textContent = "Pilih file video yang valid.";
+    // Izinkan maksimal 3 video referensi
+    const selectedFiles = Array.from(files || []);
+    const validFiles = selectedFiles.filter(file =>
+        file.type.startsWith("video/")
+    );
+
+    if (validFiles.length === 0) {
+        referenceVideoFiles = [];
+        text.innerHTML = "";
+        return;
+    }
+
+    referenceVideoFiles = validFiles.slice(0, 3);
+
+    text.innerHTML = "";
+
+    referenceVideoFiles.forEach((file, index) => {
+        const item = document.createElement("div");
+        item.style.cssText =
+            "margin:10px 0;padding:10px;border:1px solid #334155;border-radius:10px;";
+
+        const name = document.createElement("div");
+        name.textContent = `${index + 1}. ${file.name}`;
+        name.style.cssText =
+            "overflow-wrap:anywhere;margin-bottom:8px;";
+
+        const preview = document.createElement("video");
+        preview.src = URL.createObjectURL(file);
+        preview.controls = true;
+        preview.playsInline = true;
+        preview.style.cssText =
+            "width:100%;max-height:220px;border-radius:8px;";
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "Hapus video";
+        remove.style.cssText =
+            "margin-top:8px;padding:8px 12px;cursor:pointer;";
+
+        remove.addEventListener("click", () => {
+            referenceVideoFiles =
+                referenceVideoFiles.filter((_, i) => i !== index);
+
+            const transfer = new DataTransfer();
+            referenceVideoFiles.forEach(f => transfer.items.add(f));
+            input.files = transfer.files;
+
+            input.dispatchEvent(
+                new Event("change", { bubbles: true })
+            );
+        });
+
+        item.append(name, preview, remove);
+        text.appendChild(item);
+    });
+
     return;
-  }
-
-  if (validFiles.length > maxVideos) {
-    text.textContent = "Maksimal 3 video referensi.";
-    return;
-  }
-
-  referenceVideoFiles = validFiles;
-  text.innerHTML = "";
-
-  validFiles.forEach((file, index) => {
-    const item = document.createElement("div");
-    item.style.cssText =
-      "margin-bottom:12px;padding:10px;border:1px solid #64748b;" +
-      "border-radius:8px;overflow-wrap:anywhere;";
-
-    const name = document.createElement("div");
-    name.textContent = file.name;
-    name.style.marginBottom = "8px";
-
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(file);
-    video.controls = true;
-    video.playsInline = true;
-    video.preload = "metadata";
-    video.style.cssText =
-      "display:block;width:100%;max-height:220px;" +
-      "object-fit:contain;border-radius:8px;";
-
-    const remove = document.createElement("button");
-    remove.textContent = "Hapus video";
-    remove.type = "button";
-    remove.style.cssText =
-      "margin-top:8px;padding:8px 12px;border:0;" +
-      "border-radius:6px;background:#b91c1c;color:white;";
-
-    remove.onclick = () => {
-      referenceVideoFiles = referenceVideoFiles.filter(
-        (_, i) => i !== index
-      );
-
-      const transfer = new DataTransfer();
-      referenceVideoFiles.forEach(videoFile =>
-        transfer.items.add(videoFile)
-      );
-      input.files = transfer.files;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    };
-
-    item.append(name, video, remove);
-    text.appendChild(item);
-  });
-
-  return;
-  }
-  
-            
+}
+          
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
 showSelectedFile("referenceVideoFiles", "referenceVideoText");
