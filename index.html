@@ -2154,73 +2154,39 @@ item.append(img, remove);
     const files = Array.from(input.files || []);
     if (!files.length) return;
 
-if (inputId === "referenceVideoFiles") {
-    const input = document.getElementById(inputId);
+    if (inputId === "referenceVideoFiles") {
+      const file = files[0];
 
-    // Simpan video sebelumnya dan tambahkan pilihan baru
-    const previous = Array.isArray(referenceVideoFiles)
-        ? referenceVideoFiles
-        : [];
+      if (!file.type.startsWith("video/")) {
+        text.textContent = "Pilih file video yang valid.";
+        return;
+      }
 
-    const combined = [...previous];
+      text.innerHTML = "";
 
-    files.forEach(file => {
-        if (
-            file.type.startsWith("video/") &&
-            !combined.some(existing =>
-                existing.name === file.name &&
-                existing.size === file.size &&
-                existing.lastModified === file.lastModified
-            ) &&
-            combined.length < 3
-        ) {
-            combined.push(file);
-        }
-    });
+      const name = document.createElement("div");
+      name.textContent = file.name;
+      name.style.cssText =
+        "margin-bottom:8px;overflow-wrap:anywhere;";
 
-    referenceVideoFiles = combined;
-    text.replaceChildren();
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      video.style.cssText =
+        "display:block;width:100%;max-height:220px;" +
+        "object-fit:contain;border-radius:8px;";
 
-    referenceVideoFiles.forEach((file, index) => {
-        const card = document.createElement("div");
-        card.style.cssText =
-            "padding:10px;margin:8px 0;border:1px solid #334155;border-radius:10px;";
+      text.append(name, video);
+      return;
+    }
 
-        const title = document.createElement("p");
-        title.textContent = `Video ${index + 1}: ${file.name}`;
-
-        const video = document.createElement("video");
-        video.src = URL.createObjectURL(file);
-        video.controls = true;
-        video.playsInline = true;
-        video.style.cssText =
-            "width:100%;max-height:220px;border-radius:8px;";
-
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.textContent = "Hapus video";
-
-        remove.addEventListener("click", () => {
-            referenceVideoFiles =
-                referenceVideoFiles.filter((_, i) => i !== index);
-
-            const transfer = new DataTransfer();
-            referenceVideoFiles.forEach(f =>
-                transfer.items.add(f)
-            );
-
-            input.files = transfer.files;
-            input.dispatchEvent(
-                new Event("change", { bubbles: true })
-            );
-        });
-
-        card.append(title, video, remove);
-        text.appendChild(card);
-    });
-
-    return;
-          }
+    text.innerHTML =
+      "<b>" + files.map(file => file.name).join("<br>") +
+      "</b><br><span class='muted'>File berhasil dipilih</span>";
+  });
+                   }
     
        
 showSelectedFile("referenceImageFiles", "referenceImageText");
