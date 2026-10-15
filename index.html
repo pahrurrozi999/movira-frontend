@@ -695,6 +695,7 @@ applyMoviraLanguage();
 let imageData = "";
 let referenceImages = [];
 let referenceVideos = [];
+let selectedReferenceVideoFiles = [];
 let sourceVideo = "";
 let model = "alibaba/wan-3.0-prime/image-to-video";
 let resolution = "720p";
@@ -2154,52 +2155,71 @@ item.append(img, remove);
     const files = Array.from(input.files || []);
     if (!files.length) return;
 
+
 if (inputId === "referenceVideoFiles") {
-    
-const previous =
-    typeof referenceVideoFiles !== "undefined" &&
-    Array.isArray(referenceVideoFiles)
-        ? referenceVideoFiles
-        : [];
-  
-    const combined = [...previous];
+    const combined = [...selectedReferenceVideoFiles];
 
     files.forEach(file => {
+        const duplicate = combined.some(existing =>
+            existing.name === file.name &&
+            existing.size === file.size &&
+            existing.lastModified === file.lastModified
+        );
+
         if (
             file.type.startsWith("video/") &&
-            !combined.some(existing =>
-                existing.name === file.name &&
-                existing.size === file.size &&
-                existing.lastModified === file.lastModified
-            ) &&
+            !duplicate &&
             combined.length < 3
         ) {
             combined.push(file);
         }
     });
 
-    referenceVideoFiles = combined;
+    selectedReferenceVideoFiles = combined;
+
+    // Sinkronkan daftar pilihan dengan input HTML
+    const transfer = new DataTransfer();
+    selectedReferenceVideoFiles.forEach(file => {
+        transfer.items.add(file);
+    });
+    input.files = transfer.files;
+
+    // Tampilkan semua video terpilih
     text.replaceChildren();
 
-    referenceVideoFiles.forEach((file, index) => {
+    if (selectedReferenceVideoFiles.length === 0) {
+        text.textContent = "Belum ada video referensi.";
+        return;
+    }
+
+    selectedReferenceVideoFiles.forEach((file, index) => {
+        const card = document.createElement("div");
+        card.style.cssText =
+            "margin:10px 0;padding:8px;" +
+            "border:1px solid #334155;border-radius:8px;";
+
         const name = document.createElement("div");
         name.textContent = `Video ${index + 1}: ${file.name}`;
         name.style.cssText =
-            "margin:8px 0;overflow-wrap:anywhere;";
+            "margin-bottom:8px;overflow-wrap:anywhere;";
 
         const video = document.createElement("video");
         video.src = URL.createObjectURL(file);
         video.controls = true;
         video.playsInline = true;
+        video.preload = "metadata";
         video.style.cssText =
-            "width:100%;max-height:220px;object-fit:contain;border-radius:8px;";
+            "display:block;width:100%;max-height:180px;" +
+            "object-fit:contain;border-radius:8px;";
 
-        text.append(name, video);
+        card.append(name, video);
+        text.appendChild(card);
     });
 
     return;
-}
-      
+    }
+
+    
     text.innerHTML =
       "<b>" + files.map(file => file.name).join("<br>") +
       "</b><br><span class='muted'>File berhasil dipilih</span>";
