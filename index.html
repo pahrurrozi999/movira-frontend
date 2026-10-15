@@ -2155,10 +2155,13 @@ item.append(img, remove);
     if (!files.length) return;
 
 if (inputId === "referenceVideoFiles") {
-    const previous = Array.isArray(referenceVideoFiles)
+    
+const previous =
+    typeof referenceVideoFiles !== "undefined" &&
+    Array.isArray(referenceVideoFiles)
         ? referenceVideoFiles
         : [];
-
+  
     const combined = [...previous];
 
     files.forEach(file => {
