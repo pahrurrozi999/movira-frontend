@@ -2151,72 +2151,41 @@ item.append(img, remove);
   }
 
   input.addEventListener("change", () => {
-   const files = Array.from(input.files || []);
+    const files = Array.from(input.files || []);
+    if (!files.length) return;
 
-if (!files.length && inputId === "referenceVideoFiles") {
-  referenceVideoFiles = [];
-  text.innerHTML = "";
-  return;
-}
+    if (inputId === "referenceVideoFiles") {
+      const file = files[0];
 
-if (!files.length) return; 
- 
-if (inputId === "referenceVideoFiles") {
-    const input = document.getElementById("referenceVideoFiles");
+      if (!file.type.startsWith("video/")) {
+        text.textContent = "Pilih file video yang valid.";
+        return;
+      }
 
-    referenceVideoFiles = files
-        .filter(file => file.type.startsWith("video/"))
-        .slice(0, 3);
+      text.innerHTML = "";
 
-    text.replaceChildren();
+      const name = document.createElement("div");
+      name.textContent = file.name;
+      name.style.cssText =
+        "margin-bottom:8px;overflow-wrap:anywhere;";
 
-    referenceVideoFiles.forEach((file, index) => {
-        const card = document.createElement("div");
-        card.style.cssText =
-            "padding:12px;margin:10px 0;border:1px solid #334155;border-radius:12px;";
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      video.style.cssText =
+        "display:block;width:100%;max-height:220px;" +
+        "object-fit:contain;border-radius:8px;";
 
-        const title = document.createElement("p");
-        title.textContent = `Video ${index + 1}: ${file.name}`;
+      text.append(name, video);
+      return;
+    }
 
-        const preview = document.createElement("video");
-        preview.controls = true;
-        preview.playsInline = true;
-        preview.preload = "metadata";
-        preview.style.cssText =
-            "display:block;width:100%;max-height:220px;border-radius:8px;";
-
-        const url = URL.createObjectURL(file);
-        preview.src = url;
-
-        preview.addEventListener("loadedmetadata", () => {
-            URL.revokeObjectURL(url);
-        }, { once: true });
-
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.textContent = "Hapus video";
-
-        remove.addEventListener("click", () => {
-            const remaining = referenceVideoFiles.filter(
-                (_, i) => i !== index
-            );
-
-            referenceVideoFiles = remaining;
-
-            const transfer = new DataTransfer();
-            remaining.forEach(item => transfer.items.add(item));
-            input.files = transfer.files;
-
-            input.dispatchEvent(
-                new Event("change", { bubbles: true })
-            );
-        });
-
-        card.append(title, preview, remove);
-        text.appendChild(card);
-    });
-
-    return;
+    text.innerHTML =
+      "<b>" + files.map(file => file.name).join("<br>") +
+      "</b><br><span class='muted'>File berhasil dipilih</span>";
+  });
 }
     
           
