@@ -2226,10 +2226,15 @@ video.style.cssText =
     "background:#000;";
       
 card.style.cssText =
-    "width:100%;box-sizing:border-box;" +
-    "padding:10px;margin:0;" +
-    "border:1px solid #334155;border-radius:8px;";
-      
+    "display:block;" +
+    "width:100%;" +
+    "box-sizing:border-box;" +
+    "margin:10px 0;" +
+    "padding:8px;" +
+    "border:1px solid #334155;" +
+    "border-radius:8px;" +
+    "overflow:visible;";
+              
         card.append(name, video);
         text.appendChild(card);
     });
