@@ -2048,7 +2048,8 @@ function showSelectedFile(inputId, textId) {
     const preview = document.getElementById("referenceImagePreview");
     if (!preview) return;
 
-    let selectedFiles = [];
+   let selectedFiles = [];
+   const imageUrls = new Map();
 
     function syncFiles() {
       const transfer = new DataTransfer();
@@ -2070,10 +2071,16 @@ function showSelectedFile(inputId, textId) {
         const item = document.createElement("div");
         item.style.cssText =
           "position:relative;flex:0 0 70px;width:70px;height:70px;";
-       
+     
 const img = document.createElement("img");
-const imageUrl = URL.createObjectURL(file);
+const fileKey =
+  file.name + "|" + file.size + "|" + file.lastModified;
 
+if (!imageUrls.has(fileKey)) {
+  imageUrls.set(fileKey, URL.createObjectURL(file));
+}
+const imageUrl = imageUrls.get(fileKey);
+        
 img.setAttribute("src", imageUrl);
 img.setAttribute("alt", file.name);
 img.style.cssText =
