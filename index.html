@@ -2322,22 +2322,24 @@ removeVideo.type = "button";
 removeVideo.textContent = "×";
 removeVideo.title = "Hapus video ini";
 
-removeVideo.style.cssText =
-    "position:absolute;top:6px;right:6px;" +
-    "width:36px;height:36px;min-width:36px;" +
+removeVideo.style.cssText =  
+    "position:absolute;top:5px;right:5px;" +
+    "width:28px;height:28px;min-width:28px;" +
     "border:0;border-radius:50%;" +
     "background:#dc2626;color:white;" +
-    "font-size:22px;font-weight:bold;" +
+    "font-size:18px;font-weight:bold;" +
     "display:flex;align-items:center;justify-content:center;" +
     "cursor:pointer;z-index:999999;" +
     "pointer-events:auto;touch-action:manipulation;" +
     "padding:0;margin:0;";
-                
+                     
 card.style.position = "relative";
 removeVideo.style.pointerEvents = "auto";
 removeVideo.style.zIndex = "999999";
-removeVideo.addEventListener("click", () => {
-  selectedReferenceVideoFiles.splice(index, 1);
+removeVideo.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    selectedReferenceVideoFiles.splice(index, 1);
 
   const transfer = new DataTransfer();
   selectedReferenceVideoFiles.forEach(file => {
