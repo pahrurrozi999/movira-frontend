@@ -2221,16 +2221,18 @@ text.style.boxSizing = "border-box";
         video.playsInline = true;
         video.preload = "metadata";
          
+
 video.style.cssText =
   "display:block;" +
   "width:100%;" +
   "height:auto;" +
+  "max-width:100%;" +
   "max-height:none;" +
-  "aspect-ratio:auto;" +
   "object-fit:contain;" +
+  "object-position:center;" +
   "border-radius:8px;" +
   "background:#000;";
- 
+      
 card.style.cssText =
   "display:block;" +
   "position:relative;" +
@@ -2249,7 +2251,29 @@ card.style.cssText =
         card.append(name, video);
         text.appendChild(card);
     });
+  
+const addVideoBtn = document.createElement("button");
+addVideoBtn.type = "button";
+addVideoBtn.textContent = "+ Tambah Video";
+addVideoBtn.style.cssText =
+  "display:block;" +
+  "width:100%;" +
+  "min-height:48px;" +
+  "margin:4px 0 8px;" +
+  "padding:12px;" +
+  "border:1px dashed #64748b;" +
+  "border-radius:10px;" +
+  "background:#13243b;" +
+  "color:#fff;" +
+  "font-size:16px;" +
+  "cursor:pointer;";
 
+addVideoBtn.addEventListener("click", () => {
+  referenceVideoFiles.click();
+});
+
+text.appendChild(addVideoBtn);
+  
     return;
     }
 
