@@ -2256,8 +2256,37 @@ card.style.cssText =
   "background:#0b1729;" +
   "overflow:visible;";
                        
-        card.append(name, video);
-        text.appendChild(card);
+ 
+const removeVideo = document.createElement("button");
+removeVideo.type = "button";
+removeVideo.textContent = "×";
+removeVideo.title = "Hapus video ini";
+
+removeVideo.style.cssText =
+  "position:absolute;top:6px;right:6px;" +
+  "width:28px;height:28px;border:0;" +
+  "border-radius:50%;background:#dc2626;" +
+  "color:white;font-size:20px;font-weight:bold;" +
+  "cursor:pointer;z-index:5;";
+
+card.style.position = "relative";
+
+removeVideo.addEventListener("click", () => {
+  selectedReferenceVideoFiles.splice(index, 1);
+
+  const transfer = new DataTransfer();
+  selectedReferenceVideoFiles.forEach(file => {
+    transfer.items.add(file);
+  });
+
+  input.files = transfer.files;
+
+  showSelectedFile(inputId, textId);
+});
+
+card.append(name, video, removeVideo);
+text.appendChild(card);
+                         
     });
   
 const addVideoBtn = document.createElement("button");
