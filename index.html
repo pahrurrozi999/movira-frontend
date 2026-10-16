@@ -2200,12 +2200,12 @@ if (inputId === "referenceVideoFiles") {
     // Tampilkan semua video terpilih
     text.replaceChildren();
 
-text.style.display = "flex";
-text.style.flexDirection = "column";
-text.style.alignItems = "stretch";
-text.style.gap = "12px";
+text.style.display = "grid";
+text.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
+text.style.alignItems = "start";
+text.style.gap = "10px";
 text.style.width = "100%";
-text.style.maxHeight = "400px";
+text.style.maxHeight = "none";
 text.style.padding = "4px 2px 12px";
 text.style.scrollPadding = "12px";
 text.style.overflowY = "auto";
@@ -2252,30 +2252,25 @@ video.style.cssText =
     "display:block;" +
     "width:100%;" +
     "height:auto;" +
-    "min-height:180px;" +
+    "min-height:0;" +
     "max-width:100%;" +
     "max-height:none;" +
+    "aspect-ratio:16/9;" +
     "object-fit:contain;" +
-    "object-position:center;" +
     "border-radius:8px;" +
     "background:#000;";
-        
+              
 card.style.cssText =
-  "display:block;" +
-  "position:relative;" +
-  "flex:0 0 auto;" +
-  "width:100%;" +
-  "height:auto;" +
-  "min-height:0;" +
-  "box-sizing:border-box;" +
-  "margin:0;" +
-  "padding:10px;" +
-  "border:1px solid #334155;" +
-  "border-radius:12px;" +
-  "background:#0b1729;" +
-  "overflow:visible;";
-                       
- 
+    "position:relative;" +
+    "display:block;" +
+    "width:100%;min-width:0;" +
+    "box-sizing:border-box;" +
+    "margin:0;padding:8px 5px;" +
+    "border:1px solid #334155;" +
+    "border-radius:10px;" +
+    "background:#0b1729;" +
+    "overflow:visible;";
+       
 const removeVideo = document.createElement("button");
 removeVideo.type = "button";
 removeVideo.textContent = "×";
@@ -2288,10 +2283,10 @@ removeVideo.style.cssText =
     "background:#dc2626;color:white;" +
     "font-size:22px;font-weight:bold;" +
     "display:flex;align-items:center;justify-content:center;" +
-    "cursor:pointer;z-index:99999;" +
+    "cursor:pointer;z-index:999999;" +
     "pointer-events:auto;touch-action:manipulation;" +
-    "-webkit-tap-highlight-color:transparent;";
-            
+    "padding:0;margin:0;";
+                
 card.style.position = "relative";
 
 removeVideo.addEventListener("click", () => {
