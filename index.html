@@ -2230,7 +2230,7 @@ if (selectedReferenceVideoFiles.length === 0) {
 
         const name = document.createElement("div");
         
-name.textContent = `Video ${index + 1}: ${file.name}`;
+name.textContent = "";
 name.style.cssText =
 "display:block;" +
 "width:100%;" +
@@ -2251,17 +2251,16 @@ name.style.cssText =
         video.preload = "metadata";
          
 video.style.cssText =
-    "display:block;" +
-    "width:100%;" +
-    "height:auto;" +
-    "min-height:0;" +
-    "max-width:100%;" +
-    "max-height:none;" +
-    "aspect-ratio:16/9;" +
-    "object-fit:contain;" +
-    "border-radius:8px;" +
-    "background:#000;";
-              
+  "display:block;" +
+  "width:100%;" +
+  "height:auto;" +
+  "min-height:0;" +
+  "max-width:100%;" +
+  "aspect-ratio:16/9;" +
+  "object-fit:contain;" +
+  "border-radius:8px;" +
+  "background:#000;";
+               
 card.style.cssText =
     "position:relative;" +
     "display:block;" +
