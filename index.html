@@ -2246,9 +2246,42 @@ name.style.cssText =
            
         const video = document.createElement("video");
         video.src = URL.createObjectURL(file);
-        video.controls = true;
-        video.playsInline = true;
-        video.preload = "metadata";
+        video.controls = false;
+video.playsInline = true;
+video.preload = "metadata";
+const playBtn = document.createElement("button");
+playBtn.type = "button";
+playBtn.textContent = "▶";
+
+playBtn.style.cssText =
+    "position:absolute;" +
+    "left:50%;top:50%;" +
+    "transform:translate(-50%,-50%);" +
+    "width:42px;height:42px;" +
+    "border:0;border-radius:50%;" +
+    "background:#315efb;color:white;" +
+  "display:flex;align-items:center;justify-content:center;" +
+"cursor:pointer;" +
+    "font-size:20px;z-index:5;";
+
+playBtn.onclick = async () => {
+    if (video.paused) {
+        try {
+            await video.play();
+            playBtn.textContent = "❚❚";
+        } catch (error) {
+            playBtn.textContent = "▶";
+        }
+    } else {
+        video.pause();
+        playBtn.textContent = "▶";
+    }
+};
+
+video.onended = () => {
+    playBtn.textContent = "▶";
+};     
+video.muted = true;
          
 video.style.cssText =
   "display:block;" +
@@ -2304,7 +2337,7 @@ removeVideo.addEventListener("click", () => {
   showSelectedFile(inputId, textId);
 });
 
-card.append(name, video, removeVideo);
+card.append(name, video, playBtn, removeVideo);
 text.appendChild(card);
                          
     });
