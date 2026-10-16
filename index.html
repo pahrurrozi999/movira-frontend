@@ -2282,16 +2282,14 @@ video.onclick = () => {
     if (!video.paused) {
         video.pause();
         playBtn.style.display = "flex";
+        playBtn.textContent = "▶";
     }
-};
-
-video.onended = () => {
-    playBtn.style.display = "flex";
-};
-      
+};      
+            
 video.onended = () => {
     playBtn.textContent = "▶";
-};     
+    playBtn.style.display = "flex";
+};
 video.muted = true;
          
 video.style.cssText =
