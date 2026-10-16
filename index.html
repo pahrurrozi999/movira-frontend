@@ -2277,15 +2277,18 @@ playBtn.onclick = async () => {
         playBtn.style.display = "flex";
     }
 };
+ 
+video.onclick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-video.onclick = () => {
     if (!video.paused) {
         video.pause();
-        playBtn.style.display = "flex";
         playBtn.textContent = "▶";
+        playBtn.style.display = "flex";
     }
-};      
-            
+};
+                 
 video.onended = () => {
     playBtn.textContent = "▶";
     playBtn.style.display = "flex";
