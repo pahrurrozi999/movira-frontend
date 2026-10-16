@@ -2268,16 +2268,27 @@ playBtn.onclick = async () => {
     if (video.paused) {
         try {
             await video.play();
-            playBtn.textContent = "❚❚";
+            playBtn.style.display = "none";
         } catch (error) {
-            playBtn.textContent = "▶";
+            playBtn.style.display = "flex";
         }
     } else {
         video.pause();
-        playBtn.textContent = "▶";
+        playBtn.style.display = "flex";
     }
 };
 
+video.onclick = () => {
+    if (!video.paused) {
+        video.pause();
+        playBtn.style.display = "flex";
+    }
+};
+
+video.onended = () => {
+    playBtn.style.display = "flex";
+};
+      
 video.onended = () => {
     playBtn.textContent = "▶";
 };     
