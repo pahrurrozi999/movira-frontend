@@ -2232,16 +2232,18 @@ if (selectedReferenceVideoFiles.length === 0) {
         
 name.textContent = `Video ${index + 1}: ${file.name}`;
 name.style.cssText =
-  "display:block;" +
-  "width:100%;" +
-  "height:auto;" +
-  "min-height:24px;" +
-  "margin-bottom:8px;" +
-  "overflow-wrap:anywhere;" +
-  "white-space:normal;" +
-  "line-height:1.5;" +
-  "flex-shrink:0;";
-      
+"display:block;" +
+"width:100%;" +
+"font-size:11px;" +
+"height:auto;" +
+"min-height:0;" +
+"margin-bottom:6px;" +
+"overflow-wrap:anywhere;" +
+"word-break:break-word;" +
+"white-space:normal;" +
+"line-height:1.3;" +
+"flex-shrink:0;";
+           
         const video = document.createElement("video");
         video.src = URL.createObjectURL(file);
         video.controls = true;
@@ -2288,7 +2290,8 @@ removeVideo.style.cssText =
     "padding:0;margin:0;";
                 
 card.style.position = "relative";
-
+removeVideo.style.pointerEvents = "auto";
+removeVideo.style.zIndex = "999999";
 removeVideo.addEventListener("click", () => {
   selectedReferenceVideoFiles.splice(index, 1);
 
