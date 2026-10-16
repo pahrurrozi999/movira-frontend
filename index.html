@@ -304,6 +304,14 @@ body{overflow-x:hidden}
     </label>
     <input id="referenceVideoFiles" type="file"
       accept="video/mp4,video/quicktime" multiple hidden>
+    <button id="addReferenceVideoBtn" type="button"
+style="display:block;width:100%;min-height:48px;
+margin:8px 0 0;padding:12px;
+border:1px dashed #64748b;border-radius:10px;
+background:#13243b;color:#fff;font-size:16px;
+cursor:pointer;">
++ Tambah Video
+    </button>
   </div>
 </div>
   
@@ -2198,7 +2206,14 @@ text.style.scrollPadding = "12px";
 text.style.overflowY = "auto";
 text.style.overflowX = "hidden";
 text.style.boxSizing = "border-box";
-     
+  
+ const addReferenceVideoBtn =
+    document.getElementById("addReferenceVideoBtn");
+
+if (addReferenceVideoBtn) {
+    addReferenceVideoBtn.style.display =
+        selectedReferenceVideoFiles.length < 3 ? "block" : "none";
+  }    
 if (selectedReferenceVideoFiles.length === 0) {
     text.textContent = "Belum ada video referensi.";
 }
@@ -2289,43 +2304,31 @@ text.appendChild(card);
                          
     });
   
-const addVideoBtn = document.createElement("button");
-addVideoBtn.type = "button";
-addVideoBtn.textContent = "+ Tambah Video";
-addVideoBtn.style.cssText =
-  "display:block;" +
-  "width:100%;" +
-  "min-height:48px;" +
-  "margin:4px 0 8px;" +
-  "padding:12px;" +
-  "border:1px dashed #64748b;" +
-  "border-radius:10px;" +
-  "background:#13243b;" +
-  "color:#fff;" +
-  "font-size:16px;" +
-  "cursor:pointer;";
-
-addVideoBtn.addEventListener("click", () => {
-  referenceVideoFiles.click();
-});
-
-text.appendChild(addVideoBtn);
-  
     return;
     }
 
-    
     text.innerHTML =
       "<b>" + files.map(file => file.name).join("<br>") +
       "</b><br><span class='muted'>File berhasil dipilih</span>";
   });
                    }
-    
-       
+         
 showSelectedFile("referenceImageFiles", "referenceImageText");
 showSelectedFile("sourceVideoFile", "sourceVideoText");
 showSelectedFile("referenceVideoFiles", "referenceVideoText");
 
+const addReferenceVideoBtn =
+    document.getElementById("addReferenceVideoBtn");
+
+const referenceVideoInput =
+    document.getElementById("referenceVideoFiles");
+
+if (addReferenceVideoBtn && referenceVideoInput) {
+    addReferenceVideoBtn.onclick = () => {
+        referenceVideoInput.click();
+    };
+  }
+  
 </script>
 </body>
 </html>
