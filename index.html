@@ -2199,11 +2199,10 @@ text.style.overflowY = "auto";
 text.style.overflowX = "hidden";
 text.style.boxSizing = "border-box";
      
-    if (selectedReferenceVideoFiles.length === 0) {
-        text.textContent = "Belum ada video referensi.";
-        return;
-    }
-
+if (selectedReferenceVideoFiles.length === 0) {
+    text.textContent = "Belum ada video referensi.";
+}
+  
     selectedReferenceVideoFiles.forEach((file, index) => {
         const card = document.createElement("div");
         card.style.cssText =
@@ -2211,10 +2210,19 @@ text.style.boxSizing = "border-box";
             "border:1px solid #334155;border-radius:8px;";
 
         const name = document.createElement("div");
-        name.textContent = `Video ${index + 1}: ${file.name}`;
-        name.style.cssText =
-            "margin-bottom:8px;overflow-wrap:anywhere;";
-
+        
+name.textContent = `Video ${index + 1}: ${file.name}`;
+name.style.cssText =
+  "display:block;" +
+  "width:100%;" +
+  "height:auto;" +
+  "min-height:24px;" +
+  "margin-bottom:8px;" +
+  "overflow-wrap:anywhere;" +
+  "white-space:normal;" +
+  "line-height:1.5;" +
+  "flex-shrink:0;";
+      
         const video = document.createElement("video");
         video.src = URL.createObjectURL(file);
         video.controls = true;
