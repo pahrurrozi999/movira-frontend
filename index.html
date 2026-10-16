@@ -103,8 +103,13 @@ min-width:0;
 }
 
 #menuBtn{display:block}
-body{overflow-x:hidden}
 
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
+}
+  
 .app{
   display:block !important;
   width:100% !important;
@@ -2204,7 +2209,6 @@ text.style.maxHeight = "none";
 text.style.padding = "4px 2px 12px";
 text.style.scrollPadding = "12px";
 text.style.overflowY = "auto";
-text.style.overflowY = "visible";
 text.style.overflowX = "hidden";
   
  const addReferenceVideoBtn =
