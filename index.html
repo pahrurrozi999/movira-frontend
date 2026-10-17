@@ -2446,15 +2446,21 @@ video.addEventListener("waiting", () => {
 });
 
 video.addEventListener("error", () => {
-  const errorCode = video.error ? video.error.code : 0;
-  const errorMessage = video.error
-    ? video.error.message
+  const err = video.error;
+  const errorCode = err ? err.code : 0;
+  const errorMessage = err
+    ? err.message
     : "Tidak ada detail error";
 
+  videoStatus.style.overflowWrap = "anywhere";
   videoStatus.textContent =
-    "Error video (" + errorCode + "): " + errorMessage;
+    "Error video (" + errorCode + "): " + errorMessage +
+    " | Tipe: " + (file.type || "tidak diketahui") +
+    " | Ukuran: " + (file.size / 1048576).toFixed(2) + " MB" +
+    " | Ready: " + video.readyState +
+    " | Network: " + video.networkState;
 });
-
+  
 video.addEventListener("stalled", () => {
   videoStatus.textContent = "Pemutaran terhenti saat memuat data";
 });
