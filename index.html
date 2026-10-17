@@ -2413,6 +2413,10 @@ if (inputId === "sourceVideoFile") {
   video.controls = true;
   video.playsInline = true;
   video.preload = "metadata";
+  video.load();
+video.addEventListener("error", () => {
+  console.error("Preview video gagal:", video.error);
+});
   video.style.cssText =
   "display:block;width:100%;max-width:320px;" +
   "height:auto;max-height:220px;" +
