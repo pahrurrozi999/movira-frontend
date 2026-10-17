@@ -2420,8 +2420,8 @@ text.replaceChildren();
 previewBox.style.cssText =
   "display:flex;flex-direction:column;gap:10px;" +
   "align-items:center;width:100%;padding:10px;" +
-  "box-sizing:border-box;overflow-x:auto;" +
-  "overflow-y:auto;max-width:100%;";
+  "box-sizing:border-box;max-height:320px;" +
+  "overflow-y:auto;overflow-x:hidden;";
   
   const video = document.createElement("video");
   const videoUrl = URL.createObjectURL(file);
