@@ -2388,9 +2388,90 @@ text.appendChild(card);
     return;
     }
 
-    text.innerHTML =
-      "<b>" + files.map(file => file.name).join("<br>") +
-      "</b><br><span class='muted'>File berhasil dipilih</span>";
+  
+if (inputId === "sourceVideoFile") {
+  const file = files[0];
+
+  if (!file.type.startsWith("video/")) {
+    alert("Pilih file video yang valid.");
+    input.value = "";
+    sourceVideo = "";
+    return;
+  }
+
+  text.replaceChildren();
+
+  const previewBox = document.createElement("div");
+  previewBox.style.cssText =
+    "display:flex;flex-direction:column;gap:10px;" +
+    "align-items:center;width:100%;padding:10px;box-sizing:border-box;";
+
+  const video = document.createElement("video");
+  const videoUrl = URL.createObjectURL(file);
+
+  video.src = videoUrl;
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.style.cssText =
+    "display:block;width:100%;max-height:260px;" +
+    "object-fit:contain;border-radius:10px;background:#000;";
+
+  const fileName = document.createElement("div");
+  fileName.textContent = file.name;
+  fileName.style.cssText =
+    "text-align:center;overflow-wrap:anywhere;font-weight:bold;";
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "✕ Hapus Video";
+  removeBtn.style.cssText =
+    "padding:10px 16px;border:0;border-radius:8px;" +
+    "background:#dc2626;color:white;font-weight:bold;";
+
+  removeBtn.onclick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    URL.revokeObjectURL(videoUrl);
+
+    input.value = "";
+    sourceVideo = "";
+    text.replaceChildren();
+
+    const title = document.createElement("b");
+    title.textContent = "Add Source Video";
+
+    const hint = document.createElement("span");
+    hint.className = "muted";
+    hint.textContent =
+      "Klik untuk mengunggah video sumber";
+
+    const format = document.createElement("span");
+    format.className = "muted";
+    format.textContent = "MP4, maksimal 100 MB";
+
+    text.append(
+      document.createElement("br"),
+      title,
+      document.createElement("br"),
+      hint,
+      document.createElement("br"),
+      format
+    );
+  };
+
+  previewBox.append(fileName, video, removeBtn);
+  text.appendChild(previewBox);
+} else {
+  text.innerHTML =
+    "<b>" + files.map(file => file.name).join("<br>") +
+    "</b><br><span class='muted'>File berhasil dipilih</span>";
+  }
+  
   });
                    }
          
