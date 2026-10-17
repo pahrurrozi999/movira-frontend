@@ -2344,6 +2344,7 @@ removeVideo.onclick = (event) => {
 
   if (fileToRemove) {
     selectedReferenceVideoFiles.splice(index, 1);
+    alert("Jumlah video tersisa: " + selectedReferenceVideoFiles.length);
   }
 
   const transfer = new DataTransfer();
