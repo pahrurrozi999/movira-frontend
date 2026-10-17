@@ -2387,8 +2387,7 @@ text.appendChild(card);
   
     return;
     }
-
-  
+ 
 if (inputId === "sourceVideoFile") {
   const file = files[0];
 
@@ -2398,9 +2397,24 @@ if (inputId === "sourceVideoFile") {
     sourceVideo = "";
     return;
   }
+  
+const oldVideo = text.querySelector("video");
 
-  text.replaceChildren();
+if (oldVideo) {
+  oldVideo.pause();
 
+  const oldVideoUrl = oldVideo.getAttribute("src");
+
+  oldVideo.removeAttribute("src");
+  oldVideo.load();
+
+  if (oldVideoUrl && oldVideoUrl.startsWith("blob:")) {
+    URL.revokeObjectURL(oldVideoUrl);
+  }
+}
+
+text.replaceChildren();
+  
   const previewBox = document.createElement("div");
   previewBox.style.cssText =
     "display:flex;flex-direction:column;gap:10px;" +
