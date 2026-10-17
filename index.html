@@ -2336,20 +2336,26 @@ removeVideo.style.cssText =
 card.style.position = "relative";
 removeVideo.style.pointerEvents = "auto";
 removeVideo.style.zIndex = "999999";
-removeVideo.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+removeVideo.onclick = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const fileToRemove = selectedReferenceVideoFiles[index];
+
+  if (fileToRemove) {
     selectedReferenceVideoFiles.splice(index, 1);
+  }
 
   const transfer = new DataTransfer();
-  selectedReferenceVideoFiles.forEach(file => {
+
+  selectedReferenceVideoFiles.forEach((file) => {
     transfer.items.add(file);
   });
 
   input.files = transfer.files;
 
   showSelectedFile(inputId, textId);
-});
+};
 
 card.append(name, video, playBtn, removeVideo);
 text.appendChild(card);
