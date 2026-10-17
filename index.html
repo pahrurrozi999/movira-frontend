@@ -2416,10 +2416,9 @@ if (oldVideo) {
 text.replaceChildren();
   
   const previewBox = document.createElement("div");
-  
-previewBox.style.cssText =
-  "display:flex;flex-direction:column;gap:10px;" +
-  "align-items:center;width:100%;padding:10px;box-sizing:border-box;";
+  previewBox.style.cssText =
+    "display:flex;flex-direction:column;gap:10px;" +
+    "align-items:center;width:100%;padding:10px;box-sizing:border-box;";
   
   const video = document.createElement("video");
   const videoUrl = URL.createObjectURL(file);
