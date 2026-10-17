@@ -2337,6 +2337,7 @@ card.style.position = "relative";
 removeVideo.style.pointerEvents = "auto";
 removeVideo.style.zIndex = "999999";
 removeVideo.addEventListener("click", (event) => {
+  alert("Tombol X tertekan");
     event.preventDefault();
     event.stopPropagation();
     selectedReferenceVideoFiles.splice(index, 1);
