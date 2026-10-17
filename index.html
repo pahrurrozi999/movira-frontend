@@ -2205,7 +2205,7 @@ text.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
 text.style.alignItems = "start";
 text.style.gap = "10px";
 text.style.width = "100%";
-text.style.maxHeight = "none";
+text.style.maxHeight = "400px";
 text.style.padding = "4px 2px 12px";
 text.style.scrollPadding = "12px";
 text.style.overflowY = "auto";
@@ -2213,7 +2213,8 @@ text.style.overflowX = "hidden";
   
  const addReferenceVideoBtn =
     document.getElementById("addReferenceVideoBtn");
-
+  
+text.innerHTML = "";
 if (addReferenceVideoBtn) {
     addReferenceVideoBtn.style.display =
         selectedReferenceVideoFiles.length < 3 ? "block" : "none";
