@@ -2341,31 +2341,43 @@ removeVideo.onclick = (event) => {
   event.preventDefault();
   event.stopPropagation();
 
-  const fileToRemove = selectedReferenceVideoFiles[index];
+  const currentIndex =
+    selectedReferenceVideoFiles.indexOf(file);
 
-  if (fileToRemove) {
-    selectedReferenceVideoFiles.splice(index, 1);
+  if (currentIndex === -1) return;
+
+  selectedReferenceVideoFiles.splice(currentIndex, 1);
+
+  const oldUrl = video.src;
+
+  card.remove();
+
+  if (oldUrl.startsWith("blob:")) {
+    URL.revokeObjectURL(oldUrl);
   }
 
   const transfer = new DataTransfer();
 
-  selectedReferenceVideoFiles.forEach((file) => {
-    transfer.items.add(file);
+  selectedReferenceVideoFiles.forEach((item) => {
+    transfer.items.add(item);
   });
 
- input.files = transfer.files;
+  input.files = transfer.files;
 
-if (selectedReferenceVideoFiles.length > 0) {
-  input.dispatchEvent(new Event("change", { bubbles: true }));
-} else {
-  text.replaceChildren();
-  text.textContent = "Belum ada video referensi.";
+  const addBtn =
+    document.getElementById("addReferenceVideoBtn");
 
-  const addBtn = document.getElementById("addReferenceVideoBtn");
   if (addBtn) {
-    addBtn.style.display = "block";
+    addBtn.style.display =
+      selectedReferenceVideoFiles.length < 3
+        ? "block"
+        : "none";
   }
-}
+
+  if (selectedReferenceVideoFiles.length === 0) {
+    text.replaceChildren();
+    text.textContent = "Belum ada video referensi.";
+  }
 };
 
 card.append(name, video, playBtn, removeVideo);
