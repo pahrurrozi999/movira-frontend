@@ -2414,9 +2414,39 @@ if (inputId === "sourceVideoFile") {
   video.playsInline = true;
   video.preload = "metadata";
   video.load();
-video.addEventListener("error", () => {
-  console.error("Preview video gagal:", video.error);
+
+const videoStatus = document.createElement("div");
+videoStatus.textContent = "Memuat video...";
+videoStatus.style.cssText =
+  "font-size:13px;color:#cbd5e1;text-align:center;";
+
+video.addEventListener("loadedmetadata", () => {
+  videoStatus.textContent =
+    "Durasi video: " + Math.round(video.duration) + " detik";
 });
+
+video.addEventListener("playing", () => {
+  videoStatus.textContent = "Video sedang diputar";
+});
+
+video.addEventListener("waiting", () => {
+  videoStatus.textContent = "Video sedang memuat...";
+});
+
+video.addEventListener("error", () => {
+  const errorCode = video.error ? video.error.code : 0;
+  const errorMessage = video.error
+    ? video.error.message
+    : "Tidak ada detail error";
+
+  videoStatus.textContent =
+    "Error video (" + errorCode + "): " + errorMessage;
+});
+
+video.addEventListener("stalled", () => {
+  videoStatus.textContent = "Pemutaran terhenti saat memuat data";
+});
+  
   video.style.cssText =
   "display:block;width:100%;max-width:320px;" +
   "height:auto;max-height:220px;" +
@@ -2468,7 +2498,7 @@ video.addEventListener("error", () => {
     );
   };
 
-  previewBox.append(fileName, video, removeBtn);
+  previewBox.append(fileName, video, videoStatus, removeBtn);
   text.appendChild(previewBox);
 } else {
   text.innerHTML =
