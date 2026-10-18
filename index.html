@@ -2062,6 +2062,42 @@ updateCurrencyPrices();
   prompt.value = prompts[template.dataset.template] || "";
 });
 
+function updateActiveModelDisplay() {
+  const modelsBox = document.getElementById("models");
+  if (!modelsBox) return;
+
+  let label = document.getElementById("activeModelLabel");
+
+  if (!label) {
+    label = document.createElement("div");
+    label.id = "activeModelLabel";
+    label.style.cssText =
+      "margin-top:10px;padding:10px 12px;border-radius:10px;" +
+      "background:#142344;color:#dbeafe;font-size:14px;" +
+      "font-weight:600;border:1px solid #3557a5;";
+    modelsBox.insertAdjacentElement("afterend", label);
+  }
+
+  const modes = document.querySelectorAll(".mode-card");
+  const isReference = modes[1]?.classList.contains("selected");
+  const isVideoToVideo = modes[2]?.classList.contains("selected");
+
+  let activeName;
+
+  if (isReference) {
+    activeName = "Wan 2.6 Reference to Video Flash";
+  } else if (isVideoToVideo) {
+    activeName = "Wan 2.2 A14B Video to Video";
+  } else {
+    const selected = document.querySelector("#models button.selected");
+    activeName = selected
+      ? selected.textContent.trim()
+      : "Wan 3.0 Prime";
+  }
+
+  label.textContent = "Model aktif: " + activeName;
+}
+  
 const modeCards = document.querySelectorAll(".mode-card");
 const imageToVideoUpload = document.getElementById("imageToVideoUpload");
 const referenceModeBox = document.getElementById("referenceModeBox");
