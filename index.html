@@ -2487,14 +2487,20 @@ video.style.cssText =
   fileName.textContent = file.name;
   fileName.style.cssText =
     "text-align:center;overflow-wrap:anywhere;font-weight:bold;";
-
-  const removeBtn = document.createElement("button");
-  removeBtn.type = "button";
-  removeBtn.textContent = "✕ Hapus Video";
-  removeBtn.style.cssText =
-    "padding:10px 16px;border:0;border-radius:8px;" +
-    "background:#dc2626;color:white;font-weight:bold;";
-
+  
+const removeBtn = document.createElement("button");
+removeBtn.type = "button";
+removeBtn.textContent = "×";
+removeBtn.title = "Hapus video";
+removeBtn.style.cssText =
+  "position:absolute;top:5px;right:5px;" +
+  "width:28px;height:28px;min-width:28px;" +
+  "padding:0;border:0;border-radius:50%;" +
+  "background:#dc2626;color:white;" +
+  "font-size:22px;font-weight:bold;" +
+  "display:flex;align-items:center;" +
+  "justify-content:center;z-index:10;";
+  
   removeBtn.onclick = (event) => {
     event.preventDefault();
     event.stopPropagation();
