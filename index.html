@@ -2109,16 +2109,40 @@ modeCards.forEach((card, index) => {
     card.classList.add("selected");
 const modelButtons = document.querySelectorAll("#models button");
 
-if (index === 1 || index === 2) {
+const wan26Button = Array.from(modelButtons).find(
+  button => button.dataset.value === "wan/v2.6/image-to-video"
+);
+
+if (index === 1) {
+  modelButtons.forEach(button => {
+    const active = button === wan26Button;
+    button.classList.toggle("selected", active);
+    button.disabled = !active;
+    button.style.opacity = active ? "1" : "0.35";
+    button.style.cursor = active ? "default" : "not-allowed";
+  });
+} else if (index === 2) {
   modelButtons.forEach(button => {
     button.classList.remove("selected");
+    button.disabled = true;
+    button.style.opacity = "0.35";
+    button.style.cursor = "not-allowed";
   });
-} else if (!document.querySelector("#models button.selected")) {
-  const defaultButton = document.querySelector(
-    '#models button[data-value="alibaba/wan-3.0-prime/image-to-video"]'
-  );
-  if (defaultButton) defaultButton.classList.add("selected");
+} else {
+  modelButtons.forEach(button => {
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.style.cursor = "pointer";
+  });
+
+  if (!document.querySelector("#models button.selected")) {
+    const defaultButton = document.querySelector(
+      '#models button[data-value="alibaba/wan-3.0-prime/image-to-video"]'
+    );
+    if (defaultButton) defaultButton.classList.add("selected");
+  }
 }
+    
     if (referenceModeBox) {
       referenceModeBox.style.display = index === 1 ? "block" : "none";
     }
@@ -2138,7 +2162,8 @@ if (index === 1) {
 }
     
     updateResolutionOptions();
-updateCreditCost();
+    updateCreditCost();
+    updateActiveModelDisplay();
   });
 });
 
