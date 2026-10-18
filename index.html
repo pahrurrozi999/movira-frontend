@@ -2071,7 +2071,18 @@ modeCards.forEach((card, index) => {
   card.addEventListener("click", () => {
     modeCards.forEach(item => item.classList.remove("selected"));
     card.classList.add("selected");
+const modelButtons = document.querySelectorAll("#models button");
 
+if (index === 1 || index === 2) {
+  modelButtons.forEach(button => {
+    button.classList.remove("selected");
+  });
+} else if (!document.querySelector("#models button.selected")) {
+  const defaultButton = document.querySelector(
+    '#models button[data-value="alibaba/wan-3.0-prime/image-to-video"]'
+  );
+  if (defaultButton) defaultButton.classList.add("selected");
+}
     if (referenceModeBox) {
       referenceModeBox.style.display = index === 1 ? "block" : "none";
     }
