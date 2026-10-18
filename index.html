@@ -890,13 +890,19 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   "720p": {5:35,10:70}
 },
 };
-  const isVideoToVideoMode =
+  
+const isReferenceMode =
+  document.querySelectorAll(".mode-card")[1]?.classList.contains("selected");
+
+const isVideoToVideoMode =
   document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
 
-const selectedModel = isVideoToVideoMode
+const selectedModel = isReferenceMode
+  ? "wan/v2.6/reference-to-video/flash"
+  : isVideoToVideoMode
   ? "fal-ai/wan/v2.2-a14b/video-to-video"
   : document.querySelector("#models button.selected")?.dataset.value || model;
-
+   
   const selectedResolution =
     document.querySelector("#resolutions button.selected")?.dataset.value || resolution;
 
@@ -1103,8 +1109,17 @@ async function generateRealVideo(){
 
   const prompt=document.getElementById("prompt").value.trim();
   if(prompt.length<3){alert("Tulis prompt terlebih dahulu.");return}
-const selectedModel = document.querySelector("#models button.selected")?.dataset.value || model;
+const isReferenceMode =
+  document.querySelectorAll(".mode-card")[1]?.classList.contains("selected");
 
+const isVideoToVideoMode =
+  document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
+
+const selectedModel = isReferenceMode
+  ? "wan/v2.6/reference-to-video/flash"
+  : isVideoToVideoMode
+  ? "fal-ai/wan/v2.2-a14b/video-to-video"
+  : document.querySelector("#models button.selected")?.dataset.value || model;
 if (selectedModel === "wan/v2.6/reference-to-video/flash") {
   referenceImages = await readReferenceFiles(referenceImageFiles);
   referenceVideos = await readReferenceFiles(referenceVideoFiles);
@@ -1166,11 +1181,11 @@ const response=await fetch(`${API_BASE}/api/generate`,{
   body:JSON.stringify({
   prompt,
   ratio,
-  duration:model === "fal-ai/veo3.1/lite/image-to-video"
+  duration: selectedModel === "fal-ai/veo3.1/lite/image-to-video"
   ? `${Number(duration)}s`
-  : Number(duration),
+  : Number(duration), 
   resolution,
-model,
+model: selectedModel,
 imageData,
 referenceImages,
 referenceVideos,
@@ -2047,6 +2062,15 @@ modeCards.forEach((card, index) => {
     if (videoToVideoUpload) {
       videoToVideoUpload.style.display = index === 2 ? "block" : "none";
     }
+    
+if (index === 1) {
+  model = "wan/v2.6/reference-to-video/flash";
+} else if (index === 2) {
+  model = "fal-ai/wan/v2.2-a14b/video-to-video";
+} else {
+  model = document.querySelector("#models button.selected")?.dataset.value || "alibaba/wan-3.0-prime/image-to-video";
+}
+    
     updateResolutionOptions();
 updateCreditCost();
   });
