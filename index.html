@@ -964,11 +964,12 @@ const veoButton = Array.from(modelButtons).find(btn =>
   btn.dataset.value === "fal-ai/veo3.1/lite/image-to-video"
 );
 
-if (veoButton) {
-  veoButton.disabled = isVideoToVideoMode;
-  veoButton.style.opacity = isVideoToVideoMode ? "0.35" : "1";
-  veoButton.style.cursor = isVideoToVideoMode ? "not-allowed" : "pointer";
-
+veoButton.disabled = isReferenceMode || isVideoToVideoMode;
+veoButton.style.opacity =
+  isReferenceMode || isVideoToVideoMode ? "0.35" : "1";
+veoButton.style.cursor =
+  isReferenceMode || isVideoToVideoMode ? "not-allowed" : "pointer";
+  
   if (isVideoToVideoMode && veoButton.classList.contains("selected")) {
     veoButton.classList.remove("selected");
 
