@@ -2440,6 +2440,12 @@ videoStatus.style.cssText =
 video.addEventListener("loadedmetadata", () => {
   videoStatus.textContent =
     "Durasi video: " + Math.round(video.duration) + " detik";
+      if (video.videoHeight > video.videoWidth) {
+        previewBox.style.width = "fit-content";
+        previewBox.style.maxWidth = "180px";
+        video.style.width = "140px";
+        video.style.maxWidth = "140px";
+        }
 });
 
 video.addEventListener("playing", () => {
