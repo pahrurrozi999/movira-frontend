@@ -2073,6 +2073,20 @@ if (index === 1) {
     
     updateResolutionOptions();
 updateCreditCost();
+    
+const modelButtons = document.querySelectorAll("#models button");
+
+modelButtons.forEach(button => {
+  const disableForReference = index === 1;
+  const disableForVideoToVideo =
+    index === 2 &&
+    button.dataset.value === "fal-ai/veo3.1/lite/image-to-video";
+
+  button.disabled = disableForReference || disableForVideoToVideo;
+  button.style.opacity = button.disabled ? "0.35" : "1";
+  button.style.cursor = button.disabled ? "not-allowed" : "pointer";
+});
+
   });
 });
 
