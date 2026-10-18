@@ -2474,14 +2474,14 @@ video.addEventListener("stalled", () => {
 video.load();
   
   video.style.cssText =
-  "display:block;" +
-  "width:100%;" +
-  "max-width:140px;" +
-  "height:auto;" +
-  "max-height:200px;" +
-  "object-fit:contain;" +
-  "object-position:center;" +
-  "background:#000;";  
+"display:block;" +
+"width:auto;" +
+"max-width:100%;" +
+"height:auto;" +
+"max-height:200px;" +
+"object-fit:contain;" +
+"object-position:center;" +
+"background:#000;";
     
   const fileName = document.createElement("div");
   fileName.textContent = file.name;
