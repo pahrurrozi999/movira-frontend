@@ -1087,10 +1087,11 @@ document.querySelectorAll("#models button").forEach(b => b.onclick = () => {
 
   document.querySelectorAll("#models button").forEach(x => x.classList.remove("selected"));
 
-  b.classList.add("selected");
-  model = b.dataset.value;
-  updateResolutionOptions();
-  updateCreditCost();
+b.classList.add("selected");
+model = b.dataset.value;
+updateResolutionOptions();
+updateCreditCost();
+updateActiveModelDisplay();
 });
 
 updateResolutionOptions();
