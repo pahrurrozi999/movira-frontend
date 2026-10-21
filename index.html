@@ -2724,12 +2724,21 @@ async function refreshVideoQueue() {
   refreshVideoQueueBtn.disabled = true;
 
   try {
-    if (typeof session === "undefined" || !session?.access_token) {
-      videoQueueStatus.textContent = "Silakan login untuk melihat antrean video.";
+    
+    const { data: { session }, error: sessionError } =
+      await moviraSupabase.auth.getSession();
+
+    if (sessionError) {
+      throw new Error("Gagal membaca sesi login. Silakan coba lagi.");
+    }
+
+    if (!session?.access_token) {
+      videoQueueStatus.textContent =
+        "Sesi login belum terbaca. Silakan login kembali.";
       videoQueueList.replaceChildren();
       return;
     }
-
+    
     const response = await fetch(`${API_BASE}/api/video-requests`, {
       headers: {
         Authorization: `Bearer ${session.access_token}`
