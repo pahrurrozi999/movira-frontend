@@ -545,6 +545,22 @@ Veo 3.1 Lite ⭐
 
   </div>
 </section>
+ 
+<section class="card" id="videoQueuePanel" style="margin-top:16px;padding:16px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div>
+      <h3 style="margin:0;">Antrean Video</h3>
+      <div class="muted" style="margin-top:6px;">Pantau status video yang kamu buat.</div>
+    </div>
+    <button type="button" id="refreshVideoQueue">Perbarui</button>
+  </div>
+
+  <div id="videoQueueStatus" class="muted" style="margin-top:14px;">
+    Login untuk melihat antrean video.
+  </div>
+
+  <div id="videoQueueList" style="display:grid;gap:10px;margin-top:12px;"></div>
+</section>
   
 </main>
 </div>
@@ -2697,6 +2713,91 @@ if (addReferenceVideoBtn && referenceVideoInput) {
     };
   }
   
+const videoQueueStatus = document.getElementById("videoQueueStatus");
+const videoQueueList = document.getElementById("videoQueueList");
+const refreshVideoQueueBtn = document.getElementById("refreshVideoQueue");
+
+async function refreshVideoQueue() {
+  if (!videoQueueStatus || !videoQueueList) return;
+
+  videoQueueStatus.textContent = "Memuat antrean video...";
+  refreshVideoQueueBtn.disabled = true;
+
+  try {
+    if (typeof session === "undefined" || !session?.access_token) {
+      videoQueueStatus.textContent = "Silakan login untuk melihat antrean video.";
+      videoQueueList.replaceChildren();
+      return;
+    }
+
+    const response = await fetch(`${API_BASE}/api/video-requests`, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Gagal memuat antrean video.");
+    }
+
+    const requests = Array.isArray(data.requests) ? data.requests : [];
+    videoQueueList.replaceChildren();
+
+    if (requests.length === 0) {
+      videoQueueStatus.textContent = "Belum ada permintaan video.";
+      return;
+    }
+
+    videoQueueStatus.textContent = `${requests.length} permintaan video terbaru`;
+
+    const labels = {
+      submitted: "Menunggu",
+      processing: "Sedang diproses",
+      succeeded: "Berhasil",
+      failed_confirmed: "Gagal terkonfirmasi",
+      unknown: "Status belum pasti"
+    };
+
+    requests.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.cssText = "padding:12px;border:1px solid var(--border,#ddd);";
+
+      const title = document.createElement("strong");
+      title.textContent = item.model || "Video AI";
+
+      const status = document.createElement("div");
+      status.style.marginTop = "6px";
+      status.textContent = `Status: ${labels[item.status] || item.status || "Tidak diketahui"}`;
+
+      const details = document.createElement("div");
+      details.className = "muted";
+      details.style.marginTop = "6px";
+
+      const date = item.created_at
+        ? new Date(item.created_at).toLocaleString()
+        : "Waktu tidak tersedia";
+
+      details.textContent = `${item.credit_amount} Kredit • ${date}`;
+
+      card.append(title, status, details);
+      videoQueueList.appendChild(card);
+    });
+  } catch (error) {
+    videoQueueStatus.textContent = error.message || "Gagal memuat antrean.";
+  } finally {
+    refreshVideoQueueBtn.disabled = false;
+  }
+}
+
+if (refreshVideoQueueBtn) {
+  refreshVideoQueueBtn.addEventListener("click", refreshVideoQueue);
+  refreshVideoQueue();
+  setInterval(refreshVideoQueue, 30000);
+  }
+                     
 </script>
 </body>
 </html>
