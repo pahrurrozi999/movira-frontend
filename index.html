@@ -339,7 +339,27 @@ cursor:pointer;">
   
       <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
       <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
-      
+   <div class="muted" style="margin-top:12px;">
+  Template Prompt Siap Pakai
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+  <button type="button" onclick="usePromptTemplate('Cinematic scene, smooth camera movement, realistic lighting, detailed environment.')">
+    Sinematik
+  </button>
+
+  <button type="button" onclick="usePromptTemplate('A cute character walks slowly, smiles naturally, and looks around with smooth animation.')">
+    Karakter Lucu
+  </button>
+
+  <button type="button" onclick="usePromptTemplate('A peaceful nature scene with flowing water, moving leaves, soft sunlight, and a gentle camera pan.')">
+    Pemandangan
+  </button>
+
+  <button type="button" onclick="usePromptTemplate('A product rotates slowly in the center, with clean lighting, smooth camera movement, and a professional presentation.')">
+    Produk
+  </button>
+</div>   
   </div>
   
       <br><br>
@@ -566,6 +586,20 @@ Veo 3.1 Lite ⭐
 </div>
 <script>
 const API_BASE = "https://movira-backend-1.onrender.com";
+  function usePromptTemplate(template) {
+  const promptBox = document.getElementById("prompt");
+
+  if (!promptBox) {
+    return;
+  }
+
+  promptBox.value = template;
+  promptBox.dispatchEvent(new Event("input", {
+    bubbles: true
+  }));
+
+  promptBox.focus();
+  }
   function toggleProfile() {
   const box = document.getElementById("authBox");
   const upgrade = document.querySelector(".upgrade");
