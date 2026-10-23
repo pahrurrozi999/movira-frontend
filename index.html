@@ -2935,6 +2935,266 @@ if (refreshVideoHistoryBtn) {
   refreshVideoHistory();
   } 
   
+  // ===== MOVIRA AI: PROYEK + AUTO-SAVE =====
+(function () {
+  const projectBox = document.createElement("div");
+  projectBox.id = "moviraProjects";
+  projectBox.className = "card";
+  projectBox.style.cssText =
+    "margin-top:18px;padding:16px;border:1px solid #2b405d;border-radius:14px;background:#0c1a2d;color:#fff;";
+
+  projectBox.innerHTML = `
+    <h3 style="margin:0 0 12px">📁 Proyek Saya</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <input id="projectName" type="text" placeholder="Nama proyek"
+        value="Proyek Baru"
+        style="flex:1;min-width:150px;padding:10px;border-radius:8px">
+      <button id="newProjectBtn" type="button">＋ Proyek Baru</button>
+      <button id="saveProjectBtn" type="button">Simpan Sekarang</button>
+    </div>
+    <div id="projectSaveStatus" style="font-size:12px;color:#9fb1c9;margin-bottom:10px">
+      Menyiapkan proyek...
+    </div>
+    <div id="projectList"></div>
+  `;
+
+  function mountProjectBox() {
+    if (document.getElementById("moviraProjects")) return;
+
+    const home = document.getElementById("homePage");
+    if (home) {
+      home.appendChild(projectBox);
+    } else {
+      const main = document.querySelector(".main");
+      if (main) main.appendChild(projectBox);
+    }
+  }
+
+  let currentProjectId = null;
+  let saveTimer = null;
+  let loadingProjects = false;
+
+  function getPromptElement() {
+    return document.querySelector(
+      'textarea[placeholder*="rompt"], textarea[id*="prompt" i], textarea[name*="prompt" i]'
+    );
+  }
+
+  function getSettings() {
+    const settings = {};
+    [
+      "model", "duration", "resolution", "aspectRatio",
+      "ratio", "videoMode"
+    ].forEach(function (key) {
+      const el =
+        document.querySelector(`[name="${key}"]`) ||
+        document.getElementById(key);
+      if (el) settings[key] = el.value;
+    });
+    return settings;
+  }
+
+  function setStatus(message) {
+    const el = document.getElementById("projectSaveStatus");
+    if (el) el.textContent = message;
+  }
+
+  async function getSession() {
+    const result = await moviraSupabase.auth.getSession();
+    if (result.error) throw result.error;
+    if (!result.data.session) throw new Error("Silakan login ke Movira terlebih dahulu.");
+    return result.data.session;
+  }
+
+  async function saveProject() {
+    if (loadingProjects) return;
+
+    try {
+      const session = await getSession();
+      const promptEl = getPromptElement();
+      const nameEl = document.getElementById("projectName");
+
+      const projectData = {
+        user_id: session.user.id,
+        name: (nameEl && nameEl.value.trim()) || "Proyek Baru",
+        prompt: promptEl ? promptEl.value : "",
+        settings: getSettings(),
+        status: "draft",
+        updated_at: new Date().toISOString()
+      };
+
+      setStatus("Menyimpan proyek...");
+
+      let result;
+
+      if (currentProjectId) {
+        result = await moviraSupabase
+          .from("projects")
+          .update(projectData)
+          .eq("id", currentProjectId)
+          .eq("user_id", session.user.id)
+          .select()
+          .single();
+      } else {
+        result = await moviraSupabase
+          .from("projects")
+          .insert(projectData)
+          .select()
+          .single();
+      }
+
+      if (result.error) throw result.error;
+
+      currentProjectId = result.data.id;
+      setStatus("✅ Proyek tersimpan otomatis.");
+      await loadProjects();
+    } catch (error) {
+      setStatus("Gagal menyimpan: " + (error.message || "Kesalahan tidak diketahui"));
+    }
+  }
+
+  async function loadProjects() {
+    if (loadingProjects) return;
+
+    loadingProjects = true;
+
+    try {
+      const session = await getSession();
+      const result = await moviraSupabase
+        .from("projects")
+        .select("id,name,prompt,settings,status,updated_at")
+        .eq("user_id", session.user.id)
+        .order("updated_at", { ascending: false });
+
+      if (result.error) throw result.error;
+
+      const list = document.getElementById("projectList");
+      if (!list) return;
+
+      list.replaceChildren();
+
+      if (!result.data || result.data.length === 0) {
+        list.textContent = "Belum ada proyek. Buat proyek pertama kamu.";
+        return;
+      }
+
+      result.data.forEach(function (project) {
+        const row = document.createElement("div");
+        row.style.cssText =
+          "display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;margin-top:8px;border:1px solid #2b405d;border-radius:8px;";
+
+        const open = document.createElement("button");
+        open.type = "button";
+        open.textContent = "📂 " + project.name;
+        open.style.cssText = "flex:1;text-align:left;overflow-wrap:anywhere;";
+        open.addEventListener("click", function () {
+          const nameEl = document.getElementById("projectName");
+          const promptEl = getPromptElement();
+
+          if (nameEl) nameEl.value = project.name || "Proyek Baru";
+          if (promptEl) promptEl.value = project.prompt || "";
+
+          const settings = project.settings || {};
+          Object.keys(settings).forEach(function (key) {
+            const el =
+              document.querySelector(`[name="${key}"]`) ||
+              document.getElementById(key);
+            if (el) {
+              el.value = settings[key];
+              el.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          });
+
+          currentProjectId = project.id;
+          setStatus("Proyek dibuka: " + project.name);
+        });
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.textContent = "Hapus";
+        del.addEventListener("click", async function () {
+          if (!confirm("Hapus proyek ini?")) return;
+
+          try {
+            const session = await getSession();
+            const deletion = await moviraSupabase
+              .from("projects")
+              .delete()
+              .eq("id", project.id)
+              .eq("user_id", session.user.id);
+
+            if (deletion.error) throw deletion.error;
+
+            if (currentProjectId === project.id) currentProjectId = null;
+            setStatus("Proyek dihapus.");
+            await loadProjects();
+          } catch (error) {
+            setStatus("Gagal menghapus: " + error.message);
+          }
+        });
+
+        row.append(open, del);
+        list.appendChild(row);
+      });
+    } catch (error) {
+      setStatus("Gagal memuat proyek: " + (error.message || "Kesalahan"));
+    } finally {
+      loadingProjects = false;
+    }
+  }
+
+  function scheduleSave() {
+    clearTimeout(saveTimer);
+    setStatus("Perubahan terdeteksi...");
+    saveTimer = setTimeout(saveProject, 1500);
+  }
+
+  function initializeProjects() {
+    mountProjectBox();
+
+    const promptEl = getPromptElement();
+    if (promptEl && !promptEl.dataset.projectAutosaveBound) {
+      promptEl.dataset.projectAutosaveBound = "true";
+      promptEl.addEventListener("input", scheduleSave);
+    }
+
+    const nameEl = document.getElementById("projectName");
+    if (nameEl && !nameEl.dataset.projectAutosaveBound) {
+      nameEl.dataset.projectAutosaveBound = "true";
+      nameEl.addEventListener("input", scheduleSave);
+    }
+
+    const newBtn = document.getElementById("newProjectBtn");
+    if (newBtn) {
+      newBtn.onclick = function () {
+        currentProjectId = null;
+        const nameEl = document.getElementById("projectName");
+        const promptEl = getPromptElement();
+
+        if (nameEl) nameEl.value = "Proyek Baru";
+        if (promptEl) promptEl.value = "";
+
+        setStatus("Proyek baru siap. Menyimpan...");
+        saveProject();
+      };
+    }
+
+    const saveBtn = document.getElementById("saveProjectBtn");
+    if (saveBtn) saveBtn.onclick = saveProject;
+
+    loadProjects();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeProjects);
+  } else {
+    initializeProjects();
+  }
+
+  setInterval(mountProjectBox, 1500);
+})();
+// ===== AKHIR PROYEK + AUTO-SAVE =====
+  
 </script>
 </body>
 </html>
