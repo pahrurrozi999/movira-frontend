@@ -3009,7 +3009,7 @@ if (refreshVideoHistoryBtn) {
   `;
 
   function mountProjectBox() {
-    if (document.getElementById("moviraProjects")) return;
+    if (document.getElementById("projectsPage")) return;
 
     const home = document.getElementById("homePage");
     if (home) {
@@ -3025,8 +3025,9 @@ if (refreshVideoHistoryBtn) {
   let loadingProjects = false;
 
   function getPromptElement() {
-    return document.querySelector(
-      'textarea[placeholder*="rompt"], textarea[id*="prompt" i], textarea[name*="prompt" i]'
+  return document.getElementById("projectPrompt") ||
+    document.querySelector(
+      'textarea[placeholder*="prompt"], textarea[id="prompt"], textarea[name*="prompt" i]'
     );
   }
 
