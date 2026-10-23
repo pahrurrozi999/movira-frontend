@@ -1508,22 +1508,24 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
       style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #38557e;background:#081426;color:white;">
 
     <div style="display:flex;gap:8px;">
-      <button id="loginBtn"
-type="button"
-onclick="window.loginMovira()"
-style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;position:relative;z-index:10001;pointer-events:auto;touch-action:manipulation;">
-Login
- <button
-  type="button"
-  onclick="loginWithGoogle()"
-  style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#fff;color:#222;font-weight:700;">
-  Masuk dengan Google
-</button>       
-      </button>
-      <button id="signupBtn"
-        style="flex:1;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:700;">
-        Daftar
-      </button>
+  <button
+    id="loginBtn"
+    type="button"
+    onclick="window.loginMovira()"
+    style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:bold;"
+  >Login</button>
+
+  <button
+    type="button"
+    onclick="loginWithGoogle()"
+    style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#fff;color:#222;"
+  >Masuk dengan Google</button>
+
+  <button
+    id="signupBtn"
+    type="button"
+    style="flex:1;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:bold;"
+  >Daftar</button>
     </div>
 
     <div id="authStatus" style="font-size:12px;margin-top:8px;color:#9fb4d8;"></div>
