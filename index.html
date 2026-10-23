@@ -1597,10 +1597,18 @@ Login
     }
 
     userCredits.textContent = String(data.credits ?? 0);
-  } catch (error) {
-    console.error("Gagal membaca kredit:", error);
+} catch (error) {
+  console.error("Gagal membaca kredit:", error);
+
+  const creditElement =
+    document.getElementById("userCredits") ||
+    document.getElementById("creditBalance");
+
+  if (creditElement) {
+    creditElement.textContent = "Gagal memuat kredit";
   }
   }
+    
   async function updateMoviraAuth() {
     const {
       data: { session }
