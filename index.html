@@ -908,6 +908,22 @@ if (text === "gallery") {
   navButtons.forEach(btn => btn.classList.remove("active"));
   button.classList.add("active");
     }
+    if (text === "projects") {
+  createTop.style.display = "none";
+  createGrid.style.display = "none";
+  samples.style.display = "none";
+  historyPage.style.display = "none";
+  galleryPage.style.display = "none";
+  homePage.style.display = "none";
+
+  const projectsPage = document.getElementById("projectsPage");
+  if (projectsPage) {
+    projectsPage.style.display = "block";
+  }
+
+  navButtons.forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+    }
     if (text === "create") {
       createTop.style.display = "";
       createGrid.style.display = "";
