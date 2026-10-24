@@ -1479,7 +1479,7 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   <button
     id="loginBtn"
     type="button"
-    onclick="window.loginMovira()"
+    onclick="alert('Fungsi Login: ' + typeof window.loginMovira); if (typeof window.loginMovira === 'function') window.loginMovira();"
     style="flex:1;padding:10px;border:0;border-radius:8px;background:#315efb;color:white;font-weight:700;position:relative;z-index:10001;pointer-events:auto;touch-action:manipulation;"
   >Login</button>
 
