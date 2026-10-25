@@ -3116,6 +3116,14 @@ if (refreshVideoHistoryBtn) {
               el.dispatchEvent(new Event("change", { bubbles: true }));
             }
           });
+          
+          const createNavButton = document.querySelector(
+  '[data-i18n="create"]'
+);
+
+if (createNavButton) {
+  createNavButton.click();
+}
           currentProjectId = project.id;
           setStatus("Proyek dibuka: " + project.name);
         });
