@@ -530,56 +530,48 @@ Veo 3.1 Lite ⭐
   <section id="homePage" style="display:none;">
   <h2>Dashboard Movira AI</h2>
 
-  <div class="samplegrid">
-
-    <div class="card" style="padding:16px;">
-      <div style="font-size:28px;">🎬</div>
-      <b>Buat Video</b>
-      <div class="muted" style="margin-top:6px;">
-        Buat video AI dengan mudah.
-      </div>
+<div class="samplegrid">
+  <div class="card"
+       style="padding:16px;cursor:pointer;"
+       onclick="document.querySelector('.nav button[data-i18n=create]').click()">
+    <div style="font-size:28px;">🎬</div>
+    <b>Buat Video</b>
+    <div class="muted" style="margin-top:6px;">
+      Buat video AI dengan mudah.
     </div>
-
-    <div class="card" style="padding:16px;">
-      <div style="font-size:28px;">💰</div>
-      <b>Kredit</b>
-      <div class="muted" style="margin-top:6px;">
-        Kredit akun Movira
-      </div>
-    </div>
-
-    <div class="card" style="padding:16px;">
-      <div style="font-size:28px;">🖼️</div>
-      <b>Galeri</b>
-      <div class="muted" style="margin-top:6px;">
-        Video yang kamu simpan.
-      </div>
-    </div>
-
-    <div class="card" style="padding:16px;">
-      <div style="font-size:28px;">◷</div>
-      <b>Riwayat</b>
-      <div class="muted" style="margin-top:6px;">
-        Lihat video yang pernah dibuat.
-      </div>
-    </div>
-
-  </div>
-</section>
- 
-<section class="card" id="videoQueuePanel" style="margin-top:16px;padding:16px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-    <div>
-      <h3 style="margin:0;">Antrean Video</h3>
-      <div class="muted" style="margin-top:6px;">Pantau status video yang kamu buat.</div>
-    </div>
-    <button type="button" id="refreshVideoQueue">Perbarui</button>
   </div>
 
-  <div id="videoQueueStatus" class="muted" style="margin-top:14px;">
-    Login untuk melihat antrean video.
+  <div class="card"
+       style="padding:16px;cursor:pointer;"
+       onclick="const c=document.getElementById('userCredits');const o=document.getElementById('homeCreditValue');const n=c?c.textContent.trim():'';o.textContent=!n||n==='Memuat...'?'Kredit sedang dimuat...':n==='—'?'Silakan login untuk melihat kredit.':n==='Gagal memuat kredit'?n:'Saldo kamu: '+n+' Kredit';">
+    <div style="font-size:28px;">💰</div>
+    <b>Kredit</b>
+    <div id="homeCreditValue" class="muted" style="margin-top:6px;">
+      Tekan untuk melihat saldo kredit.
+    </div>
   </div>
 
+  <div class="card"
+       style="padding:16px;cursor:pointer;"
+       onclick="document.querySelector('.nav button[data-i18n=gallery]').click()">
+    <div style="font-size:28px;">🖼️</div>
+    <b>Galeri</b>
+    <div class="muted" style="margin-top:6px;">
+      Video yang kamu simpan.
+    </div>
+  </div>
+
+  <div class="card"
+       style="padding:16px;cursor:pointer;"
+       onclick="document.querySelector('.nav button[data-i18n=history]').click()">
+    <div style="font-size:28px;">◷</div>
+    <b>Riwayat</b>
+    <div class="muted" style="margin-top:6px;">
+      Lihat video yang pernah dibuat.
+    </div>
+  </div>
+</div>
+    
   <div id="videoQueueList" style="display:grid;gap:10px;margin-top:12px;"></div>
 </section>
   
