@@ -823,10 +823,14 @@ const createGrid = document.querySelector(".grid");
 const samples = document.querySelector(".samples");
 
 const navButtons = document.querySelectorAll(".nav button");
-
+const videoQueuePanel = document.getElementById("videoQueuePanel");
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
     const text = button.dataset.i18n;
+    if (videoQueuePanel) {
+  videoQueuePanel.style.display =
+    text === "home" ? "block" : "none";
+    }
     
 if (text === "home") {
   createTop.style.display = "none";
