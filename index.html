@@ -821,83 +821,56 @@ const homePage = document.getElementById("homePage");
 const createTop = document.querySelector(".top");
 const createGrid = document.querySelector(".grid");
 const samples = document.querySelector(".samples");
-
 const navButtons = document.querySelectorAll(".nav button");
 const videoQueuePanel = document.getElementById("videoQueuePanel");
+
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
     const text = button.dataset.i18n;
-    if (videoQueuePanel) {
-  videoQueuePanel.style.display =
-    text === "home" ? "block" : "none";
-    }
-    
-if (text === "home") {
-  createTop.style.display = "none";
-  createGrid.style.display = "none";
-  samples.style.display = "none";
-  historyPage.style.display = "none";
-  galleryPage.style.display = "none";
-  homePage.style.display = "block";
+    const projectsPage = document.getElementById("projectsPage");
 
-  navButtons.forEach(btn => btn.classList.remove("active"));
-  button.classList.add("active");
-  }
-    
-    if (text === "history") {
-      createTop.style.display = "none";
-      createGrid.style.display = "none";
-      samples.style.display = "none";
-      historyPage.style.display = "block";
-      galleryPage.style.display = "none";
+    // Sembunyikan semua halaman dan panel terlebih dahulu
+    if (createTop) createTop.style.display = "none";
+    if (createGrid) createGrid.style.display = "none";
+    if (samples) samples.style.display = "none";
+    if (historyPage) historyPage.style.display = "none";
+    if (galleryPage) galleryPage.style.display = "none";
+    if (homePage) homePage.style.display = "none";
+    if (projectsPage) projectsPage.style.display = "none";
+    if (videoQueuePanel) videoQueuePanel.style.display = "none";
+
+    navButtons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+
+    if (text === "home") {
+      if (homePage) homePage.style.display = "block";
+      if (videoQueuePanel) videoQueuePanel.style.display = "block";
+    } else if (text === "create") {
+      if (createTop) createTop.style.display = "";
+      if (createGrid) createGrid.style.display = "";
+      if (samples) samples.style.display = "";
+    } else if (text === "template") {
+      if (samples) samples.style.display = "block";
+    } else if (text === "history") {
+      if (historyPage) historyPage.style.display = "block";
       loadMoviraHistory();
-      
-      navButtons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
+    } else if (text === "gallery") {
+      if (galleryPage) galleryPage.style.display = "block";
+      loadMoviraGallery();
+    } else if (text === "projects") {
+      if (projectsPage) projectsPage.style.display = "block";
     }
-if (text === "gallery") {
-  createTop.style.display = "none";
-  createGrid.style.display = "none";
-  samples.style.display = "none";
-  historyPage.style.display = "none";
-  galleryPage.style.display = "block";
-  
-  loadMoviraGallery();
-  
-  navButtons.forEach(btn => btn.classList.remove("active"));
-  button.classList.add("active");
-    }
-    if (text === "projects") {
-  createTop.style.display = "none";
-  createGrid.style.display = "none";
-  samples.style.display = "none";
-  historyPage.style.display = "none";
-  galleryPage.style.display = "none";
-  homePage.style.display = "none";
 
-  const projectsPage = document.getElementById("projectsPage");
-  if (projectsPage) {
-    projectsPage.style.display = "block";
-  }
-
-  navButtons.forEach(btn => btn.classList.remove("active"));
-  button.classList.add("active");
-    }
-    if (text === "create") {
-      createTop.style.display = "";
-      createGrid.style.display = "";
-      samples.style.display = "";
-      historyPage.style.display = "none";
-      galleryPage.style.display = "none";
-      const projectsPage = document.getElementById("projectsPage");
-if (projectsPage) projectsPage.style.display = "none";
-      homePage.style.display = "none";
-      navButtons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-    }
-        document.querySelector(".nav")?.classList.remove("open");
+    document.querySelector(".nav")?.classList.remove("open");
   });
 });
+
+// Tampilkan halaman awal sesuai menu Beranda
+const initialNav =
+  document.querySelector('.nav button.active') ||
+  document.querySelector('.nav button[data-i18n="home"]');
+
+if (initialNav) initialNav.click();
 file.onchange=e=>{
   const f=e.target.files[0];
   if(!f)return;
@@ -2985,7 +2958,8 @@ if (refreshVideoHistoryBtn) {
     page.id = "projectsPage";
     page.className = "card";
     page.style.marginTop = "18px";
-
+    page.style.display = "none";
+    
     const main = document.querySelector("main.main");
     if (!main) {
       console.error("Halaman utama Movira tidak ditemukan.");
