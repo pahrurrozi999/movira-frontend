@@ -904,6 +904,7 @@ if (projectsPage) projectsPage.style.display = "none";
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
     }
+        document.querySelector(".nav")?.classList.remove("open");
   });
 });
 file.onchange=e=>{
