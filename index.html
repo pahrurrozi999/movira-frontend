@@ -2984,14 +2984,26 @@ if (refreshVideoHistoryBtn) {
     <div id="projectList"></div>
   `;
   function mountProjectBox() {
-    if (document.getElementById("projectsPage")) return;
-    const home = document.getElementById("homePage");
-    if (home) {
-      home.appendChild(projectBox);
-    } else {
-      const main = document.querySelector(".main");
-      if (main) main.appendChild(projectBox);
+  let page = document.getElementById("projectsPage");
+
+  if (!page) {
+    page = document.createElement("section");
+    page.id = "projectsPage";
+    page.className = "card";
+    page.style.marginTop = "18px";
+
+    const main = document.querySelector("main.main");
+    if (!main) {
+      console.error("Halaman utama Movira tidak ditemukan.");
+      return;
     }
+
+    main.appendChild(page);
+  }
+
+  if (projectBox.parentElement !== page) {
+    page.appendChild(projectBox);
+  }
   }
   let currentProjectId = null;
   let saveTimer = null;
