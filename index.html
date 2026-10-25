@@ -256,7 +256,7 @@ body {
   <button data-i18n="gallery">Galeri</button>
   <button data-i18n="template">Template</button>
   <button data-i18n="history">Riwayat</button>
-  <button data-i18n="projects" onclick="showProjects()">📁 Proyek</button>
+  <button data-i18n="projects">📁 Proyek</button>
 </div>
 
 <button id="profileBtn" class="profileBtn" onclick="const b=document.getElementById('authBox'); b.style.setProperty('display', getComputedStyle(b).display==='none'?'block':'none','important');" style="width:42px;height:42px;min-width:42px;min-height:42px;padding:0;border:0;background:transparent;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -898,6 +898,8 @@ if (text === "gallery") {
       samples.style.display = "";
       historyPage.style.display = "none";
       galleryPage.style.display = "none";
+      const projectsPage = document.getElementById("projectsPage");
+if (projectsPage) projectsPage.style.display = "none";
       homePage.style.display = "none";
       navButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
@@ -3124,6 +3126,10 @@ if (refreshVideoHistoryBtn) {
 if (createNavButton) {
   createNavButton.click();
 }
+          document.querySelector(".nav")?.classList.remove("open");
+document.getElementById("imageToVideoUpload")
+  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          
           currentProjectId = project.id;
           setStatus("Proyek dibuka: " + project.name);
         });
