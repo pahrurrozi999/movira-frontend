@@ -3027,19 +3027,48 @@ let projectVersion = 0;
       'textarea[placeholder*="rompt"], textarea[id*="prompt" i], textarea[name*="prompt" i]'
     );
   }
-  function getSettings() {
-    const settings = {};
-    [
-      "model", "duration", "resolution", "aspectRatio",
-      "ratio", "videoMode"
-    ].forEach(function (key) {
-      const el =
-        document.querySelector(`[name="${key}"]`) ||
-        document.getElementById(key);
-      if (el) settings[key] = el.value;
-    });
-    return settings;
-  }
+  
+function getSettings() {
+  const modes = document.querySelectorAll(".mode-card");
+
+  const isReferenceMode =
+    modes[1]?.classList.contains("selected");
+
+  const isVideoToVideoMode =
+    modes[2]?.classList.contains("selected");
+
+  const selectedModel = isReferenceMode
+    ? "wan/v2.6/reference-to-video/flash"
+    : isVideoToVideoMode
+    ? "fal-ai/wan/v2.2-a14b/video-to-video"
+    : document.querySelector("#models button.selected")
+        ?.dataset.value || model;
+
+  const selectedResolution =
+    document.querySelector("#resolutions button.selected")
+      ?.dataset.value || resolution;
+
+  const selectedRatio =
+    document.querySelector("#ratios button.selected")
+      ?.dataset.value || ratio;
+
+  const selectedDuration =
+    document.querySelector("#durations button.selected")
+      ?.dataset.value || duration;
+
+  return {
+    model: selectedModel,
+    resolution: selectedResolution,
+    ratio: selectedRatio,
+    duration: String(selectedDuration),
+    videoMode: isReferenceMode
+      ? "reference-to-video"
+      : isVideoToVideoMode
+      ? "video-to-video"
+      : "image-to-video"
+  };
+}
+  
   function setStatus(message) {
     const el = document.getElementById("projectSaveStatus");
     if (el) el.textContent = message;
