@@ -1231,6 +1231,11 @@ if (!creditResponse.ok) {
 if (Number(creditData.credits) <= 0) {
 throw new Error("Kredit kamu sudah habis. Silakan tambah kredit untuk membuat video.");
 }
+    const projectVideoContext =
+  window.moviraProjectVideoContext || null;
+
+window.moviraProjectVideoContext = null;
+    
 const response=await fetch(`${API_BASE}/api/generate`,{
   method:"POST",
   headers:{
@@ -1249,7 +1254,9 @@ imageData,
 referenceImages,
 referenceVideos,
 sourceVideo,
-audio: true
+audio: true,
+project_id: projectVideoContext?.project_id || null,
+scene_number: projectVideoContext?.scene_number || null
 })
 });
 
@@ -3626,7 +3633,15 @@ if (projectCreateVideoBtn) {
         setStatus("Menu Buat Video tidak ditemukan.");
         return;
       }
+if (!currentProjectId) {
+  setStatus("Proyek belum tersimpan. Simpan proyek terlebih dahulu.");
+  return;
+}
 
+window.moviraProjectVideoContext = {
+  project_id: currentProjectId,
+  scene_number: activeSceneIndex + 1
+};
       createButton.click();
 
       promptBox.value = promptText;
