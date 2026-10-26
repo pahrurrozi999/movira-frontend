@@ -3138,17 +3138,30 @@ if (
   workspaceScenes[activeSceneIndex].prompt = scenePromptEl.value;
 }
 
+const settingsSnapshot = getSettings();
+
 const saveSettings = {
   ...currentProjectSettings,
-  ...getSettings()
+  ...settingsSnapshot
 };
 
 if (projectWorkspaceOpen) {
-  saveSettings.workspaceScenes = workspaceScenes.map(
-    scene => ({ prompt: String(scene.prompt || "") })
-  );
+  const selectedScene = workspaceScenes[activeSceneIndex];
+
+  if (selectedScene) {
+    selectedScene.settings = { ...settingsSnapshot };
+  }
+
+  saveSettings.workspaceScenes = workspaceScenes.map(scene => ({
+    prompt: String(scene.prompt || ""),
+    settings:
+      scene.settings && typeof scene.settings === "object"
+        ? { ...scene.settings }
+        : null
+  }));
+
   saveSettings.activeSceneIndex = activeSceneIndex;
-}
+                                                               }
 
 const activeScene = workspaceScenes[activeSceneIndex];
 
