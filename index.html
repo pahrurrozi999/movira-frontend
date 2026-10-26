@@ -3309,17 +3309,6 @@ row.style.cssText = `
   });
 });
           
-          const createNavButton = document.querySelector(
-  '[data-i18n="create"]'
-);
-
-if (createNavButton) {
-  createNavButton.click();
-}
-          document.querySelector(".nav")?.classList.remove("open");
-document.getElementById("imageToVideoUpload")
-  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          
           currentProjectId = project.id;
           setStatus("Proyek dibuka: " + project.name);
         });
@@ -3505,6 +3494,7 @@ if (deleteSceneBtn) {
     const saveBtn = document.getElementById("saveProjectBtn");
     if (saveBtn) saveBtn.onclick = saveProject;
     loadProjects();
+  }
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeProjects);
