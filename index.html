@@ -2978,7 +2978,10 @@ if (refreshVideoHistoryBtn) {
           style="padding:10px;border-radius:9px">
           ＋ Tambah Scene
         </button>
-
+<button id="deleteProjectSceneBtn" type="button"
+  style="padding:10px;border-radius:9px">
+  Hapus Scene Aktif
+</button>
         <button id="projectCreateVideoBtn" type="button"
   style="padding:10px 14px;border-radius:9px;
   background:linear-gradient(90deg,#1987ff,#6d45ff);
@@ -3068,6 +3071,42 @@ function getSettings() {
       : "image-to-video"
   };
 }
+  
+  function restoreProjectSettings(settings = {}) {
+  const clickOption = (selector, value) => {
+    if (value == null) return;
+
+    const buttons = document.querySelectorAll(selector);
+    const target = [...buttons].find(
+      button => button.dataset.value === String(value)
+    );
+
+    if (target) target.click();
+  };
+
+  const modeButtons = document.querySelectorAll(".mode-card");
+  const mode = settings.videoMode || "image-to-video";
+
+  const modeIndex = {
+    "image-to-video": 0,
+    "reference-to-video": 1,
+    "video-to-video": 2
+  }[mode];
+
+  if (modeButtons[modeIndex]) {
+    modeButtons[modeIndex].click();
+  }
+
+  if (settings.model) {
+    clickOption("#models button", settings.model);
+  }
+
+  clickOption("#resolutions button", settings.resolution);
+  clickOption("#ratios button", settings.ratio);
+  clickOption("#durations button", settings.duration);
+
+  updateCreditCost();
+  }
   
   function setStatus(message) {
     const el = document.getElementById("projectSaveStatus");
@@ -3279,10 +3318,49 @@ row.style.cssText = `
   background:linear-gradient(145deg,#10223a,#0a1729);
   box-shadow:0 4px 12px #0002;
 `;
+        
+const cardTitle = document.createElement("div");
+cardTitle.textContent = "📁 " + (project.name || "Proyek Baru");
+cardTitle.style.cssText =
+  "font-size:17px;font-weight:750;overflow-wrap:anywhere;";
+
+const savedSceneCount =
+  project.settings &&
+  Array.isArray(project.settings.workspaceScenes)
+    ? project.settings.workspaceScenes.length
+    : 1;
+
+const sceneCount = Math.max(1, savedSceneCount);
+const updatedDate = project.updated_at
+  ? new Date(project.updated_at)
+  : null;
+
+const updatedText =
+  updatedDate && !Number.isNaN(updatedDate.getTime())
+    ? updatedDate.toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : "Belum tersedia";
+
+const cardMeta = document.createElement("div");
+cardMeta.className = "muted";
+cardMeta.style.cssText = "font-size:12px;line-height:1.5;";
+cardMeta.textContent =
+  "🎬 " + sceneCount + " scene • Diperbarui: " + updatedText;
+        
         const open = document.createElement("button");
         open.type = "button";
-        open.textContent = "📂 " + project.name;
-        open.style.cssText = "flex:1;text-align:left;overflow-wrap:anywhere;";
+        open.textContent = "↗ Buka Proyek";
+open.style.cssText =
+  "flex:1;text-align:center;padding:10px 12px;" +
+  "border:0;border-radius:9px;" +
+  "background:linear-gradient(90deg,#1987ff,#6d45ff);" +
+  "color:#fff;font-weight:700;cursor:pointer;";
+        
         open.addEventListener("click", async function () {
   if (
     projectWorkspaceOpen &&
@@ -3325,7 +3403,9 @@ row.style.cssText = `
 
   const nameEl = document.getElementById("projectName");
   if (nameEl) nameEl.value = project.name || "Proyek Baru";
-
+          
+restoreProjectSettings(currentProjectSettings);
+          
   projectWorkspaceOpen = true;
   renderProjectWorkspace();
 
@@ -3343,6 +3423,10 @@ row.style.cssText = `
         const del = document.createElement("button");
         del.type = "button";
         del.textContent = "Hapus";
+        del.style.cssText =
+  "padding:9px 12px;border:1px solid #74334b;" +
+  "border-radius:9px;background:#351b2b;" +
+  "color:#fecdd3;cursor:pointer;";
         del.addEventListener("click", async function () {
           if (!confirm("Hapus proyek ini?")) return;
           try {
@@ -3360,8 +3444,13 @@ row.style.cssText = `
             setStatus("Gagal menghapus: " + error.message);
           }
         });
-        row.append(open, del);
-        list.appendChild(row);
+        const actions = document.createElement("div");
+actions.style.cssText =
+  "display:flex;gap:8px;flex-wrap:wrap;";
+
+actions.append(open, del);
+row.append(cardTitle, cardMeta, actions);
+list.appendChild(row);
       });
     } catch (error) {
       setStatus("Gagal memuat proyek: " + (error.message || "Kesalahan"));
