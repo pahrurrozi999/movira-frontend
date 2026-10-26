@@ -2979,10 +2979,12 @@ if (refreshVideoHistoryBtn) {
           ＋ Tambah Scene
         </button>
 
-        <button id="deleteProjectSceneBtn" type="button"
-          style="padding:10px;border-radius:9px">
-          Hapus Scene Aktif
-        </button>
+        <button id="projectCreateVideoBtn" type="button"
+  style="padding:10px 14px;border-radius:9px;
+  background:linear-gradient(90deg,#1987ff,#6d45ff);
+  color:white;border:0;font-weight:700">
+  🎬 Buat Video dari Scene Ini
+</button>
       </div>
     </div>
   </div>
@@ -3453,6 +3455,66 @@ if (deleteSceneBtn) {
 
     renderProjectWorkspace();
     scheduleSave();
+  };
+}
+    const projectCreateVideoBtn =
+  document.getElementById("projectCreateVideoBtn");
+
+if (projectCreateVideoBtn) {
+  projectCreateVideoBtn.onclick = async function () {
+    syncWorkspaceScenePrompt();
+
+    const scene = workspaceScenes[activeSceneIndex];
+    const promptText = String(scene?.prompt || "").trim();
+
+    if (!promptText) {
+      setStatus("Tulis prompt untuk scene ini terlebih dahulu.");
+      document.getElementById("projectScenePrompt")?.focus();
+      return;
+    }
+
+    try {
+      await saveProject();
+
+      const promptBox = document.getElementById("prompt");
+      if (!promptBox) {
+        setStatus("Kolom prompt generator tidak ditemukan.");
+        return;
+      }
+
+      promptBox.value = promptText;
+      promptBox.dispatchEvent(
+        new Event("input", { bubbles: true })
+      );
+
+      const createButton = document.querySelector(
+        '.nav button[data-i18n="create"]'
+      );
+
+      if (!createButton) {
+        setStatus("Menu Buat Video tidak ditemukan.");
+        return;
+      }
+
+      createButton.click();
+
+      promptBox.value = promptText;
+      promptBox.dispatchEvent(
+        new Event("input", { bubbles: true })
+      );
+
+      promptBox.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      setStatus("Prompt scene siap digunakan di Buat Video.");
+    } catch (error) {
+      setStatus(
+        "Gagal menyiapkan scene: " +
+        (error.message || "Kesalahan tidak diketahui")
+      );
+    }
   };
 }
     const newBtn = document.getElementById("newProjectBtn");
