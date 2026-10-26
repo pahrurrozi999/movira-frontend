@@ -3406,9 +3406,13 @@ open.style.cssText =
     Array.isArray(currentProjectSettings.workspaceScenes) &&
     currentProjectSettings.workspaceScenes.length > 0
   ) {
-    workspaceScenes = currentProjectSettings.workspaceScenes.map(
-      scene => ({ prompt: String(scene.prompt || "") })
-    );
+    workspaceScenes = currentProjectSettings.workspaceScenes.map(scene => ({
+  prompt: String(scene.prompt || ""),
+  settings:
+    scene.settings && typeof scene.settings === "object"
+      ? { ...scene.settings }
+      : null
+}));
   } else {
     workspaceScenes = [
       { prompt: project.prompt || "" }
