@@ -2929,19 +2929,64 @@ if (refreshVideoHistoryBtn) {
   projectBox.style.cssText =
     "margin-top:18px;padding:16px;border:1px solid #2b405d;border-radius:14px;background:#0c1a2d;color:#fff;";
   projectBox.innerHTML = `
-    <h3 style="margin:0 0 12px">📁 Proyek Saya</h3>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-      <input id="projectName" type="text" placeholder="Nama proyek"
-        value="Proyek Baru"
-        style="flex:1;min-width:150px;padding:10px;border-radius:8px">
-      <button id="newProjectBtn" type="button">＋ Proyek Baru</button>
-      <button id="saveProjectBtn" type="button">Simpan Sekarang</button>
+  <h3 style="margin:0 0 12px">📁 Proyek Saya</h3>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <input id="projectName" type="text" placeholder="Nama proyek"
+      value="Proyek Baru"
+      style="flex:1;min-width:150px;padding:10px;border-radius:8px">
+    <button id="newProjectBtn" type="button">＋ Proyek Baru</button>
+    <button id="saveProjectBtn" type="button">Simpan Sekarang</button>
+  </div>
+
+  <div id="projectSaveStatus"
+    style="font-size:12px;color:#9fb1c9;margin-bottom:10px">
+    Menyiapkan proyek...
+  </div>
+
+  <div id="projectList"></div>
+
+  <div id="projectWorkspace"
+    style="display:none;margin-top:14px">
+
+    <button id="backToProjectsBtn" type="button"
+      style="padding:10px 14px;border:1px solid #2b405d;
+      border-radius:10px;background:#13243b;color:white">
+      ← Semua Proyek
+    </button>
+
+    <h3 id="projectWorkspaceTitle"
+      style="margin:16px 0">Ruang Kerja Proyek</h3>
+
+    <div id="projectSceneTabs"
+      style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;margin-bottom:14px"></div>
+
+    <div class="subcard">
+      <b>✍️ Prompt Scene Aktif</b>
+
+      <textarea id="projectScenePrompt"
+        placeholder="Tulis prompt untuk scene ini..."
+        style="width:100%;min-height:140px;margin-top:10px"></textarea>
+
+      <div class="muted" style="margin-top:8px">
+        Prompt tiap scene disimpan di proyek ini.
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button id="addProjectSceneBtn" type="button"
+          style="padding:10px;border-radius:9px">
+          ＋ Tambah Scene
+        </button>
+
+        <button id="deleteProjectSceneBtn" type="button"
+          style="padding:10px;border-radius:9px">
+          Hapus Scene Aktif
+        </button>
+      </div>
     </div>
-    <div id="projectSaveStatus" style="font-size:12px;color:#9fb1c9;margin-bottom:10px">
-      Menyiapkan proyek...
-    </div>
-    <div id="projectList"></div>
-  `;
+  </div>
+`;
   function mountProjectBox() {
   let page = document.getElementById("projectsPage");
 
@@ -2966,9 +3011,15 @@ if (refreshVideoHistoryBtn) {
   }
   }
 let currentProjectId = null;
+let currentProjectSettings = {};
+let workspaceScenes = [{ prompt: "" }];
+let activeSceneIndex = 0;
+let projectWorkspaceOpen = false;
+
 let saveTimer = null;
 let loadingProjects = false;
-let projectVersion = 0; 
+let projectVersion = 0;
+  
   function getPromptElement() {
     return document.querySelector(
       'textarea[placeholder*="rompt"], textarea[id*="prompt" i], textarea[name*="prompt" i]'
@@ -3006,14 +3057,42 @@ let projectVersion = 0;
   const nameEl = document.getElementById("projectName");
   const promptEl = getPromptElement();
 
-  // Ambil data sekarang, sebelum menunggu sesi login.
-  const savedValues = {
-    name: (nameEl && nameEl.value.trim()) || "Proyek Baru",
-    prompt: promptEl ? promptEl.value : "",
-    settings: getSettings(),
-    status: "draft",
-    updated_at: new Date().toISOString()
-  };
+const scenePromptEl =
+  document.getElementById("projectScenePrompt");
+
+if (
+  projectWorkspaceOpen &&
+  scenePromptEl &&
+  workspaceScenes[activeSceneIndex]
+) {
+  workspaceScenes[activeSceneIndex].prompt = scenePromptEl.value;
+}
+
+const saveSettings = {
+  ...currentProjectSettings,
+  ...getSettings()
+};
+
+if (projectWorkspaceOpen) {
+  saveSettings.workspaceScenes = workspaceScenes.map(
+    scene => ({ prompt: String(scene.prompt || "") })
+  );
+  saveSettings.activeSceneIndex = activeSceneIndex;
+}
+
+const activeScene = workspaceScenes[activeSceneIndex];
+
+const savedValues = {
+  name: (nameEl && nameEl.value.trim()) || "Proyek Baru",
+
+  prompt: projectWorkspaceOpen
+    ? ((activeScene && activeScene.prompt) || "")
+    : (promptEl ? promptEl.value : ""),
+
+  settings: saveSettings,
+  status: "draft",
+  updated_at: new Date().toISOString()
+};
 
   try {
     const session = await getSession();
@@ -3049,7 +3128,8 @@ let projectVersion = 0;
 
     // Jangan biarkan penyimpanan lama mengganti proyek aktif.
     if (versionAtStart !== projectVersion) return;
-
+currentProjectSettings =
+  result.data.settings || savedValues.settings;
     currentProjectId = result.data.id;
     setStatus("✅ Proyek tersimpan otomatis.");
     refreshProjectsAfterSave();
@@ -3062,6 +3142,80 @@ let projectVersion = 0;
     }
   }
   } 
+  function syncWorkspaceScenePrompt() {
+  const field = document.getElementById("projectScenePrompt");
+  const scene = workspaceScenes[activeSceneIndex];
+
+  if (projectWorkspaceOpen && field && scene) {
+    scene.prompt = field.value;
+  }
+}
+
+function renderProjectWorkspace() {
+  const workspace = document.getElementById("projectWorkspace");
+  const list = document.getElementById("projectList");
+  const tabs = document.getElementById("projectSceneTabs");
+  const scenePrompt = document.getElementById("projectScenePrompt");
+  const title = document.getElementById("projectWorkspaceTitle");
+
+  if (list) list.style.display = projectWorkspaceOpen ? "none" : "";
+  if (workspace) {
+    workspace.style.display = projectWorkspaceOpen ? "block" : "none";
+  }
+
+  if (!projectWorkspaceOpen) return;
+
+  if (!Array.isArray(workspaceScenes) || workspaceScenes.length === 0) {
+    workspaceScenes = [{ prompt: "" }];
+  }
+
+  activeSceneIndex = Math.max(
+    0,
+    Math.min(activeSceneIndex, workspaceScenes.length - 1)
+  );
+
+  const name = document.getElementById("projectName");
+  if (title) {
+    title.textContent = "📂 " +
+      ((name && name.value.trim()) || "Proyek Baru");
+  }
+
+  if (tabs) {
+    tabs.replaceChildren();
+
+    workspaceScenes.forEach(function (scene, index) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "Scene " + (index + 1);
+
+      button.style.cssText =
+        "padding:10px 4px;border:1px solid #2b405d;" +
+        "border-radius:10px;color:white;" +
+        "background:" +
+        (index === activeSceneIndex ? "#1d3b70" : "#0a1729") +
+        ";";
+
+      button.onclick = function () {
+        syncWorkspaceScenePrompt();
+        activeSceneIndex = index;
+        renderProjectWorkspace();
+      };
+
+      tabs.appendChild(button);
+    });
+  }
+
+  const activeScene = workspaceScenes[activeSceneIndex];
+
+  if (scenePrompt) {
+    scenePrompt.value = activeScene.prompt || "";
+  }
+
+  const videoPrompt = getPromptElement();
+  if (videoPrompt) {
+    videoPrompt.value = activeScene.prompt || "";
+  }
+}
   async function loadProjects() {
     if (loadingProjects) return;
     loadingProjects = true;
@@ -3098,21 +3252,62 @@ row.style.cssText = `
         open.type = "button";
         open.textContent = "📂 " + project.name;
         open.style.cssText = "flex:1;text-align:left;overflow-wrap:anywhere;";
-        open.addEventListener("click", function () {
-          const nameEl = document.getElementById("projectName");
-          const promptEl = getPromptElement();
-          if (nameEl) nameEl.value = project.name || "Proyek Baru";
-          if (promptEl) promptEl.value = project.prompt || "";
-          const settings = project.settings || {};
-          Object.keys(settings).forEach(function (key) {
-            const el =
-              document.querySelector(`[name="${key}"]`) ||
-              document.getElementById(key);
-            if (el) {
-              el.value = settings[key];
-              el.dispatchEvent(new Event("change", { bubbles: true }));
-            }
-          });
+        open.addEventListener("click", async function () {
+  if (
+    projectWorkspaceOpen &&
+    currentProjectId &&
+    currentProjectId !== project.id
+  ) {
+    syncWorkspaceScenePrompt();
+    await saveProject();
+  }
+
+  projectVersion += 1;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+
+  currentProjectId = project.id;
+
+  currentProjectSettings =
+    project.settings && typeof project.settings === "object"
+      ? { ...project.settings }
+      : {};
+
+  if (
+    Array.isArray(currentProjectSettings.workspaceScenes) &&
+    currentProjectSettings.workspaceScenes.length > 0
+  ) {
+    workspaceScenes = currentProjectSettings.workspaceScenes.map(
+      scene => ({ prompt: String(scene.prompt || "") })
+    );
+  } else {
+    workspaceScenes = [
+      { prompt: project.prompt || "" }
+    ];
+  }
+
+  activeSceneIndex = Number.isInteger(
+    currentProjectSettings.activeSceneIndex
+  )
+    ? currentProjectSettings.activeSceneIndex
+    : 0;
+
+  const nameEl = document.getElementById("projectName");
+  if (nameEl) nameEl.value = project.name || "Proyek Baru";
+
+  projectWorkspaceOpen = true;
+  renderProjectWorkspace();
+
+  setStatus(
+    "Proyek dibuka: " + (project.name || "Proyek Baru") +
+    " • " + workspaceScenes.length + " scene"
+  );
+
+  document.getElementById("projectsPage")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
           
           const createNavButton = document.querySelector(
   '[data-i18n="create"]'
@@ -3174,34 +3369,139 @@ document.getElementById("imageToVideoUpload")
     mountProjectBox();
     const promptEl = getPromptElement();
     if (promptEl && !promptEl.dataset.projectAutosaveBound) {
-      promptEl.dataset.projectAutosaveBound = "true";
-      promptEl.addEventListener("input", scheduleSave);
+  promptEl.dataset.projectAutosaveBound = "true";
+
+  promptEl.addEventListener("input", function () {
+    if (
+      projectWorkspaceOpen &&
+      workspaceScenes[activeSceneIndex]
+    ) {
+      workspaceScenes[activeSceneIndex].prompt = promptEl.value;
+
+      const sceneField =
+        document.getElementById("projectScenePrompt");
+
+      if (sceneField && document.activeElement !== sceneField) {
+        sceneField.value = promptEl.value;
+      }
+    }
+
+    scheduleSave();
+  });
     }
     const nameEl = document.getElementById("projectName");
     if (nameEl && !nameEl.dataset.projectAutosaveBound) {
       nameEl.dataset.projectAutosaveBound = "true";
       nameEl.addEventListener("input", scheduleSave);
     }
+    const scenePromptEl =
+  document.getElementById("projectScenePrompt");
+
+if (
+  scenePromptEl &&
+  !scenePromptEl.dataset.projectAutosaveBound
+) {
+  scenePromptEl.dataset.projectAutosaveBound = "true";
+
+  scenePromptEl.addEventListener("input", function () {
+    syncWorkspaceScenePrompt();
+
+    const videoPrompt = getPromptElement();
+    if (videoPrompt) videoPrompt.value = scenePromptEl.value;
+
+    scheduleSave();
+  });
+}
+
+const backBtn = document.getElementById("backToProjectsBtn");
+
+if (backBtn) {
+  backBtn.onclick = async function () {
+    syncWorkspaceScenePrompt();
+
+    const name = document.getElementById("projectName")?.value.trim();
+    const hasSceneText = workspaceScenes.some(
+      scene => (scene.prompt || "").trim()
+    );
+    const hasWork =
+      Boolean(currentProjectId) ||
+      (name && name !== "Proyek Baru") ||
+      hasSceneText;
+
+    if (hasWork) await saveProject();
+
+    projectWorkspaceOpen = false;
+    renderProjectWorkspace();
+    setStatus("Kembali ke daftar proyek.");
+  };
+}
+
+const addSceneBtn =
+  document.getElementById("addProjectSceneBtn");
+
+if (addSceneBtn) {
+  addSceneBtn.onclick = function () {
+    syncWorkspaceScenePrompt();
+    workspaceScenes.push({ prompt: "" });
+    activeSceneIndex = workspaceScenes.length - 1;
+    renderProjectWorkspace();
+    scheduleSave();
+  };
+}
+
+const deleteSceneBtn =
+  document.getElementById("deleteProjectSceneBtn");
+
+if (deleteSceneBtn) {
+  deleteSceneBtn.onclick = function () {
+    if (workspaceScenes.length <= 1) {
+      workspaceScenes[0].prompt = "";
+      activeSceneIndex = 0;
+    } else {
+      workspaceScenes.splice(activeSceneIndex, 1);
+      activeSceneIndex = Math.min(
+        activeSceneIndex,
+        workspaceScenes.length - 1
+      );
+    }
+
+    renderProjectWorkspace();
+    scheduleSave();
+  };
+}
     const newBtn = document.getElementById("newProjectBtn");
     if (newBtn) {
-      newBtn.onclick = function () {
+      newBtn.onclick = async function () {
+  if (
+    projectWorkspaceOpen &&
+    (
+      currentProjectId ||
+      workspaceScenes.some(scene => (scene.prompt || "").trim())
+    )
+  ) {
+    syncWorkspaceScenePrompt();
+    await saveProject();
+  }
+
   projectVersion += 1;
   clearTimeout(saveTimer);
   saveTimer = null;
 
   currentProjectId = null;
+  currentProjectSettings = {};
+  workspaceScenes = [{ prompt: "" }];
+  activeSceneIndex = 0;
+  projectWorkspaceOpen = true;
 
   const nameEl = document.getElementById("projectName");
-  const promptEl = getPromptElement();
-
   if (nameEl) nameEl.value = "Proyek Baru";
+
+  const promptEl = getPromptElement();
   if (promptEl) promptEl.value = "";
 
-  setStatus(
-    "Proyek baru siap. Ubah nama atau prompt, lalu simpan."
-  );
+  renderProjectWorkspace();
+  setStatus("Proyek baru siap. Tulis prompt Scene 1 lalu simpan.");
 };
-}
     const saveBtn = document.getElementById("saveProjectBtn");
     if (saveBtn) saveBtn.onclick = saveProject;
     loadProjects();
