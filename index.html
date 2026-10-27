@@ -2997,6 +2997,28 @@ if (refreshVideoHistoryBtn) {
 </button>
       </div>
     </div>
+        <div class="subcard" style="margin-top:14px">
+      <div style="display:flex;align-items:center;
+        justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <b>🎬 Video Proyek</b>
+        <button id="refreshProjectVideosBtn" type="button"
+          style="padding:8px 10px;border:1px solid #2b405d;
+          border-radius:9px;background:#13243b;color:white">
+          ↻ Muat Ulang
+        </button>
+      </div>
+
+      <div id="projectVideosStatus" class="muted"
+        style="margin-top:8px">
+        Video untuk scene aktif akan tampil di sini.
+      </div>
+
+      <div id="projectVideosList"
+        style="display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:12px;margin-top:12px">
+      </div>
+    </div>
   </div>
 `;
   function mountProjectBox() {
@@ -3240,7 +3262,106 @@ currentProjectSettings =
     scene.prompt = field.value;
   }
 }
+  
+async function loadProjectVideos() {
+  const list = document.getElementById("projectVideosList");
+  const status = document.getElementById("projectVideosStatus");
 
+  if (!list || !status) return;
+
+  list.replaceChildren();
+
+  const projectId = currentProjectId;
+  const sceneNumber = activeSceneIndex + 1;
+
+  if (!projectWorkspaceOpen || !projectId) {
+    status.textContent =
+      "Simpan proyek terlebih dahulu untuk melihat video.";
+    return;
+  }
+
+  status.textContent = `Memuat video Scene ${sceneNumber}...`;
+
+  try {
+    const { data, error } = await moviraSupabase
+      .from("video_history")
+      .select(
+        "id,prompt,video_url,ratio,duration,resolution,created_at,project_id,scene_number"
+      )
+      .eq("project_id", projectId)
+      .eq("scene_number", sceneNumber)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) throw error;
+
+    // Abaikan hasil jika pengguna sudah berpindah proyek atau scene.
+    if (
+      projectId !== currentProjectId ||
+      sceneNumber !== activeSceneIndex + 1 ||
+      !projectWorkspaceOpen
+    ) return;
+
+    if (!data || data.length === 0) {
+      status.textContent =
+        `Belum ada video yang tersimpan untuk Scene ${sceneNumber}.`;
+      return;
+    }
+
+    status.textContent =
+      `${data.length} video ditemukan untuk Scene ${sceneNumber}.`;
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "subcard";
+      card.style.marginBottom = "0";
+
+      const player = document.createElement("video");
+      player.controls = true;
+      player.playsInline = true;
+      player.preload = "metadata";
+      player.style.cssText =
+        "display:block;width:100%;aspect-ratio:16/9;" +
+        "object-fit:contain;background:#000;border-radius:10px;";
+
+      try {
+        const url = new URL(item.video_url);
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+          throw new Error("URL video tidak valid.");
+        }
+
+        player.src = url.href;
+      } catch {
+        player.style.display = "none";
+      }
+
+      const prompt = document.createElement("div");
+      prompt.style.cssText =
+        "margin-top:10px;font-size:14px;overflow-wrap:anywhere;";
+      prompt.textContent = item.prompt || "Tanpa prompt";
+
+      const details = document.createElement("div");
+      details.className = "muted";
+      details.style.marginTop = "8px";
+      details.textContent =
+        `${item.ratio || "-"} • ${item.duration ?? "-"} detik • ` +
+        `${item.resolution || "-"} • ` +
+        (item.created_at
+          ? new Date(item.created_at).toLocaleString("id-ID")
+          : "");
+
+      card.append(player, prompt, details);
+      list.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Gagal memuat video proyek:", error);
+    status.textContent =
+      "Gagal memuat video proyek: " +
+      (error.message || "Kesalahan tidak diketahui");
+  }
+}
+  
 function renderProjectWorkspace() {
   const workspace = document.getElementById("projectWorkspace");
   const list = document.getElementById("projectList");
@@ -3324,11 +3445,22 @@ function renderProjectWorkspace() {
     scenePrompt.value = activeScene.prompt || "";
   }
 
-  const videoPrompt = getPromptElement();
-  if (videoPrompt) {
-    videoPrompt.value = activeScene.prompt || "";
-  }
+ const videoPrompt = getPromptElement();
+
+if (videoPrompt) {
+  videoPrompt.value = activeScene.prompt || "";
 }
+
+const refreshVideosButton =
+  document.getElementById("refreshProjectVideosBtn");
+
+if (refreshVideosButton) {
+  refreshVideosButton.onclick = loadProjectVideos;
+}
+
+loadProjectVideos();
+}
+  
   async function loadProjects() {
     if (loadingProjects) return;
     loadingProjects = true;
