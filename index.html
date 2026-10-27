@@ -19,7 +19,7 @@ button,input,textarea{font:inherit}.app{min-height:100vh;display:flex;align-item
   align-self:flex-start;
   height:auto;
   min-height:0;
-} .grid{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:18px}.card{background:#0c1a2d;border:1px solid #213653;border-radius:18px;padding:18px}.step{font-size:17px;font-weight:750;margin-bottom:12px}.upload{height:170px;border:2px dashed #385070;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:#0a1729;overflow:hidden}.upload img{max-width:100%;max-height:100%;display:none}.muted{color:#94a3b8;font-size:13px}textarea{width:100%;min-height:120px;resize:vertical;background:#081526;border:1px solid #2b405d;border-radius:12px;color:#fff;padding:13px;outline:none}textarea:focus{border-color:#5878ff}
+} .grid{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:18px}.card{background:#0c1a2d;border:1px solid #213653;border-radius:18px;padding:18px}.step{font-size:17px;font-weight:750;margin-bottom:12px}.upload{--movira-upload-height:250px;height:var(--movira-upload-height);min-height:var(--movira-upload-height);border:2px dashed #385070;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:#0a1729;overflow:hidden;padding:10px}.upload img{max-width:100%;max-height:100%;object-fit:contain;display:none}.muted{color:#94a3b8;font-size:13px}textarea{width:100%;min-height:120px;resize:vertical;background:#081526;border:1px solid #2b405d;border-radius:12px;color:#fff;padding:13px;outline:none}textarea:focus{border-color:#5878ff}
   
 .subcard{
 background:#0a1729;
@@ -72,6 +72,63 @@ min-width:0;
 .mode-card.selected{
   border-color:#4d75ff;
   background:#152d66;
+}
+
+
+/* Beranda: tiga pintu masuk utama dengan gradasi yang berbeda. */
+.home-mode-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin:16px 0 22px;
+}
+.home-mode-card{
+  width:100%;
+  min-width:0;
+  min-height:190px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:10px;
+  text-align:left;
+  color:#f8fbff;
+  border:1px solid #ffffff20;
+  border-radius:18px;
+  cursor:pointer;
+  box-shadow:0 8px 22px #0002;
+  transition:transform .18s ease,border-color .18s ease,filter .18s ease;
+}
+.home-mode-card:hover{transform:translateY(-2px);filter:brightness(1.08);border-color:#ffffff55}
+.home-mode-card:focus-visible{outline:3px solid #dbeafe;outline-offset:3px}
+.home-mode-card .home-mode-icon{font-size:30px;line-height:1}
+.home-mode-card strong{font-size:20px;line-height:1.25}
+.home-mode-card span:last-child{font-size:13px;line-height:1.5;color:#dbeafe}
+.home-mode-card.mode-blue{background:linear-gradient(145deg,#24499b 0%,#172747 58%,#101b30 100%)}
+.home-mode-card.mode-green{background:linear-gradient(145deg,#087c70 0%,#13433f 55%,#10252f 100%)}
+.home-mode-card.mode-purple{background:linear-gradient(145deg,#7045ad 0%,#372652 58%,#171b31 100%)}
+.home-mode-label{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#a9bad5;margin:4px 0 8px}
+.top-heading{min-width:0}
+#modeIntro{display:none;color:#9fb1c9;font-size:13px;line-height:1.5;margin-top:6px;max-width:680px}
+.videoBox{min-height:260px}
+/* Mode dipilih dari kartu beranda, sehingga halaman kerja tidak menumpuk tiga pilihan mode lagi. */
+.mode-grid{display:none!important}
+@media(max-width:900px){
+  .home-mode-grid{grid-template-columns:1fr;gap:12px}
+  .home-mode-card{min-height:150px;padding:18px}
+  .home-mode-card .home-mode-icon{font-size:28px}
+  .home-mode-card strong{font-size:19px}
+}
+@media(min-width:601px) and (max-width:900px){
+  .home-mode-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .home-mode-card{min-height:175px;padding:16px}
+  .home-mode-card strong{font-size:17px}
+}
+@media(max-width:430px){
+  .upload{padding:8px}
+  .home-mode-card{min-height:138px}
+  .home-mode-card strong{font-size:18px}
 }
 
 @media (max-width: 600px) {
@@ -175,7 +232,7 @@ body {
   .pill{font-size:11px;padding:7px 9px}
   .grid{display:flex;flex-direction:column;gap:14px}
   .card{padding:14px;border-radius:15px}
-  .upload{height:145px}
+  .upload{--movira-upload-height:230px;height:var(--movira-upload-height);min-height:var(--movira-upload-height)}
   textarea{min-height:105px}
   .options{gap:6px}
   .options button{padding:10px 3px;font-size:13px}
@@ -268,7 +325,7 @@ body {
 </button>
 </aside>
 <main class="main">
-  <div class="top"><h1 data-i18n="create">Buat Video</h1><div class="pill">Movira AI • Backend Terhubung</div></div>
+  <div class="top"><div class="top-heading"><h1 data-i18n="create">Buat Video</h1><div id="modeIntro"></div></div><div class="pill">Movira AI • Backend Terhubung</div></div>
   <div class="grid">
     <section class="card">
       
@@ -529,15 +586,32 @@ Veo 3.1 Lite ⭐
   </section>
   <section id="homePage" style="display:none;">
   <h2>Dashboard Movira AI</h2>
-
-<div class="samplegrid">
+  <div class="home-mode-grid" aria-label="Pilih fitur pembuatan video">
+    <button type="button" class="home-mode-card mode-blue" onclick="openMoviraMode('image-to-video')">
+      <span class="home-mode-icon">🖼️</span>
+      <strong>Image to Video</strong>
+      <span>Ubah gambar menjadi video dengan gerakan yang halus.</span>
+    </button>
+    <button type="button" class="home-mode-card mode-green" onclick="openMoviraMode('reference-to-video')">
+      <span class="home-mode-icon">🎞️</span>
+      <strong>Reference to Video</strong>
+      <span>Gunakan gambar atau video referensi untuk mengarahkan hasil.</span>
+    </button>
+    <button type="button" class="home-mode-card mode-purple" onclick="openMoviraMode('video-to-video')">
+      <span class="home-mode-icon">🎬</span>
+      <strong>Video to Video</strong>
+      <span>Olah video sumber dengan bantuan AI.</span>
+    </button>
+  </div>
+  <div class="home-mode-label">Menu lainnya</div>
+ <div class="samplegrid">
   <div class="card"
        style="padding:16px;cursor:pointer;"
-       onclick="document.querySelector('.nav button[data-i18n=create]').click()">
-    <div style="font-size:28px;">🎬</div>
-    <b>Buat Video</b>
+       onclick="document.querySelector('.nav button[data-i18n=projects]').click()">
+    <div style="font-size:28px;">📁</div>
+    <b>Proyek Saya</b>
     <div class="muted" style="margin-top:6px;">
-      Buat video AI dengan mudah.
+      Kelola proyek dan prompt setiap scene.
     </div>
   </div>
 
@@ -840,7 +914,8 @@ navButtons.forEach(button => {
     } else if (text === "create") {
       if (createTop) createTop.style.display = "";
       if (createGrid) createGrid.style.display = "";
-      if (samples) samples.style.display = "";
+      if (samples) samples.style.display = "none";
+      updateMoviraModeHeading();
     } else if (text === "template") {
       if (samples) samples.style.display = "block";
     } else if (text === "history") {
@@ -1114,6 +1189,57 @@ durationButtons[0].classList.add("selected");
 }
   }
   }
+
+function getMoviraSelectedMode() {
+  const cards = document.querySelectorAll(".mode-card");
+  if (cards[1]?.classList.contains("selected")) return "reference-to-video";
+  if (cards[2]?.classList.contains("selected")) return "video-to-video";
+  return "image-to-video";
+}
+
+function updateMoviraModeHeading() {
+  const mode = getMoviraSelectedMode();
+  const headings = {
+    "image-to-video": {
+      title: "Image to Video",
+      intro: "Unggah satu gambar, tulis prompt, lalu atur model dan format video."
+    },
+    "reference-to-video": {
+      title: "Reference to Video",
+      intro: "Tambahkan gambar atau video referensi, lalu tulis prompt untuk mengarahkan hasil."
+    },
+    "video-to-video": {
+      title: "Video to Video",
+      intro: "Unggah video sumber, tulis prompt, lalu pilih pengaturan yang tersedia."
+    }
+  };
+  const selected = headings[mode];
+  const heading = document.querySelector(".top h1");
+  const intro = document.getElementById("modeIntro");
+  if (heading) heading.textContent = selected.title;
+  if (intro) {
+    intro.textContent = selected.intro;
+    intro.style.display = "block";
+  }
+}
+
+window.openMoviraMode = function (mode) {
+  const indices = {
+    "image-to-video": 0,
+    "reference-to-video": 1,
+    "video-to-video": 2
+  };
+  const index = indices[mode];
+  const modeButtons = document.querySelectorAll(".mode-card");
+  if (index === undefined || !modeButtons[index]) return;
+
+  // Reuse the existing mode handler so model, resolution, credit cost, and upload boxes stay synchronized.
+  modeButtons[index].click();
+  const createButton = document.querySelector('.nav button[data-i18n="create"]');
+  if (createButton) createButton.click();
+  updateMoviraModeHeading();
+  document.querySelector(".top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 
 document.querySelectorAll("#models button").forEach(b => b.onclick = () => {
   const isReferenceMode =
@@ -2259,14 +2385,14 @@ function showSelectedFile(inputId, textId) {
       preview.style.display = "flex";
       preview.style.flexWrap = "nowrap";
       preview.style.gap = "8px";
-      preview.style.maxHeight = "90px";
+      preview.style.maxHeight = "150px";
       preview.style.overflowX = "auto";
       preview.style.overflowY = "hidden";
 
       selectedFiles.forEach((file, index) => {
         const item = document.createElement("div");
         item.style.cssText =
-          "position:relative;flex:0 0 70px;width:70px;height:70px;";
+          "position:relative;flex:0 0 112px;width:112px;height:112px;";
      
 const img = document.createElement("img");
 const fileKey =
@@ -2280,7 +2406,7 @@ const imageUrl = imageUrls.get(fileKey);
 img.setAttribute("src", imageUrl);
 img.setAttribute("alt", file.name);
 img.style.cssText =
-  "display:block;width:70px;height:70px;min-width:70px;" +
+  "display:block;width:112px;height:112px;min-width:112px;" +
   "object-fit:cover;border-radius:8px;" +
   "border:1px solid #334155;background:#ffffff;";
 
@@ -2311,7 +2437,7 @@ item.append(img, remove);
         add.type = "button";
         add.textContent = "+ Tambah";
         add.style.cssText =
-          "flex:0 0 80px;width:80px;height:70px;" +
+          "flex:0 0 120px;width:120px;height:112px;" +
           "border:1px dashed #64748b;border-radius:8px;" +
           "background:#0f172a;color:white;font-size:11px;";
         add.onclick = () => input.click();
@@ -2383,15 +2509,21 @@ if (inputId === "referenceVideoFiles") {
     text.replaceChildren();
 
 text.style.display = "grid";
-text.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
+text.style.gridTemplateColumns = "repeat(auto-fit, minmax(min(100%, 180px), 1fr))";
 text.style.alignItems = "start";
 text.style.gap = "10px";
 text.style.width = "100%";
-text.style.maxHeight = "400px";
+text.style.maxHeight = "620px";
 text.style.padding = "4px 2px 12px";
 text.style.scrollPadding = "12px";
 text.style.overflowY = "auto";
 text.style.overflowX = "hidden";
+const referenceUploadBox = text.closest(".upload");
+if (referenceUploadBox) {
+    referenceUploadBox.style.height = "auto";
+    referenceUploadBox.style.minHeight = "var(--movira-upload-height, 250px)";
+    referenceUploadBox.style.overflow = "visible";
+}
   
  const addReferenceVideoBtn =
     document.getElementById("addReferenceVideoBtn");
@@ -2482,8 +2614,8 @@ video.muted = false;
 video.style.cssText =
   "display:block;" +
   "width:100%;" +
-  "height:120px;" +
-  "min-height:120px;" +
+  "height:170px;" +
+  "min-height:170px;" +
   "max-width:100%;" +
   "object-fit:contain;" +
   "object-position:center;" +
@@ -2557,9 +2689,15 @@ removeVideo.onclick = (event) => {
         : "none";
   }
 
-  if (selectedReferenceVideoFiles.length === 0) {
-    text.replaceChildren();
-    text.textContent = "Belum ada video referensi.";
+   if (selectedReferenceVideoFiles.length === 0) {
+     text.replaceChildren();
+     text.textContent = "Belum ada video referensi.";
+     const referenceUploadBox = text.closest(".upload");
+     if (referenceUploadBox) {
+       referenceUploadBox.style.height = "var(--movira-upload-height, 250px)";
+       referenceUploadBox.style.minHeight = "var(--movira-upload-height, 250px)";
+       referenceUploadBox.style.overflow = "hidden";
+     }
   }
 };
 
@@ -2598,7 +2736,13 @@ if (oldVideo) {
 
 text.replaceChildren();
   
-  const previewBox = document.createElement("div");
+   const sourceUploadBox = text.closest(".upload");
+   if (sourceUploadBox) {
+     sourceUploadBox.style.height = "auto";
+     sourceUploadBox.style.minHeight = "var(--movira-upload-height, 250px)";
+     sourceUploadBox.style.overflow = "visible";
+   }
+   const previewBox = document.createElement("div");
   
 previewBox.style.cssText =
     "position:relative;display:flex;flex-direction:column;gap:10px;" +
@@ -2606,7 +2750,7 @@ previewBox.style.cssText =
     "box-sizing:border-box;max-width:100%;" +
     "border:1px solid #334155;border-radius:16px;" +
     "background:#0b1b2e;" +
-"height:220px;overflow-y:auto;overflow-x:hidden;";
+"height:290px;min-height:290px;overflow-y:auto;overflow-x:hidden;";
       
   const video = document.createElement("video");
   const videoUrl = URL.createObjectURL(file);
@@ -2626,8 +2770,8 @@ video.addEventListener("loadedmetadata", () => {
       if (video.videoHeight > video.videoWidth) {
         previewBox.style.width = "fit-content";
         previewBox.style.maxWidth = "180px";
-        video.style.width = "140px";
-        video.style.maxWidth = "140px";
+        video.style.width = "160px";
+        video.style.maxWidth = "160px";
         }
 });
 
@@ -2667,7 +2811,7 @@ video.load();
 "width:auto;" +
 "max-width:100%;" +
 "height:auto;" +
-"max-height:200px;" +
+"max-height:260px;" +
 "object-fit:contain;" +
 "object-position:center;" +
 "background:#000;";
@@ -2703,8 +2847,13 @@ removeBtn.style.cssText =
     sourceVideo = "";
     previewBox.remove();
     text.replaceChildren();
+    if (sourceUploadBox) {
+       sourceUploadBox.style.height = "var(--movira-upload-height, 250px)";
+       sourceUploadBox.style.minHeight = "var(--movira-upload-height, 250px)";
+       sourceUploadBox.style.overflow = "hidden";
+     }
 
-    const title = document.createElement("b");
+     const title = document.createElement("b");
     title.textContent = "Add Source Video";
 
     const hint = document.createElement("span");
