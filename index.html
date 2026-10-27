@@ -3286,10 +3286,33 @@ function renderProjectWorkspace() {
         ";";
 
       button.onclick = function () {
-        syncWorkspaceScenePrompt();
-        activeSceneIndex = index;
-        renderProjectWorkspace();
-      };
+  // Simpan prompt dan pengaturan scene yang ditinggalkan.
+  syncWorkspaceScenePrompt();
+
+  const previousScene = workspaceScenes[activeSceneIndex];
+
+  if (previousScene) {
+    previousScene.settings = { ...getSettings() };
+  }
+
+  // Pindah ke scene yang dipilih.
+  activeSceneIndex = index;
+  renderProjectWorkspace();
+
+  // Pulihkan pengaturan milik scene tujuan.
+  const nextScene = workspaceScenes[activeSceneIndex];
+
+  const settingsToRestore =
+    nextScene?.settings &&
+    typeof nextScene.settings === "object"
+      ? nextScene.settings
+      : currentProjectSettings;
+
+  restoreProjectSettings(settingsToRestore || {});
+
+  // Simpan perubahan scene secara otomatis.
+  scheduleSave();
+};
 
       tabs.appendChild(button);
     });
