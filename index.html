@@ -300,7 +300,20 @@ body {
 .videoBox.ratio-916{aspect-ratio:9/16}.videoBox.ratio-169{aspect-ratio:16/9}.videoBox.ratio-11{aspect-ratio:1/1}
 #resultVideo{object-fit:cover}
 @media(max-width:900px){.videoBox{width:100%}}
-.downloadNote{font-size:12px;color:#8fa4bf;margin-top:8px;text-align:center}.downloadNote{display:none}@media(max-width:900px){.downloadNote{display:block}} </style>
+.downloadNote{font-size:12px;color:#8fa4bf;margin-top:8px;text-align:center}.downloadNote{display:none}@media(max-width:900px){.downloadNote{display:block}} 
+.home-header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.home-header-row h2{margin:0}
+.language-picker{position:relative;z-index:40;margin-left:auto}
+.language-toggle{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 12px;border:1px solid #385276;border-radius:10px;background:#0b1b2e;color:#e8efff;font-weight:700;cursor:pointer}
+.language-toggle:focus-visible,.language-option:focus-visible{outline:2px solid #88a7ff;outline-offset:2px}
+.language-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:150px;padding:6px;border:1px solid #385276;border-radius:12px;background:#0b1b2e;box-shadow:0 12px 28px #0008;z-index:1000}
+.language-menu[hidden]{display:none}
+.language-option{display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:#e8efff;cursor:pointer}
+.language-option:hover,.language-option[aria-checked="true"]{background:#1b3260}
+.ratio-warning{display:none;margin:9px 0 0;padding:10px 12px;border:1px solid #7c5b20;border-radius:10px;background:#2b2110;color:#ffdf99;font-size:13px;line-height:1.45}
+.ratio-warning[hidden]{display:none}
+@media(max-width:520px){.home-header-row{align-items:flex-start}.language-picker{margin-left:0}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -320,7 +333,7 @@ body {
   <img id="headerAvatar" src="https://ui-avatars.com/api/?name=User&background=394cff&color=fff" alt="Profil" style="width:42px;height:42px;min-width:42px;min-height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;">
 </button>
 
-<button class="upgrade" style="display:block;margin:10px 12px 0;padding:10px 14px;border:0;border-radius:10px;background:linear-gradient(90deg,#2948ff,#6d45ff);color:#fff;font-weight:700;">
+<button class="upgrade" data-i18n="upgradeLabel" style="display:block;margin:10px 12px 0;padding:10px 14px;border:0;border-radius:10px;background:linear-gradient(90deg,#2948ff,#6d45ff);color:#fff;font-weight:700;">
    Upgrade
 </button>
 </aside>
@@ -334,9 +347,9 @@ body {
       <div class="step">1. <span data-i18n="upload">Upload Gambar</span></div>
       <label class="upload" for="file">
         <input id="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-        <div id="uploadText">🖼️<br><b>Klik untuk upload gambar</b><br><span class="muted">PNG, JPG, WEBP • maks. 10 MB</span></div>
+        <div id="uploadText">🖼️<br><b data-i18n="clickUploadImage">Click to upload an image</b><br><span class="muted" data-i18n="imageFileLimit">PNG, JPG, WEBP • max. 10 MB</span></div>
         <img id="thumb">
-        <button type="button" id="clearImageBtn" class="image-clear-btn" aria-label="Hapus gambar" hidden>×</button>
+        <button type="button" id="clearImageBtn" class="image-clear-btn" data-i18n-aria-label="removeImageLabel" aria-label="Remove image" hidden>×</button>
       </label>
   
 </div>
@@ -347,9 +360,9 @@ body {
   <label class="upload" for="referenceImageFiles">
  <div id="referenceImageText">
   <br>
-  <b>Add Reference Images</b><br>
-  <span class="muted">Klik untuk menambahkan gambar referensi</span><br>
-  <span class="muted">PNG, JPG, WEBP</span>
+  <b data-i18n="addReferenceImages">Add Reference Images</b><br>
+  <span class="muted" data-i18n="referenceUploadHint">Click to add reference images</span><br>
+  <span class="muted" data-i18n="referenceImageFormats">PNG, JPG, WEBP</span>
 </div>
 <div id="referenceImagePreview" style="display:none;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
   </label>
@@ -361,9 +374,9 @@ body {
     <label class="upload" for="referenceVideoFiles">
       <div id="referenceVideoText">
         🎞️<br>
-        <b>Add Reference Video</b><br>
-        <span class="muted">Klik untuk menambahkan video referensi</span><br>
-        <span class="muted">MP4 atau MOV</span>
+        <b data-i18n="addReferenceVideo">Add Reference Video</b><br>
+        <span class="muted" data-i18n="referenceVideoHint">Click to add a reference video</span><br>
+        <span class="muted" data-i18n="referenceVideoFormats">MP4 or MOV</span>
       </div>
     </label>
     <input id="referenceVideoFiles" type="file"
@@ -374,7 +387,7 @@ margin:8px 0 0;padding:12px;
 border:1px dashed #64748b;border-radius:10px;
 background:#13243b;color:#fff;font-size:16px;
 cursor:pointer;">
-+ Tambah Video
+<span data-i18n="addVideoAction">+ Add Video</span>
     </button>
   </div>
 </div>
@@ -384,9 +397,9 @@ cursor:pointer;">
   <label class="upload" for="sourceVideoFile">
     <div id="sourceVideoText">
       <br>
-      <b>Add Source Video</b><br>
-      <span class="muted">Klik untuk mengunggah video sumber</span><br>
-      <span class="muted">MP4, maksimal 100 MB</span>
+      <b data-i18n="addSourceVideo">Add Source Video</b><br>
+      <span class="muted" data-i18n="sourceVideoHint">Click to upload a source video</span><br>
+      <span class="muted" data-i18n="sourceVideoLimit">MP4, max. 100 MB</span>
     </div>
   </label>
   <input id="sourceVideoFile" type="file" accept="video/mp4" hidden>
@@ -397,26 +410,26 @@ cursor:pointer;">
 <div class="subcard">
   
       <div class="step">2. <span data-i18n="promptTitle">Tulis Prompt</span></div>
-      <textarea id="prompt" placeholder="Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D."></textarea>
+      <textarea id="prompt" data-i18n-placeholder="promptPlaceholder" placeholder="Example: A character walks slowly toward the camera."></textarea>
    <div class="muted" style="margin-top:12px;">
-  Template Prompt Siap Pakai
+  <span data-i18n="promptExamplesTitle">Ready-to-Use Prompt Templates</span>
 </div>
 
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
   <button type="button" onclick="usePromptTemplate('Cinematic scene, smooth camera movement, realistic lighting, detailed environment.')">
-    Sinematik
+    <span data-i18n="promptTemplateCinema">Cinematic</span>
   </button>
 
   <button type="button" onclick="usePromptTemplate('A cute character walks slowly, smiles naturally, and looks around with smooth animation.')">
-    Karakter Lucu
+    <span data-i18n="promptTemplateCharacter">Cute Character</span>
   </button>
 
   <button type="button" onclick="usePromptTemplate('A peaceful nature scene with flowing water, moving leaves, soft sunlight, and a gentle camera pan.')">
-    Pemandangan
+    <span data-i18n="promptTemplateLandscape">Landscape</span>
   </button>
 
   <button type="button" onclick="usePromptTemplate('A product rotates slowly in the center, with clean lighting, smooth camera movement, and a professional presentation.')">
-    Produk
+    <span data-i18n="promptTemplateProduct">Product</span>
   </button>
 </div>   
   </div>
@@ -464,11 +477,17 @@ Wan 2.6 Reference to Video Flash
 <button type="button" data-value="google/gemini-omni-flash/v1.1/reference-to-video" data-mode="reference">
 Gemini Omni Flash 1.1 Reference to Video
 </button>
+<button type="button" data-value="minimax/h3-max/reference-to-video" data-mode="reference">
+MiniMax H3 Max Reference to Video
+</button>
 <button type="button" data-value="fal-ai/wan/v2.2-a14b/video-to-video" data-mode="video">
 Wan 2.2 A14B Video to Video
 </button>
 <button type="button" data-value="google/gemini-omni-flash/v1.1/edit" data-mode="video">
 Gemini Omni Flash 1.1 Edit
+</button>
+<button type="button" data-value="minimax/h3-max/reframe-video" data-mode="video">
+MiniMax H3 Max Reframe Video
 </button>
 </div>
 <br>
@@ -491,6 +510,7 @@ Gemini Omni Flash 1.1 Edit
 
 <button type="button" data-value="1:1" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='1:1'; updateCreditCost();">1:1<br><small>Square</small></button> 
       </div>
+      <div id="ratioWarning" class="ratio-warning" role="status" aria-live="polite" hidden></div>
       <br>
       <div class="step">6. <span data-i18n="duration">Durasi</span></div>
       <div class="options" id="durations">
@@ -503,8 +523,8 @@ Gemini Omni Flash 1.1 Edit
       <div id="creditCostInfo" style="margin:10px 0;padding:10px 12px;border-radius:10px;background:#101d35;color:#b9c7e8;text-align:center;font-size:14px;">
   💰 Biaya sedang dihitung...
       </div>
-<button class="generate" id="generate" onclick="generateRealVideo()">
-  ✨ Generate Video
+<button class="generate" id="generate" data-i18n="generateAction" onclick="generateRealVideo()">
+  Generate Video
 </button>
       <div class="status" id="status">Mode demo: membuat video WebM nyata dari gambar.</div>
   </div> 
@@ -512,15 +532,15 @@ Gemini Omni Flash 1.1 Edit
     <section class="card preview">
       <div class="step" data-i18n="result">Hasil Video</div>
       <div class="videoBox" id="videoBox">
-        <div class="placeholder" id="placeholder"><span data-i18n="videoPlaceholder">Video hasil akan muncul di sini</span><br><span class="muted">Upload gambar lalu klik Generate Video</span></div>
+        <div class="placeholder" id="placeholder"><span data-i18n="videoPlaceholder">Video hasil akan muncul di sini</span><br><span class="muted" data-i18n="placeholderInstruction">Upload an image, then click Generate Video</span></div>
         <video id="resultVideo" controls playsinline style="display:none;width:100%;height:100%;object-object-fit:cover;background:#000;border-radius:12px"></video>
       </div>
-      <div class="downloadNote" id="downloadNote">📱 Download disimpan tanpa membuka tab baru. Cek folder Download HP.</div>
-      <div class="resultbar"><button id="download" data-i18n="download">Download</button><button id="share">↗ Bagikan</button><button id="save">♡ Simpan</button><button id="again">↻ Buat Lagi</button></div>
+      <div class="downloadNote" id="downloadNote" data-i18n="downloadNoteText">📱 The download is saved without opening a new tab. Check your phone's Downloads folder.</div>
+      <div class="resultbar"><button id="download" data-i18n="download">Download</button><button id="share" data-i18n="shareAction">↗ Share</button><button id="save" data-i18n="saveAction">♡ Save</button><button id="again" data-i18n="againAction">↻ Create Again</button></div>
     </section>
   </div>
   <section class="samples">
-  <h2>Template Video</h2>
+  <h2 data-i18n="templateSectionTitle">Video Templates</h2>
 
 <div class="samplegrid">
 
@@ -587,58 +607,70 @@ Gemini Omni Flash 1.1 Edit
 </div>
   </section>
   <section id="historyPage" style="display:none;">
-  <h2>Riwayat Video</h2>
+  <h2 data-i18n="historyTitle">Video History</h2>
 
   <div id="historyList" class="samplegrid">
-    <div class="muted">Belum ada video di riwayat.</div>
+    <div class="muted" data-i18n="emptyHistory">No videos in history yet.</div>
   </div>
   </section>
   
   <section id="galleryPage" style="display:none;">
-  <h2>Galeri Video</h2>
+  <h2 data-i18n="galleryTitle">Video Gallery</h2>
 
   <div id="galleryList" class="samplegrid">
-    <div class="muted">Belum ada video tersimpan.</div>
+    <div class="muted" data-i18n="emptyGallery">No saved videos yet.</div>
   </div>
   </section>
   <section id="homePage" style="display:none;">
-  <h2>Dashboard Movira AI</h2>
+  <div class="home-header-row">
+    <h2 data-i18n="dashboardTitle">Movira AI Dashboard</h2>
+    <div class="language-picker" id="languagePicker">
+      <button type="button" id="languageToggle" class="language-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu">
+        <span id="languageCurrentLabel">English</span><span aria-hidden="true">▾</span>
+      </button>
+      <div id="languageMenu" class="language-menu" role="radiogroup" aria-label="Language" hidden>
+        <button type="button" class="language-option" data-language="en" role="radio" aria-checked="true">English</button>
+        <button type="button" class="language-option" data-language="id" role="radio" aria-checked="false">Indonesian</button>
+        <button type="button" class="language-option" data-language="ms" role="radio" aria-checked="false">Malaysia</button>
+      </div>
+    </div>
+  </div>
   <div class="home-mode-grid" aria-label="Pilih fitur pembuatan video">
     <button type="button" class="home-mode-card mode-blue" onclick="openMoviraMode('image-to-video')">
       <span class="home-mode-icon">🖼️</span>
-      <strong>Image to Video</strong>
-      <span>Ubah gambar menjadi video dengan gerakan yang halus.</span>
+      <strong data-i18n="imageModeTitle">Image to Video</strong>
+      <span data-i18n="imageModeDesc">Animate an image into a smooth video.</span>
     </button>
     <button type="button" class="home-mode-card mode-green" onclick="openMoviraMode('reference-to-video')">
       <span class="home-mode-icon">🎞️</span>
-      <strong>Reference to Video</strong>
-      <span>Gunakan gambar atau video referensi untuk mengarahkan hasil.</span>
+      <strong data-i18n="referenceModeTitle">Reference to Video</strong>
+      <span data-i18n="referenceModeDesc">Guide the result with reference images or videos.</span>
     </button>
     <button type="button" class="home-mode-card mode-purple" onclick="openMoviraMode('video-to-video')">
       <span class="home-mode-icon">🎬</span>
-      <strong>Video to Video</strong>
-      <span>Olah video sumber dengan bantuan AI.</span>
+      <strong data-i18n="videoModeTitle">Video to Video</strong>
+      <span data-i18n="videoModeDesc">Transform a source video with AI.</span>
     </button>
   </div>
-  <div class="home-mode-label">Menu lainnya</div>
+  <div class="home-mode-label" data-i18n="otherMenus">More menus</div>
  <div class="samplegrid">
   <div class="card"
        style="padding:16px;cursor:pointer;"
        onclick="document.querySelector('.nav button[data-i18n=projects]').click()">
     <div style="font-size:28px;">📁</div>
-    <b>Proyek Saya</b>
-    <div class="muted" style="margin-top:6px;">
-      Kelola proyek dan prompt setiap scene.
+    <b data-i18n="myProjects">My Projects</b>
+    <div class="muted" style="margin-top:6px;" data-i18n="projectsDesc">
+      Manage projects and each scene prompt.
     </div>
   </div>
 
   <div class="card"
        style="padding:16px;cursor:pointer;"
-       onclick="const c=document.getElementById('userCredits');const o=document.getElementById('homeCreditValue');const n=c?c.textContent.trim():'';o.textContent=!n||n==='Memuat...'?'Kredit sedang dimuat...':n==='—'?'Silakan login untuk melihat kredit.':n==='Gagal memuat kredit'?n:'Saldo kamu: '+n+' Kredit';">
+       onclick="showHomeCreditBalance()">
     <div style="font-size:28px;">💰</div>
-    <b>Kredit</b>
-    <div id="homeCreditValue" class="muted" style="margin-top:6px;">
-      Tekan untuk melihat saldo kredit.
+    <b data-i18n="creditsTitle">Credits</b>
+    <div id="homeCreditValue" class="muted" style="margin-top:6px;" data-i18n="pressToViewBalance">
+      Tap to view your credit balance.
     </div>
   </div>
 
@@ -646,9 +678,9 @@ Gemini Omni Flash 1.1 Edit
        style="padding:16px;cursor:pointer;"
        onclick="document.querySelector('.nav button[data-i18n=gallery]').click()">
     <div style="font-size:28px;">🖼️</div>
-    <b>Galeri</b>
-    <div class="muted" style="margin-top:6px;">
-      Video yang kamu simpan.
+    <b data-i18n="gallery">Gallery</b>
+    <div class="muted" style="margin-top:6px;" data-i18n="galleryDesc">
+      Videos you saved.
     </div>
   </div>
 
@@ -656,9 +688,9 @@ Gemini Omni Flash 1.1 Edit
        style="padding:16px;cursor:pointer;"
        onclick="document.querySelector('.nav button[data-i18n=history]').click()">
     <div style="font-size:28px;">◷</div>
-    <b>Riwayat</b>
-    <div class="muted" style="margin-top:6px;">
-      Lihat video yang pernah dibuat.
+    <b data-i18n="history">History</b>
+    <div class="muted" style="margin-top:6px;" data-i18n="historyDesc">
+      View videos you have generated.
     </div>
   </div>
 </div>
@@ -704,13 +736,17 @@ const API_BASE = "https://movira-backend-1.onrender.com";
     upgrade.style.display = isHidden ? "block" : "none";
   }
   }
-// Bahasa otomatis Movira
-const browserLang = (navigator.language || "en").toLowerCase();
-
-const moviraLang =
-  browserLang.startsWith("id") ? "id" :
-  browserLang.startsWith("ms") ? "ms" :
-  "en";
+// Bahasa dipilih pengguna. Default pertama kali adalah English.
+function readMoviraLanguage() {
+  try {
+    const saved = localStorage.getItem("moviraLang");
+    return ["en", "id", "ms"].includes(saved) ? saved : "en";
+  } catch {
+    return "en";
+  }
+}
+let moviraLang = readMoviraLanguage();
+const moviraLanguageNames = { en: "English", id: "Indonesian", ms: "Malaysia" };
   const moviraTexts = {
   id: {
     home: "Beranda",
@@ -747,7 +783,78 @@ natureDesc:"Suasana alam indah",
 magic:"MAGIC",
 magicDesc:"Efek dunia ajaib",
 story:"STORY",
-storyDesc:"Gaya cerita film"
+storyDesc:"Gaya cerita film",
+    projects: "📁 Proyek",
+    dashboardTitle: "Beranda Movira AI",
+    otherMenus: "Menu lainnya",
+    myProjects: "Proyek Saya",
+    projectsDesc: "Kelola proyek dan prompt setiap scene.",
+    creditsTitle: "Kredit",
+    pressToViewBalance: "Tekan untuk melihat saldo kredit.",
+    galleryDesc: "Video yang kamu simpan.",
+    historyDesc: "Lihat video yang pernah dibuat.",
+    galleryTitle: "Galeri Video",
+    historyTitle: "Riwayat Video",
+    imageModeTitle: "Gambar ke Video",
+    imageModeDesc: "Ubah gambar menjadi video dengan gerakan yang halus.",
+    referenceModeTitle: "Referensi ke Video",
+    referenceModeDesc: "Gunakan gambar atau video referensi untuk mengarahkan hasil.",
+    videoModeTitle: "Video ke Video",
+    videoModeDesc: "Olah video sumber dengan bantuan AI.",
+    secondUnit: "detik",
+    activeModel: "Model aktif: ",
+    noCostYet: "⚠️ Kombinasi pilihan belum tersedia",
+    uploadSourceForCost: "Unggah video sumber untuk menghitung biaya.",
+    estimatedCost: "💰 Perkiraan biaya untuk video sumber {seconds} detik: {cost} Kredit",
+    ratioFollowsImage: "Peringatan: Rasio MiniMax H3 Max Turbo mengikuti gambar yang diunggah. Pilihan rasio dinonaktifkan.",
+    ratioFollowsVideo: "Peringatan: Rasio Gemini Omni Flash 1.1 Edit mengikuti video sumber. Pilihan rasio dinonaktifkan.",
+    ratioSquareUnsupported: "Peringatan: Rasio 1:1 tidak didukung model ini dan dinonaktifkan.",
+    ratiosDisabled: "Rasio yang redup tidak didukung oleh model yang dipilih.",
+
+
+        creditLoading: "Kredit sedang dimuat...",
+    pleaseLoginCredits: "Silakan login untuk melihat kredit.",
+    creditLoadFailed: "Gagal memuat kredit",
+    balancePrefix: "Saldo kamu: ",
+    minimaxRefCostWarning: "Harga di atas adalah biaya dasar video. Kredit tambahan untuk gambar/video referensi dihitung dari jumlah, ukuran, resolusi, dan durasinya sebelum permintaan dikirim.",
+    reframeModelNotice: "MiniMax H3 Max Reframe mengubah rasio kanvas sambil mempertahankan audio dan garis masa. Skema API mencantumkan 480p, 768p, dan 1080p; video sumber dibatasi maksimal 15 detik.",
+    clickUploadImage: "Klik untuk upload gambar",
+    imageFileLimit: "PNG, JPG, WEBP • maks. 10 MB",
+    addReferenceImages: "Tambah Gambar Referensi",
+    referenceUploadHint: "Klik untuk menambahkan gambar referensi",
+    referenceImageFormats: "PNG, JPG, WEBP",
+    addReferenceVideo: "Tambah Video Referensi",
+    referenceVideoHint: "Klik untuk menambahkan video referensi",
+    referenceVideoFormats: "MP4 atau MOV",
+    addSourceVideo: "Tambah Video Sumber",
+    sourceVideoHint: "Klik untuk mengunggah video sumber",
+    sourceVideoLimit: "MP4, maksimal 100 MB",
+    promptExamplesTitle: "Template Prompt Siap Pakai",
+    promptTemplateCinema: "Sinematik",
+    promptTemplateCharacter: "Karakter Lucu",
+    promptTemplateLandscape: "Pemandangan",
+    promptTemplateProduct: "Produk",
+    promptPlaceholder: "Contoh: Karakter berjalan perlahan ke arah kamera, tersenyum, gerakan halus, gaya animasi 3D.",
+    placeholderInstruction: "Upload gambar lalu klik Generate Video",
+    downloadNoteText: "📱 Download disimpan tanpa membuka tab baru. Cek folder Download HP.",
+    shareAction: "↗ Bagikan",
+    saveAction: "♡ Simpan",
+    againAction: "↻ Buat Lagi",
+    templateSectionTitle: "Template Video",
+    emptyHistory: "Belum ada video di riwayat.",
+    emptyGallery: "Belum ada video tersimpan.",
+    accountLabel: "Akun Movira",
+    loginHeading: "🔐 Masuk Movira",
+    loginGoogle: "Masuk dengan Google",
+    signUp: "Daftar",
+    logout: "Keluar",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Password",
+    profileAlt: "Foto profil",
+    removeImageLabel: "Hapus gambar",
+    addVideoAction: "+ Tambah Video",
+    generateAction: "Buat Video",
+    upgradeLabel: "Upgrade"
   },
 
   ms: {
@@ -785,7 +892,76 @@ natureDesc:"Suasana alam yang indah",
 magic:"MAGIK",
 magicDesc:"Kesan dunia ajaib",
 story:"CERITA",
-storyDesc:"Gaya cerita filem"
+storyDesc:"Gaya cerita filem",
+    projects: "📁 Projek",
+    dashboardTitle: "Laman Utama Movira AI",
+    otherMenus: "Menu lain",
+    myProjects: "Projek Saya",
+    projectsDesc: "Urus projek dan prompt setiap scene.",
+    creditsTitle: "Kredit",
+    pressToViewBalance: "Tekan untuk melihat baki kredit.",
+    galleryDesc: "Video yang anda simpan.",
+    historyDesc: "Lihat video yang pernah dijana.",
+    galleryTitle: "Galeri Video",
+    historyTitle: "Sejarah Video",
+    imageModeTitle: "Imej ke Video",
+    imageModeDesc: "Jadikan gambar sebagai video dengan gerakan yang lancar.",
+    referenceModeTitle: "Rujukan ke Video",
+    referenceModeDesc: "Gunakan gambar atau video rujukan untuk membimbing hasil.",
+    videoModeTitle: "Video ke Video",
+    videoModeDesc: "Ubah video sumber menggunakan AI.",
+    secondUnit: "saat",
+    activeModel: "Model aktif: ",
+    noCostYet: "⚠️ Gabungan pilihan belum tersedia",
+    uploadSourceForCost: "Muat naik video sumber untuk mengira kos.",
+    estimatedCost: "💰 Anggaran kos untuk video sumber {seconds} saat: {cost} Kredit",
+    ratioFollowsImage: "Amaran: Nisbah MiniMax H3 Max Turbo mengikut gambar yang dimuat naik. Pilihan nisbah dinyahaktifkan.",
+    ratioFollowsVideo: "Amaran: Nisbah Gemini Omni Flash 1.1 Edit mengikut video sumber. Pilihan nisbah dinyahaktifkan.",
+    ratioSquareUnsupported: "Amaran: Nisbah 1:1 tidak disokong model ini dan dinyahaktifkan.",
+    ratiosDisabled: "Nisbah yang malap tidak disokong oleh model yang dipilih.",
+    creditLoading: "Kredit sedang dimuat...",
+    pleaseLoginCredits: "Log masuk untuk melihat kredit.",
+    creditLoadFailed: "Gagal memuatkan kredit",
+    balancePrefix: "Baki anda: ",
+    minimaxRefCostWarning: "Harga di atas ialah kos asas video. Kredit tambahan untuk imej/video rujukan dikira berdasarkan bilangan, saiz, resolusi dan tempohnya sebelum permintaan dihantar.",
+    reframeModelNotice: "MiniMax H3 Max Reframe mengubah nisbah kanvas sambil mengekalkan audio dan garis masa. Skema API menyenaraikan 480p, 768p dan 1080p; video sumber dihadkan kepada maksimum 15 saat.",
+    clickUploadImage: "Klik untuk memuat naik imej",
+    imageFileLimit: "PNG, JPG, WEBP • maks. 10 MB",
+    addReferenceImages: "Tambah Imej Rujukan",
+    referenceUploadHint: "Klik untuk menambah imej rujukan",
+    referenceImageFormats: "PNG, JPG, WEBP",
+    addReferenceVideo: "Tambah Video Rujukan",
+    referenceVideoHint: "Klik untuk menambah video rujukan",
+    referenceVideoFormats: "MP4 atau MOV",
+    addSourceVideo: "Tambah Video Sumber",
+    sourceVideoHint: "Klik untuk memuat naik video sumber",
+    sourceVideoLimit: "MP4, maksimum 100 MB",
+    promptExamplesTitle: "Templat Prompt Sedia Digunakan",
+    promptTemplateCinema: "Sinematik",
+    promptTemplateCharacter: "Watak Comel",
+    promptTemplateLandscape: "Pemandangan",
+    promptTemplateProduct: "Produk",
+    promptPlaceholder: "Contoh: Watak berjalan perlahan ke arah kamera, tersenyum, bergerak lancar dalam gaya animasi 3D.",
+    placeholderInstruction: "Muat naik imej kemudian tekan Jana Video",
+    downloadNoteText: "📱 Muat turun disimpan tanpa membuka tab baharu. Semak folder Muat Turun telefon.",
+    shareAction: "↗ Kongsi",
+    saveAction: "♡ Simpan",
+    againAction: "↻ Buat Semula",
+    templateSectionTitle: "Templat Video",
+    emptyHistory: "Belum ada video dalam sejarah.",
+    emptyGallery: "Belum ada video disimpan.",
+    accountLabel: "Akaun Movira",
+    loginHeading: "🔐 Log Masuk Movira",
+    loginGoogle: "Log masuk dengan Google",
+    signUp: "Daftar",
+    logout: "Log keluar",
+    emailPlaceholder: "E-mel",
+    passwordPlaceholder: "Kata laluan",
+    profileAlt: "Foto profil",
+    removeImageLabel: "Padam imej",
+    addVideoAction: "+ Tambah Video",
+    generateAction: "Jana Video",
+    upgradeLabel: "Naik Taraf"
   },
 
   en: {
@@ -823,17 +999,147 @@ natureDesc:"Beautiful natural atmosphere",
 magic:"MAGIC",
 magicDesc:"Magical world effects",
 story:"STORY",
-storyDesc:"Film storytelling style"
+storyDesc:"Film storytelling style",
+    projects: "📁 Projects",
+    dashboardTitle: "Movira AI Home",
+    otherMenus: "More menus",
+    myProjects: "My Projects",
+    projectsDesc: "Manage projects and each scene prompt.",
+    creditsTitle: "Credits",
+    pressToViewBalance: "Tap to view your credit balance.",
+    galleryDesc: "Videos you saved.",
+    historyDesc: "View videos you have generated.",
+    galleryTitle: "Video Gallery",
+    historyTitle: "Video History",
+    imageModeTitle: "Image to Video",
+    imageModeDesc: "Animate an image into a smooth video.",
+    referenceModeTitle: "Reference to Video",
+    referenceModeDesc: "Guide the result with reference images or videos.",
+    videoModeTitle: "Video to Video",
+    videoModeDesc: "Transform a source video with AI.",
+    secondUnit: "seconds",
+    activeModel: "Active model: ",
+    noCostYet: "⚠️ This combination is not available yet",
+    uploadSourceForCost: "Upload a source video to calculate the cost.",
+    estimatedCost: "💰 Estimated cost for a {seconds}-second source video: {cost} Credits",
+    ratioFollowsImage: "Notice: MiniMax H3 Max Turbo follows the uploaded image's aspect ratio. Ratio choices are disabled.",
+    ratioFollowsVideo: "Notice: Gemini Omni Flash 1.1 Edit follows the source video's aspect ratio. Ratio choices are disabled.",
+    ratioSquareUnsupported: "Notice: The 1:1 ratio is not supported by this model and has been disabled.",
+    ratiosDisabled: "Dimmed ratio choices are not supported by the selected model.",
+    creditLoading: "Loading credits...",
+    pleaseLoginCredits: "Please log in to view credits.",
+    creditLoadFailed: "Failed to load credits",
+    balancePrefix: "Your balance: ",
+    minimaxRefCostWarning: "The amount above is the base video cost. Extra credits for image/video references are calculated from their number, size, resolution, and duration before submission.",
+    reframeModelNotice: "MiniMax H3 Max Reframe changes the canvas ratio while preserving source audio and timing. The API schema lists 480p, 768p, and 1080p; source videos are limited to 15 seconds.",
+    clickUploadImage: "Click to upload an image",
+    imageFileLimit: "PNG, JPG, WEBP • max. 10 MB",
+    addReferenceImages: "Add Reference Images",
+    referenceUploadHint: "Click to add reference images",
+    referenceImageFormats: "PNG, JPG, WEBP",
+    addReferenceVideo: "Add Reference Video",
+    referenceVideoHint: "Click to add a reference video",
+    referenceVideoFormats: "MP4 or MOV",
+    addSourceVideo: "Add Source Video",
+    sourceVideoHint: "Click to upload a source video",
+    sourceVideoLimit: "MP4, max. 100 MB",
+    promptExamplesTitle: "Ready-to-Use Prompt Templates",
+    promptTemplateCinema: "Cinematic",
+    promptTemplateCharacter: "Cute Character",
+    promptTemplateLandscape: "Landscape",
+    promptTemplateProduct: "Product",
+    promptPlaceholder: "Example: A character slowly walks toward the camera, smiles, and moves smoothly in a 3D animation style.",
+    placeholderInstruction: "Upload an image, then click Generate Video",
+    downloadNoteText: "📱 The download is saved without opening a new tab. Check your phone's Downloads folder.",
+    shareAction: "↗ Share",
+    saveAction: "♡ Save",
+    againAction: "↻ Create Again",
+    templateSectionTitle: "Video Templates",
+    emptyHistory: "No videos in history yet.",
+    emptyGallery: "No saved videos yet.",
+    accountLabel: "Movira Account",
+    loginHeading: "🔐 Log in to Movira",
+    loginGoogle: "Continue with Google",
+    signUp: "Sign Up",
+    logout: "Log Out",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Password",
+    profileAlt: "Profile photo",
+    removeImageLabel: "Remove image",
+    addVideoAction: "+ Add Video",
+    generateAction: "Generate Video",
+    upgradeLabel: "Upgrade"
   }
 };
 
-  function applyMoviraLanguage() {
+function applyMoviraLanguage() {
+  const translations = moviraTexts[moviraLang] || moviraTexts.en;
+  document.documentElement.lang = moviraLang;
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.dataset.i18n;
-    el.textContent =
-      moviraTexts[moviraLang][key] ||
-      moviraTexts.en[key] ||
-      el.textContent;
+    el.textContent = translations[key] || moviraTexts.en[key] || el.textContent;
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    const value = translations[key] || moviraTexts.en[key];
+    if (value) el.setAttribute("placeholder", value);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
+    const key = el.dataset.i18nAriaLabel;
+    const value = translations[key] || moviraTexts.en[key];
+    if (value) el.setAttribute("aria-label", value);
+  });
+  const currentLabel = document.getElementById("languageCurrentLabel");
+  if (currentLabel) currentLabel.textContent = moviraLanguageNames[moviraLang] || "English";
+  document.querySelectorAll(".language-option").forEach(button => {
+    button.setAttribute("aria-checked", String(button.dataset.language === moviraLang));
+  });
+  updateRatioWarning(getSelectedModelForMode());
+  if (window.homeBalanceShown) showHomeCreditBalance();
+}
+
+function showHomeCreditBalance() {
+  const creditsElement = document.getElementById("userCredits");
+  const output = document.getElementById("homeCreditValue");
+  if (!output) return;
+  window.homeBalanceShown = true;
+  const n = creditsElement ? creditsElement.textContent.trim() : "";
+  const t = moviraTexts[moviraLang] || moviraTexts.en;
+  if (!n || n === "Memuat..." || n === "Loading...") output.textContent = t.creditLoading || moviraTexts.en.creditLoading;
+  else if (n === "—") output.textContent = t.pleaseLoginCredits || moviraTexts.en.pleaseLoginCredits;
+  else if (["Gagal memuat kredit", "Failed to load credits", "Gagal memuatkan kredit"].includes(n)) output.textContent = t.creditLoadFailed || moviraTexts.en.creditLoadFailed;
+  else output.textContent = (t.balancePrefix || moviraTexts.en.balancePrefix) + n + (moviraLang === "en" ? " Credits" : " Kredit");
+}
+
+function setMoviraLanguage(language) {
+  if (!["en", "id", "ms"].includes(language)) return;
+  moviraLang = language;
+  try { localStorage.setItem("moviraLang", language); } catch { /* storage can be unavailable */ }
+  applyMoviraLanguage();
+  const menu = document.getElementById("languageMenu");
+  const toggle = document.getElementById("languageToggle");
+  if (menu) menu.hidden = true;
+  if (toggle) toggle.setAttribute("aria-expanded", "false");
+  updateCreditCost();
+  updateMoviraModeHeading();
+  updateActiveModelDisplay();
+}
+
+const languageToggle = document.getElementById("languageToggle");
+const languageMenu = document.getElementById("languageMenu");
+if (languageToggle && languageMenu) {
+  languageToggle.addEventListener("click", () => {
+    languageMenu.hidden = !languageMenu.hidden;
+    languageToggle.setAttribute("aria-expanded", String(!languageMenu.hidden));
+  });
+  document.querySelectorAll(".language-option").forEach(button => {
+    button.addEventListener("click", () => setMoviraLanguage(button.dataset.language));
+  });
+  document.addEventListener("click", event => {
+    if (!document.getElementById("languagePicker")?.contains(event.target)) {
+      languageMenu.hidden = true;
+      languageToggle.setAttribute("aria-expanded", "false");
+    }
   });
 }
 
@@ -845,6 +1151,7 @@ let referenceVideos = [];
 let selectedReferenceVideoFiles = [];
 let sourceVideo = "";
 let sourceVideoDimensions = null;
+let sourceVideoDurationSeconds = 0;
 let model = "alibaba/wan-3.0-prime/image-to-video";
 let resolution = "720p";
 let ratio = "16:9";
@@ -860,6 +1167,9 @@ sourceVideoFile.addEventListener("change", async () => {
   const file = sourceVideoFile.files[0];
   if (!file) {
     sourceVideo = "";
+    sourceVideoDurationSeconds = 0;
+    sourceVideoDimensions = null;
+    updateCreditCost();
     return;
   }
 
@@ -867,6 +1177,9 @@ sourceVideoFile.addEventListener("change", async () => {
     alert("Ukuran video maksimal 100 MB.");
     sourceVideoFile.value = "";
     sourceVideo = "";
+    sourceVideoDurationSeconds = 0;
+    sourceVideoDimensions = null;
+    updateCreditCost();
     return;
   }
 
@@ -877,9 +1190,11 @@ sourceVideoFile.addEventListener("change", async () => {
     reader.readAsDataURL(file);
   });
   sourceVideoDimensions = await readVideoDimensions(file);
+  sourceVideoDurationSeconds = Number(sourceVideoDimensions?.duration) || 0;
   if (getSelectedModelForMode() === "google/gemini-omni-flash/v1.1/edit" && sourceVideoDimensions) {
     setRatioFromDimensions(sourceVideoDimensions.width, sourceVideoDimensions.height);
   }
+  updateCreditCost();
 });
   
 function readReferenceFiles(input) {
@@ -1004,6 +1319,7 @@ clearImageBtn.addEventListener("click", (event) => {
 document.getElementById("menuBtn").onclick=()=>document.querySelector(".nav").classList.toggle("open");
 
 document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
+  if (b.disabled) return;
   if (model === "fal-ai/veo3.1/lite/image-to-video" && b.dataset.value === "1:1") {
     return;
   }
@@ -1030,7 +1346,7 @@ function readVideoDimensions(file) {
       resolve(value);
     };
     video.preload = "metadata";
-    video.onloadedmetadata = () => finish({ width: video.videoWidth, height: video.videoHeight });
+    video.onloadedmetadata = () => finish({ width: video.videoWidth, height: video.videoHeight, duration: video.duration });
     video.onerror = () => finish(null);
     video.src = url;
   });
@@ -1112,6 +1428,11 @@ function updateCreditCost(){
       "720p": {5:42,10:84},
       "1080p": {5:63,10:125}
     },
+    "minimax/h3-max/reference-to-video": {
+      "480p": {5:25,10:50,15:75},
+      "768p": {5:40,10:80,15:120},
+      "1080p": {5:80,10:160,15:240}
+    },
     "fal-ai/wan/v2.2-a14b/video-to-video": {
       "480p": {5:20,10:40},
       "580p": {5:25,10:50},
@@ -1130,19 +1451,79 @@ function updateCreditCost(){
   model = selectedModel;
   resolution = selectedResolution;
   duration = selectedDuration;
-  const cost = creditCosts[model]?.[resolution]?.[Number(duration)];
+  const translations = moviraTexts[moviraLang] || moviraTexts.en;
+  let cost = creditCosts[model]?.[resolution]?.[Number(duration)];
   const costInfo = document.getElementById("creditCostInfo");
   const generateButton = document.getElementById("generate");
-  if(cost){
-    costInfo.innerHTML = model === "google/gemini-omni-flash/v1.1/edit"
-      ? `💰 Biaya untuk video sumber hingga ${Number(duration)} detik: <strong>${cost} Kredit</strong>`
-      : `💰 Biaya: <strong>${cost} Kredit</strong>`;
-    generateButton.textContent = `✨ Generate Video • ${cost} Kredit`;
-  }else{
-    costInfo.innerHTML = `⚠️ Kombinasi pilihan belum tersedia`;
-    generateButton.textContent = `✨ Generate Video`;
+  if (model === "minimax/h3-max/reframe-video") {
+    const seconds = Math.ceil(Number(sourceVideoDurationSeconds) || 0);
+    const perSecond = { "480p": 5, "768p": 8, "1080p": 16 }[resolution];
+    cost = seconds > 0 && perSecond ? seconds * perSecond : null;
+    if (cost && sourceVideoDurationSeconds > 15) {
+      costInfo.textContent = translations.reframeModelNotice || moviraTexts.en.reframeModelNotice;
+      costInfo.style.color = "#ffdf99";
+      generateButton.textContent = "✨ " + (translations.generateAction || moviraTexts.en.generateAction);
+      updateRatioWarning(model);
+      return;
+    }
+    if (!cost) {
+      costInfo.textContent = translations.uploadSourceForCost || moviraTexts.en.uploadSourceForCost;
+      costInfo.style.color = "#b9c7e8";
+      generateButton.textContent = "✨ " + (translations.generateAction || moviraTexts.en.generateAction);
+      updateRatioWarning(model);
+      return;
+    }
+    const template = translations.estimatedCost || moviraTexts.en.estimatedCost;
+    costInfo.textContent = template.replace("{seconds}", String(seconds)).replace("{cost}", String(cost));
+    if (model === "minimax/h3-max/reframe-video") {
+      costInfo.textContent += "\n" + (translations.reframeModelNotice || moviraTexts.en.reframeModelNotice);
+      costInfo.style.whiteSpace = "pre-line";
+    }
+    costInfo.style.color = "#b9c7e8";
+    generateButton.textContent = `✨ ${translations.generateAction || moviraTexts.en.generateAction} • ${cost} ${moviraLang === "en" ? "Credits" : "Kredit"}`;
+    updateRatioWarning(model);
+    return;
   }
+  if(cost){
+    costInfo.textContent = model === "google/gemini-omni-flash/v1.1/edit"
+      ? (moviraLang === "en" ? `💰 Source video up to ${Number(duration)} seconds: ${cost} Credits` : moviraLang === "ms" ? `💰 Video sumber sehingga ${Number(duration)} saat: ${cost} Kredit` : `💰 Biaya untuk video sumber hingga ${Number(duration)} detik: ${cost} Kredit`)
+      : (moviraLang === "en" ? `💰 Cost: ${cost} Credits` : moviraLang === "ms" ? `💰 Kos: ${cost} Kredit` : `💰 Biaya: ${cost} Kredit`);
+    if (model === "minimax/h3-max/reference-to-video") {
+      costInfo.textContent += "\n" + (translations.minimaxRefCostWarning || moviraTexts.en.minimaxRefCostWarning);
+      costInfo.style.whiteSpace = "pre-line";
+    }
+    costInfo.style.color = "#b9c7e8";
+    generateButton.textContent = `✨ ${translations.generateAction || moviraTexts.en.generateAction} • ${cost} ${moviraLang === "en" ? "Credits" : "Kredit"}`;
+  }else{
+    costInfo.textContent = translations.noCostYet || moviraTexts.en.noCostYet;
+    costInfo.style.color = "#b9c7e8";
+    generateButton.textContent = `✨ ${translations.generateAction || moviraTexts.en.generateAction}`;
+  }
+  updateRatioWarning(model);
 }
+function updateRatioWarning(selectedModel = getSelectedModelForMode()) {
+  const warning = document.getElementById("ratioWarning");
+  if (!warning) return;
+  const t = moviraTexts[moviraLang] || moviraTexts.en;
+  let message = "";
+  if (selectedModel === "minimax/h3-max-turbo/image-to-video") {
+    message = t.ratioFollowsImage || moviraTexts.en.ratioFollowsImage;
+  } else if (selectedModel === "google/gemini-omni-flash/v1.1/edit") {
+    message = t.ratioFollowsVideo || moviraTexts.en.ratioFollowsVideo;
+  } else {
+    const noSquare = [
+      "fal-ai/veo3.1/lite/image-to-video",
+      "google/gemini-omni-flash/image-to-video",
+      "wan/v2.6/reference-to-video/flash",
+      "google/gemini-omni-flash/v1.1/reference-to-video"
+    ].includes(selectedModel);
+    if (noSquare) message = t.ratioSquareUnsupported || moviraTexts.en.ratioSquareUnsupported;
+  }
+  warning.textContent = message;
+  warning.hidden = !message;
+  warning.style.display = message ? "block" : "none";
+}
+
 function updateResolutionOptions(){
   const mode = getCurrentModeKey();
   setModelOptionsForMode(mode);
@@ -1162,8 +1543,10 @@ function updateResolutionOptions(){
     "google/gemini-omni-flash/image-to-video": ["720p"],
     "wan/v2.6/reference-to-video/flash": ["720p", "1080p"],
     "google/gemini-omni-flash/v1.1/reference-to-video": ["360p", "720p", "1080p"],
+    "minimax/h3-max/reference-to-video": ["480p", "768p", "1080p"],
     "fal-ai/wan/v2.2-a14b/video-to-video": ["480p", "580p", "720p"],
-    "google/gemini-omni-flash/v1.1/edit": ["360p", "720p", "1080p"]
+    "google/gemini-omni-flash/v1.1/edit": ["360p", "720p", "1080p"],
+    "minimax/h3-max/reframe-video": ["480p", "768p", "1080p"]
   };
   const allowedResolutions = resolutionOptions[selectedModel] || ["720p"];
   resolutionButtons.forEach(button => {
@@ -1200,13 +1583,17 @@ function updateResolutionOptions(){
     button.disabled = disable;
     button.style.opacity = disable ? "0.35" : "1";
     button.style.cursor = disable ? "not-allowed" : "pointer";
+    button.title = disable ? ((moviraTexts[moviraLang] || moviraTexts.en).ratiosDisabled || moviraTexts.en.ratiosDisabled) : "";
   });
   if (!autoRatioModel && noSquare && ratio === "1:1") {
     ratio = "16:9";
     document.querySelectorAll('#ratios button').forEach(button => button.classList.toggle("selected", button.dataset.value === ratio));
   }
 
-  const durationOptions = selectedModel === "fal-ai/veo3.1/lite/image-to-video"
+  const isMiniMaxReframe = selectedModel === "minimax/h3-max/reframe-video";
+  const durationOptions = isMiniMaxReframe
+    ? []
+    : selectedModel === "fal-ai/veo3.1/lite/image-to-video"
     ? ["4", "6", "8"]
     : selectedModel === "google/gemini-omni-flash/image-to-video"
       ? ["5", "10"]
@@ -1224,12 +1611,12 @@ function updateResolutionOptions(){
     button.disabled = !allowed;
     if (allowed) {
       button.dataset.value = durationOptions[index];
-      button.textContent = `${durationOptions[index]} detik`;
+      button.textContent = `${durationOptions[index]} ${(moviraTexts[moviraLang] || moviraTexts.en).secondUnit || "seconds"}`;
     } else {
       button.classList.remove("selected");
     }
   });
-  if (!durationOptions.includes(String(duration))) {
+  if (!isMiniMaxReframe && durationOptions.length && !durationOptions.includes(String(duration))) {
     duration = durationOptions[0];
   }
   durationButtons.forEach(button => button.classList.toggle("selected", button.dataset.value === String(duration) && button.style.display !== "none"));
@@ -1244,18 +1631,19 @@ function getMoviraSelectedMode() {
 
 function updateMoviraModeHeading() {
   const mode = getMoviraSelectedMode();
+  const translations = moviraTexts[moviraLang] || moviraTexts.en;
   const headings = {
     "image-to-video": {
-      title: "Image to Video",
-      intro: "Unggah satu gambar, tulis prompt, lalu atur model dan format video."
+      title: translations.imageModeTitle || moviraTexts.en.imageModeTitle,
+      intro: translations.imageModeDesc || moviraTexts.en.imageModeDesc
     },
     "reference-to-video": {
-      title: "Reference to Video",
-      intro: "Tambahkan gambar atau video referensi, lalu tulis prompt untuk mengarahkan hasil."
+      title: translations.referenceModeTitle || moviraTexts.en.referenceModeTitle,
+      intro: translations.referenceModeDesc || moviraTexts.en.referenceModeDesc
     },
     "video-to-video": {
-      title: "Video to Video",
-      intro: "Unggah video sumber, tulis prompt, lalu pilih pengaturan yang tersedia."
+      title: translations.videoModeTitle || moviraTexts.en.videoModeTitle,
+      intro: translations.videoModeDesc || moviraTexts.en.videoModeDesc
     }
   };
   const selected = headings[mode];
@@ -1343,11 +1731,13 @@ const isVideoToVideoMode =
 const selectedModel = getSelectedModelForMode();
 const isReferenceModelClient = [
   "wan/v2.6/reference-to-video/flash",
-  "google/gemini-omni-flash/v1.1/reference-to-video"
+  "google/gemini-omni-flash/v1.1/reference-to-video",
+  "minimax/h3-max/reference-to-video"
 ].includes(selectedModel);
 const isVideoToVideoModelClient = [
   "fal-ai/wan/v2.2-a14b/video-to-video",
-  "google/gemini-omni-flash/v1.1/edit"
+  "google/gemini-omni-flash/v1.1/edit",
+  "minimax/h3-max/reframe-video"
 ].includes(selectedModel);
 if (isReferenceModelClient) {
   referenceImages = await readReferenceFiles(referenceImageFiles);
@@ -1590,18 +1980,16 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
   font-family:Arial,sans-serif;
 ">
   <div id="authLoggedOut">
-    <div style="font-size:18px;font-weight:700;margin-bottom:10px;">
-      🔐 Masuk Movira
-    </div>
+    <div data-i18n="loginHeading" style="font-size:18px;font-weight:700;margin-bottom:10px;">🔐 Log in to Movira</div>
 
     <input id="authEmail"
       type="email"
-      placeholder="Email"
+      data-i18n-placeholder="emailPlaceholder" placeholder="Email"
       style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #38557e;background:#081426;color:white;">
 
     <input id="authPassword"
       type="password"
-      placeholder="Password"
+      data-i18n-placeholder="passwordPlaceholder" placeholder="Password"
       style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #38557e;background:#081426;color:white;">
 
     <div style="display:flex;gap:8px;">
@@ -1616,13 +2004,13 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
     type="button"
     onclick="loginWithGoogle()"
     style="width:100%;padding:10px;margin-top:8px;border:0;border-radius:8px;background:#fff;color:#222;"
-  >Masuk dengan Google</button>
+   data-i18n="loginGoogle">Continue with Google</button>
 
   <button
     id="signupBtn"
     type="button"
     style="flex:1;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:bold;"
-  >Daftar</button>
+   data-i18n="signUp">Sign Up</button>
     </div>
 
     <div id="authStatus" style="font-size:12px;margin-top:8px;color:#9fb4d8;"></div>
@@ -1637,7 +2025,7 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
       style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #394cff;"
     >
     <div>
-      <div style="font-size:13px;color:#9fb4d8;">Akun Movira</div>
+      <div data-i18n="accountLabel" style="font-size:13px;color:#9fb4d8;">Movira Account</div>
       <div id="userEmail" style="font-size:12px;color:#fff;"></div>
     </div>
   </div>
@@ -1657,7 +2045,7 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
 
     <button id="logoutBtn"
       style="width:100%;padding:10px;border:0;border-radius:8px;background:#263955;color:white;font-weight:700;">
-      Keluar
+      <span data-i18n="logout">Log Out</span>
     </button>
   </div>
 </div>
@@ -2295,7 +2683,7 @@ function updateActiveModelDisplay() {
   const activeModel = getSelectedModelForMode();
   const selected = Array.from(document.querySelectorAll('#models button'))
     .find(button => button.dataset.mode === getCurrentModeKey() && button.dataset.value === activeModel);
-  label.textContent = "Model aktif: " + (selected?.textContent.trim() || "Wan 3.0 Prime");
+  label.textContent = ((moviraTexts[moviraLang] || moviraTexts.en).activeModel || "Active model: ") + (selected?.textContent.trim() || "Wan 3.0 Prime");
 }
 const modeCards = document.querySelectorAll(".mode-card");
 const imageToVideoUpload = document.getElementById("imageToVideoUpload");
