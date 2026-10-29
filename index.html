@@ -1970,6 +1970,8 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+  // Expose the same client for separately loaded feature scripts such as Drama AI.
+  window.moviraSupabase = moviraSupabase;
 
   console.log("Movira AI: Supabase siap.");
 </script><!-- Movira AI - Login & Credits -->
@@ -2610,9 +2612,7 @@ async function refreshCreditOrderHistory() {
       ...(Array.isArray(simulationData.orders) ? simulationData.orders.map(order => ({ ...order, orderType: "SIMULASI · saldo tidak berubah" })) : [])
     ].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)).slice(0, 20);
     if (!rows.length) {
-      orderHistoryList.textContent = (!realResponse.ok || !simulationResponse.ok)
-        ? "Riwayat belum lengkap. Pastikan backend simulasi aktif dan migrasi tabel simulasi sudah diterapkan."
-        : "Belum ada pesanan.";
+      orderHistoryList.textContent = "Belum ada pesanan.";
       return;
     }
     for (const order of rows) {
@@ -2625,6 +2625,9 @@ async function refreshCreditOrderHistory() {
       info.textContent = `${order.orderType} · Status: ${order.status || "unknown"} · ${order.created_at ? new Date(order.created_at).toLocaleString("id-ID") : "waktu tidak tersedia"}`;
       row.append(title, info);
       orderHistoryList.appendChild(row);
+    }
+    if ((!realResponse.ok || !simulationResponse.ok) && rows.length === 0) {
+      orderHistoryList.textContent = "Riwayat belum tersedia. Pastikan migrasi simulasi sudah dipasang.";
     }
   } catch (error) {
     orderHistoryList.textContent = "Gagal memuat riwayat. Periksa koneksi backend.";
@@ -4139,25 +4142,6 @@ open.style.cssText =
   "color:#fff;font-weight:700;cursor:pointer;";
         
         open.addEventListener("click", async function () {
-  // Drama projects use a separate data/editor format. Never load them into
-  // the ordinary Projects workspace, because that workspace can overwrite settings.
-  if (
-    project.settings?.dramaAI &&
-    Array.isArray(project.settings.dramaAI.scenes)
-  ) {
-    try {
-      const dramaNavButton = document.querySelector('.nav button[data-i18n="drama"]');
-      if (!window.moviraDramaAI?.openProjectById) {
-        throw new Error("Editor Drama AI belum siap. Muat ulang halaman lalu coba lagi.");
-      }
-      if (dramaNavButton) dramaNavButton.click();
-      await window.moviraDramaAI.openProjectById(project.id);
-    } catch (error) {
-      setStatus("Gagal membuka proyek Drama: " + (error.message || "Kesalahan tidak diketahui"));
-    }
-    return;
-  }
-
   if (
     projectWorkspaceOpen &&
     currentProjectId &&
@@ -4490,6 +4474,6 @@ window.moviraProjectVideoContext = {
 })();
 // ===== AKHIR PROYEK + AUTO-SAVE =====
 </script>
-<script src="./drama-ai.js"></script>
+<script src="./drama-ai.js?v=20261029-2"></script>
 </body>
 </html>
