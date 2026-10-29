@@ -326,6 +326,7 @@ body {
   <button data-i18n="gallery">Galeri</button>
   <button data-i18n="template">Template</button>
   <button data-i18n="history">Riwayat</button>
+  <button data-i18n="drama">🎬 Drama AI</button>
   <button data-i18n="projects">📁 Proyek</button>
 </div>
 
@@ -785,6 +786,7 @@ magicDesc:"Efek dunia ajaib",
 story:"STORY",
 storyDesc:"Gaya cerita film",
     projects: "📁 Proyek",
+    drama: "🎬 Drama AI",
     dashboardTitle: "Beranda Movira AI",
     otherMenus: "Menu lainnya",
     myProjects: "Proyek Saya",
@@ -894,6 +896,7 @@ magicDesc:"Kesan dunia ajaib",
 story:"CERITA",
 storyDesc:"Gaya cerita filem",
     projects: "📁 Projek",
+    drama: "🎬 Drama AI",
     dashboardTitle: "Laman Utama Movira AI",
     otherMenus: "Menu lain",
     myProjects: "Projek Saya",
@@ -1001,6 +1004,7 @@ magicDesc:"Magical world effects",
 story:"STORY",
 storyDesc:"Film storytelling style",
     projects: "📁 Projects",
+    drama: "🎬 Drama AI",
     dashboardTitle: "Movira AI Home",
     otherMenus: "More menus",
     myProjects: "My Projects",
@@ -1232,6 +1236,7 @@ navButtons.forEach(button => {
   button.addEventListener("click", () => {
     const text = button.dataset.i18n;
     const projectsPage = document.getElementById("projectsPage");
+    const dramaPage = document.getElementById("dramaPage");
 
     // Sembunyikan semua halaman dan panel terlebih dahulu
     if (createTop) createTop.style.display = "none";
@@ -1241,6 +1246,7 @@ navButtons.forEach(button => {
     if (galleryPage) galleryPage.style.display = "none";
     if (homePage) homePage.style.display = "none";
     if (projectsPage) projectsPage.style.display = "none";
+    if (dramaPage) dramaPage.style.display = "none";
     if (videoQueuePanel) videoQueuePanel.style.display = "none";
 
     navButtons.forEach(btn => btn.classList.remove("active"));
@@ -1264,6 +1270,9 @@ navButtons.forEach(button => {
       loadMoviraGallery();
     } else if (text === "projects") {
       if (projectsPage) projectsPage.style.display = "block";
+    } else if (text === "drama") {
+      if (dramaPage) dramaPage.style.display = "block";
+      window.moviraDramaAI?.onOpen?.();
     }
 
     document.querySelector(".nav")?.classList.remove("open");
@@ -2547,6 +2556,110 @@ document.querySelectorAll(".upgrade").forEach(button => {
     `;
 
     document.body.appendChild(overlay);
+
+const modal = overlay.firstElementChild;
+if (modal) {
+  modal.style.maxHeight = "90vh";
+  modal.style.overflowY = "auto";
+}
+const simulationPanel = document.createElement("section");
+simulationPanel.style.cssText = "margin-top:14px;padding:12px;border:1px solid #81651e;border-radius:12px;background:#211d12;text-align:left;";
+simulationPanel.innerHTML = `
+  <strong style="display:block;color:#ffe4a3;margin-bottom:6px">🧪 Mode Simulasi Pembayaran</strong>
+  <div style="font-size:12px;line-height:1.5;color:#f4e7c6">Tidak ada uang sungguhan yang dibayarkan. Pesanan simulasi terpisah dari pesanan nyata dan tidak menambah saldo kredit.</div>
+  <div id="simulationOrderStatus" role="status" style="font-size:12px;margin-top:10px;color:#fff">Pilih paket di atas untuk membuat pesanan simulasi.</div>
+  <div id="simulationOutcomeButtons" style="display:none;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button type="button" data-simulation-outcome="paid" style="flex:1;min-width:120px;padding:9px;border:0;border-radius:8px;background:#166534;color:white;font-weight:700">Simulasikan Berhasil</button>
+    <button type="button" data-simulation-outcome="failed" style="flex:1;min-width:120px;padding:9px;border:0;border-radius:8px;background:#7f1d1d;color:white;font-weight:700">Simulasikan Gagal</button>
+  </div>
+  <div style="margin-top:14px;padding-top:10px;border-top:1px solid #51452c">
+    <strong style="font-size:13px;color:#fff">Riwayat Pesanan</strong>
+    <div id="creditOrderHistory" style="display:grid;gap:8px;margin-top:8px;max-height:180px;overflow-y:auto;font-size:12px;color:#e5e7eb">Memuat riwayat…</div>
+  </div>
+`;
+const closeUpgradeButton = overlay.querySelector("#closeUpgrade");
+if (modal && closeUpgradeButton) modal.insertBefore(simulationPanel, closeUpgradeButton);
+
+let currentSimulationOrderId = null;
+let simulationBusy = false;
+const simulationOrderStatus = simulationPanel.querySelector("#simulationOrderStatus");
+const simulationOutcomeButtons = simulationPanel.querySelector("#simulationOutcomeButtons");
+const orderHistoryList = simulationPanel.querySelector("#creditOrderHistory");
+
+function getSessionToken() {
+  return moviraSupabase.auth.getSession().then(({ data }) => data.session?.access_token || null);
+}
+
+async function refreshCreditOrderHistory() {
+  if (!orderHistoryList) return;
+  orderHistoryList.replaceChildren();
+  const token = await getSessionToken();
+  if (!token) {
+    orderHistoryList.textContent = "Login untuk melihat riwayat pesanan.";
+    return;
+  }
+  try {
+    const [realResponse, simulationResponse] = await Promise.all([
+      fetch(`${API_BASE}/api/credit-orders`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API_BASE}/api/credit-order-simulations`, { headers: { Authorization: `Bearer ${token}` } })
+    ]);
+    const realData = realResponse.ok ? await realResponse.json() : { orders: [] };
+    const simulationData = simulationResponse.ok ? await simulationResponse.json() : { orders: [] };
+    const rows = [
+      ...(Array.isArray(realData.orders) ? realData.orders.map(order => ({ ...order, orderType: "Pesanan pembayaran" })) : []),
+      ...(Array.isArray(simulationData.orders) ? simulationData.orders.map(order => ({ ...order, orderType: "SIMULASI · saldo tidak berubah" })) : [])
+    ].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)).slice(0, 20);
+    if (!rows.length) {
+      orderHistoryList.textContent = (!realResponse.ok || !simulationResponse.ok)
+        ? "Riwayat belum lengkap. Pastikan backend simulasi aktif dan migrasi tabel simulasi sudah diterapkan."
+        : "Belum ada pesanan.";
+      return;
+    }
+    for (const order of rows) {
+      const row = document.createElement("div");
+      row.style.cssText = "padding:8px;border:1px solid #344054;border-radius:8px;background:#111827";
+      const title = document.createElement("strong");
+      title.textContent = `${order.credits ?? "?"} Kredit · ${order.currency || ""} ${Number(order.amount || 0).toLocaleString("id-ID")}`;
+      const info = document.createElement("div");
+      info.style.cssText = "color:#cbd5e1;margin-top:3px;line-height:1.45";
+      info.textContent = `${order.orderType} · Status: ${order.status || "unknown"} · ${order.created_at ? new Date(order.created_at).toLocaleString("id-ID") : "waktu tidak tersedia"}`;
+      row.append(title, info);
+      orderHistoryList.appendChild(row);
+    }
+  } catch (error) {
+    orderHistoryList.textContent = "Gagal memuat riwayat. Periksa koneksi backend.";
+  }
+}
+
+simulationPanel.querySelectorAll("[data-simulation-outcome]").forEach(outcomeButton => {
+  outcomeButton.addEventListener("click", async () => {
+    if (!currentSimulationOrderId || simulationBusy) return;
+    const token = await getSessionToken();
+    if (!token) { alert("Silakan login terlebih dahulu."); return; }
+    simulationBusy = true;
+    simulationPanel.querySelectorAll("[data-simulation-outcome]").forEach(button => button.disabled = true);
+    try {
+      const response = await fetch(`${API_BASE}/api/credit-order-simulations/${encodeURIComponent(currentSimulationOrderId)}/resolve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ outcome: outcomeButton.dataset.simulationOutcome })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Simulasi tidak dapat diproses.");
+      simulationOrderStatus.textContent = data.order.status === "paid"
+        ? "Simulasi berhasil: status paid. Saldo kredit asli tidak berubah."
+        : "Simulasi gagal: status failed. Saldo kredit asli tidak berubah.";
+      simulationOutcomeButtons.style.display = "none";
+      await refreshCreditOrderHistory();
+    } catch (error) {
+      simulationOrderStatus.textContent = error.message || "Simulasi gagal dijalankan.";
+    } finally {
+      simulationBusy = false;
+      simulationPanel.querySelectorAll("[data-simulation-outcome]").forEach(button => button.disabled = false);
+    }
+  });
+});
+void refreshCreditOrderHistory();
     
 const currencySelect = overlay.querySelector("#currencySelect");
 
@@ -2598,7 +2711,7 @@ updateCurrencyPrices();
     }
 
     const response = await fetch(
-      `${API_BASE}/api/credit-orders`,
+      `${API_BASE}/api/credit-order-simulations`,
       {
         method: "POST",
         headers: {
@@ -2620,11 +2733,11 @@ updateCurrencyPrices();
       );
     }
 
-    alert(
-      `Pesanan ${credit} Kredit berhasil dibuat.\n\n` +
-      `Status: ${data.order.status}\n` +
-      `Mata uang: ${data.order.currency}`
-    );
+    currentSimulationOrderId = data.order.id;
+    simulationOrderStatus.textContent = `Pesanan simulasi dibuat: ${credit} Kredit · status ${data.order.status}. Pilih hasil simulasi di bawah.`;
+    simulationOutcomeButtons.style.display = "flex";
+    simulationPanel.querySelectorAll("[data-simulation-outcome]").forEach(button => button.disabled = false);
+    await refreshCreditOrderHistory();
 
   } catch (error) {
     console.error("Gagal membuat order:", error);
@@ -4026,6 +4139,25 @@ open.style.cssText =
   "color:#fff;font-weight:700;cursor:pointer;";
         
         open.addEventListener("click", async function () {
+  // Drama projects use a separate data/editor format. Never load them into
+  // the ordinary Projects workspace, because that workspace can overwrite settings.
+  if (
+    project.settings?.dramaAI &&
+    Array.isArray(project.settings.dramaAI.scenes)
+  ) {
+    try {
+      const dramaNavButton = document.querySelector('.nav button[data-i18n="drama"]');
+      if (!window.moviraDramaAI?.openProjectById) {
+        throw new Error("Editor Drama AI belum siap. Muat ulang halaman lalu coba lagi.");
+      }
+      if (dramaNavButton) dramaNavButton.click();
+      await window.moviraDramaAI.openProjectById(project.id);
+    } catch (error) {
+      setStatus("Gagal membuka proyek Drama: " + (error.message || "Kesalahan tidak diketahui"));
+    }
+    return;
+  }
+
   if (
     projectWorkspaceOpen &&
     currentProjectId &&
@@ -4358,5 +4490,6 @@ window.moviraProjectVideoContext = {
 })();
 // ===== AKHIR PROYEK + AUTO-SAVE =====
 </script>
+<script src="./drama-ai.js"></script>
 </body>
 </html>
