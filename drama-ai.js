@@ -190,7 +190,7 @@
     box.textContent = "Tarif fal.ai/Seedance 2.5 dan biaya Kredit Movira belum diverifikasi. Durasi, rasio, dan resolusi di layar ini masih berupa pengaturan draf; tidak ada video yang dikirim.";
   }
   async function getSession() {
-    if (!window.moviraSupabase) throw new Error("Supabase belum siap.");
+    if (typeof moviraSupabase === "undefined") throw new Error("Supabase belum siap.");
     const { data, error } = await moviraSupabase.auth.getSession();
     if (error) throw error;
     if (!data.session?.user) throw new Error("Silakan login terlebih dahulu untuk menyimpan proyek Drama.");
