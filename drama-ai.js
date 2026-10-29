@@ -20,6 +20,12 @@
     #dramaPage .drama-scene-tabs button[aria-pressed="true"] { background:#214b8a; border-color:#79aaff; }
     #dramaPage .drama-status { min-height:20px; margin-top:10px; color:#b8d2ff; font-size:13px; white-space:pre-wrap; }
     #dramaPage .drama-warning { border-color:#7a5a22; background:#241e12; color:#ffe4a3; }
+    #dramaPage .drama-reference-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:10px; }
+    #dramaPage .drama-reference-box { min-width:0; border:1px dashed #405a7f; border-radius:10px; padding:10px; background:#0a1729; }
+    #dramaPage .drama-reference-preview { display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:8px; }
+    #dramaPage .drama-reference-preview img { display:block; width:100%; max-height:190px; object-fit:contain; border:1px solid #405a7f; border-radius:8px; background:#07111f; }
+    #dramaPage .drama-reference-preview[hidden] { display:none!important; }
+    #dramaPage .drama-reference-empty { color:#9fb1c9; font-size:12px; line-height:1.5; margin-top:8px; }
     @media(max-width:520px){ #dramaPage .drama-actions button { flex:1 1 auto; } }
   `;
   let page, statusEl, currentProjectId = null, activeIndex = 0, saveTimer = null;
@@ -29,6 +35,7 @@
   function freshState() {
     return {
       mode: "manual", title: "Drama Baru", genre: "Petualangan", premise: "", continuity: "",
+      references: { character: "", location: "" },
       scenes: [{ prompt: "", duration: 10, ratio: "16:9", resolution: "480p" }]
     };
   }
@@ -78,8 +85,14 @@
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
-    page.querySelector("#dramaAIChoice").addEventListener("click", () => { state = freshState(); state.mode = "ai-draft"; showSetupScreen(); });
-    page.querySelector("#dramaManualChoice").addEventListener("click", () => { state = freshState(); state.mode = "manual"; showEditor(); });
+    page.querySelector("#dramaAIChoice").addEventListener("click", () => {
+      clearTimeout(saveTimer); saveTimer = null; currentProjectId = null;
+      state = freshState(); state.mode = "ai-draft"; activeIndex = 0; showSetupScreen();
+    });
+    page.querySelector("#dramaManualChoice").addEventListener("click", () => {
+      clearTimeout(saveTimer); saveTimer = null; currentProjectId = null;
+      state = freshState(); state.mode = "manual"; activeIndex = 0; showEditor();
+    });
     page.querySelector("#dramaLoadProjectsBtn").addEventListener("click", loadDramaProjects);
   }
   function showSetupScreen() {
@@ -133,6 +146,26 @@
         <label for="dramaPremise">Sinopsis / premis</label><textarea id="dramaPremise" rows="3" placeholder="Ringkasan cerita"></textarea>
         <label for="dramaContinuity">Referensi konsistensi karakter dan dunia</label><textarea id="dramaContinuity" rows="3" placeholder="Karakter, pakaian, lokasi, gaya visual. Kolom ini terpisah dan tidak mengubah prompt adegan."></textarea>
       </div>
+      <div class="drama-card">
+        <strong>🖼️ Gambar Referensi</strong>
+        <div class="drama-muted" style="margin-top:5px">Unggah satu gambar karakter dan satu gambar lokasi. Gambar diperkecil sebelum disimpan bersama pengaturan proyek Drama ini.</div>
+        <div class="drama-reference-grid">
+          <div class="drama-reference-box">
+            <label for="dramaCharacterReferenceInput">Gambar karakter</label>
+            <input id="dramaCharacterReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <button type="button" id="dramaCharacterReferenceBtn" class="primary">＋ Upload Gambar Karakter</button>
+            <div id="dramaCharacterReferenceEmpty" class="drama-reference-empty">Belum ada gambar karakter.</div>
+            <div id="dramaCharacterReferencePreview" class="drama-reference-preview" hidden></div>
+          </div>
+          <div class="drama-reference-box">
+            <label for="dramaLocationReferenceInput">Gambar lokasi</label>
+            <input id="dramaLocationReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <button type="button" id="dramaLocationReferenceBtn" class="primary">＋ Upload Gambar Lokasi</button>
+            <div id="dramaLocationReferenceEmpty" class="drama-reference-empty">Belum ada gambar lokasi.</div>
+            <div id="dramaLocationReferencePreview" class="drama-reference-preview" hidden></div>
+          </div>
+        </div>
+      </div>
       <div class="drama-card"><strong>Daftar adegan</strong><div class="drama-scene-tabs" id="dramaSceneTabs" style="margin-top:10px"></div><div class="drama-actions"><button type="button" id="dramaAddSceneBtn">＋ Tambah Scene</button><button type="button" id="dramaDeleteSceneBtn">Hapus Scene Aktif</button></div></div>
       <div class="drama-card">
         <strong id="dramaActiveSceneTitle">Scene 1</strong>
@@ -146,11 +179,23 @@
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
-    page.querySelector("#dramaBackHomeBtn").addEventListener("click", showChoiceScreen);
+    page.querySelector("#dramaBackHomeBtn").addEventListener("click", async () => {
+      clearTimeout(saveTimer); saveTimer = null;
+      if (currentProjectId) {
+        syncActiveEditor();
+        const saved = await saveProject(true);
+        if (!saved) return;
+      }
+      showChoiceScreen();
+    });
     const title = page.querySelector("#dramaTitle"); title.value = state.title;
     const genre = page.querySelector("#dramaGenre"); genre.value = state.genre;
     page.querySelector("#dramaPremise").value = state.premise;
     page.querySelector("#dramaContinuity").value = state.continuity;
+    bindReferenceUpload("character");
+    bindReferenceUpload("location");
+    renderReferencePreview("character");
+    renderReferencePreview("location");
     page.querySelector("#dramaScenePrompt").value = getActiveScene().prompt;
     page.querySelector("#dramaSceneDuration").value = String(getActiveScene().duration || 10);
     page.querySelector("#dramaSceneRatio").value = getActiveScene().ratio || "16:9";
@@ -167,7 +212,11 @@
       syncActiveEditor(); state.scenes.splice(activeIndex, 1); activeIndex = Math.min(activeIndex, state.scenes.length - 1); showEditor(); setStatus("Scene dihapus dari draf. Simpan proyek untuk menerapkan perubahan."); scheduleSave();
     });
     page.querySelector("#dramaSaveBtn").addEventListener("click", () => saveProject(false));
-    page.querySelector("#dramaSaveNewBtn").addEventListener("click", () => { currentProjectId = null; void saveProject(false); });
+    page.querySelector("#dramaSaveNewBtn").addEventListener("click", () => {
+      clearTimeout(saveTimer); saveTimer = null;
+      currentProjectId = null;
+      void saveProject(false);
+    });
     renderSceneTabs(); updateCostEstimate();
     void loadDramaProjects();
   }
@@ -189,9 +238,113 @@
     if (!box) return;
     box.textContent = "Tarif fal.ai/Seedance 2.5 dan biaya Kredit Movira belum diverifikasi. Durasi, rasio, dan resolusi di layar ini masih berupa pengaturan draf; tidak ada video yang dikirim.";
   }
+  function renderReferencePreview(kind) {
+    const preview = page?.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferencePreview`);
+    const empty = page?.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferenceEmpty`);
+    if (!preview || !empty) return;
+    preview.replaceChildren();
+    const dataUrl = String(state.references?.[kind] || "");
+    preview.hidden = !dataUrl;
+    empty.hidden = Boolean(dataUrl);
+    if (!dataUrl) return;
+
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    img.alt = kind === "character" ? "Gambar referensi karakter" : "Gambar referensi lokasi";
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Hapus Gambar";
+    remove.addEventListener("click", () => {
+      state.references[kind] = "";
+      const input = page.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferenceInput`);
+      if (input) input.value = "";
+      renderReferencePreview(kind);
+      if (currentProjectId) scheduleSave();
+      setStatus(currentProjectId ? "Gambar referensi dihapus dari draf; perubahan akan disimpan otomatis." : "Gambar referensi dihapus dari draf.");
+    });
+    preview.append(img, remove);
+  }
+
+  function compressReferenceImage(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+        reject(new Error("Format gambar harus PNG, JPG, atau WEBP."));
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        reject(new Error("Ukuran gambar maksimal 10 MB."));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Gagal membaca gambar referensi."));
+      reader.onload = () => {
+        const image = new Image();
+        image.onerror = () => reject(new Error("File gambar tidak dapat dibuka."));
+        image.onload = () => {
+          const maxSide = 960;
+          const scale = Math.min(1, maxSide / Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round((image.naturalWidth || image.width) * scale));
+          canvas.height = Math.max(1, Math.round((image.naturalHeight || image.height) * scale));
+          const context = canvas.getContext("2d");
+          if (!context) { reject(new Error("Browser tidak mendukung pemrosesan gambar.")); return; }
+          // JPEG is broadly supported; a white background handles transparent PNGs consistently.
+          context.fillStyle = "#ffffff";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          try { resolve(canvas.toDataURL("image/jpeg", 0.76)); }
+          catch { reject(new Error("Gambar gagal dikompres.")); }
+        };
+        image.src = String(reader.result || "");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function bindReferenceUpload(kind) {
+    const prefix = kind === "character" ? "dramaCharacter" : "dramaLocation";
+    const input = page.querySelector(`#${prefix}ReferenceInput`);
+    const button = page.querySelector(`#${prefix}ReferenceBtn`);
+    if (!input || !button || input.dataset.bound === "true") return;
+    input.dataset.bound = "true";
+    button.addEventListener("click", () => input.click());
+    input.addEventListener("change", async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      button.disabled = true;
+      setStatus("Memproses gambar referensi...");
+      try {
+        state.references = state.references || { character: "", location: "" };
+        state.references[kind] = await compressReferenceImage(file);
+        input.value = "";
+        renderReferencePreview(kind);
+        if (currentProjectId) {
+          scheduleSave();
+          setStatus("Gambar referensi siap. Perubahan akan disimpan otomatis.");
+        } else {
+          setStatus("Gambar referensi ditambahkan ke draf. Tekan ‘Simpan ke Projects’ agar tersimpan permanen.");
+        }
+      } catch (error) {
+        input.value = "";
+        setStatus(error.message || "Gagal menambahkan gambar referensi.");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+
+  function getSupabaseClient() {
+    // Use an explicit window export first; keep the lexical binding as a fallback.
+    const client = window.moviraSupabase || (typeof moviraSupabase !== "undefined" ? moviraSupabase : null);
+    if (!client || !client.auth || typeof client.from !== "function") {
+      throw new Error("Klien Supabase belum tersedia. Muat ulang halaman, lalu coba lagi.");
+    }
+    return client;
+  }
+
   async function getSession() {
-    if (typeof moviraSupabase === "undefined") throw new Error("Supabase belum siap.");
-    const { data, error } = await moviraSupabase.auth.getSession();
+    const client = getSupabaseClient();
+    const { data, error } = await client.auth.getSession();
     if (error) throw error;
     if (!data.session?.user) throw new Error("Silakan login terlebih dahulu untuk menyimpan proyek Drama.");
     return data.session.user;
@@ -203,6 +356,10 @@
       dramaAI: {
         version: 1, mode: state.mode, genre: state.genre, premise: state.premise,
         continuity: state.continuity,
+        referenceImages: {
+          character: String(state.references?.character || ""),
+          location: String(state.references?.location || "")
+        },
         scenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" }))
       },
       activeSceneIndex: activeIndex,
@@ -216,11 +373,12 @@
       state.title = state.title.trim() || "Drama Baru";
       const settings = buildSettings();
       const prompt = state.scenes[0]?.prompt || state.premise || "";
+      const client = getSupabaseClient();
       let result;
       if (currentProjectId) {
-        result = await moviraSupabase.from("projects").update({ name: state.title, prompt, settings, status: "draft", updated_at: new Date().toISOString() }).eq("id", currentProjectId).eq("user_id", user.id).select("id,name,settings,updated_at").single();
+        result = await client.from("projects").update({ name: state.title, prompt, settings, status: "draft", updated_at: new Date().toISOString() }).eq("id", currentProjectId).eq("user_id", user.id).select("id,name,settings,updated_at").single();
       } else {
-        result = await moviraSupabase.from("projects").insert({ user_id: user.id, name: state.title, prompt, settings, status: "draft", updated_at: new Date().toISOString() }).select("id,name,settings,updated_at").single();
+        result = await client.from("projects").insert({ user_id: user.id, name: state.title, prompt, settings, status: "draft", updated_at: new Date().toISOString() }).select("id,name,settings,updated_at").single();
       }
       if (result.error) throw result.error;
       currentProjectId = result.data.id;
@@ -238,7 +396,8 @@
     if (!list) return;
     try {
       const user = await getSession();
-      const { data, error } = await moviraSupabase.from("projects").select("id,name,prompt,settings,updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(100);
+      const client = getSupabaseClient();
+      const { data, error } = await client.from("projects").select("id,name,prompt,settings,updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(100);
       if (error) throw error;
       loadedDramaProjects = (data || []).filter(project => project.settings && project.settings.dramaAI && Array.isArray(project.settings.dramaAI.scenes));
       list.replaceChildren();
@@ -262,6 +421,10 @@
     state = {
       mode: drama.mode || "manual", title: project.name || "Drama Baru", genre: drama.genre || "Petualangan",
       premise: drama.premise || "", continuity: drama.continuity || "", originalSettings: settings,
+      references: {
+        character: String(drama.referenceImages?.character || ""),
+        location: String(drama.referenceImages?.location || "")
+      },
       scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" })) : [{ prompt: project.prompt || "", duration:10, ratio:"16:9", resolution:"480p" }]
     };
     activeIndex = Math.max(0, Math.min(Number(settings.activeSceneIndex || 0), state.scenes.length - 1));
@@ -269,7 +432,8 @@
   }
   async function openProjectById(projectId) {
     const user = await getSession();
-    const { data, error } = await moviraSupabase
+    const client = getSupabaseClient();
+    const { data, error } = await client
       .from("projects")
       .select("id,name,prompt,settings,updated_at")
       .eq("id", projectId)
