@@ -81,21 +81,21 @@
   function showChoiceScreen() {
     page.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div><div class="drama-muted">MOVIRA AI · KHUSUS CERITA BERSERI</div><h2 style="margin:6px 0">🎬 Drama AI</h2><div class="drama-muted">Susun cerita per adegan, simpan ke Projects, lalu siapkan video setelah biaya dan endpoint diverifikasi.</div></div>
+        <div><div class="drama-muted">MOVIRA AI · KHUSUS CERITA BERSERI</div><h2 style="margin:6px 0">🎬 Drama AI</h2><div class="drama-muted">Masukkan cerita dari tool pilihanmu, susun menjadi scene, lalu pilih referensi karakter dan lokasi untuk setiap scene.</div></div>
         <button type="button" id="dramaLoadProjectsBtn">📁 Proyek Drama Tersimpan</button>
       </div>
       <div class="drama-grid" style="margin-top:16px">
-        <button type="button" id="dramaAIChoice" class="primary" style="text-align:left;min-height:125px"><strong>✨ Buat Cerita dengan AI</strong><div class="drama-muted" style="margin-top:8px;color:#e6eaff">Siapkan premis, genre, dan kerangka adegan. Penyusun cerita AI otomatis belum tersambung pada tahap ini.</div></button>
-        <button type="button" id="dramaManualChoice" style="text-align:left;min-height:125px"><strong>✍️ Gunakan Prompt Sendiri</strong><div class="drama-muted" style="margin-top:8px">Masukkan prompt buatanmu sendiri. Prompt tidak akan ditimpa AI.</div></button>
+        <button type="button" id="dramaStoryChoice" class="primary" style="text-align:left;min-height:125px"><strong>📖 Masukkan Prompt Cerita</strong><div class="drama-muted" style="margin-top:8px;color:#e6eaff">Tempel cerita yang sudah dibuat di ChatGPT, Gemini, atau tool lain. Movira tidak memanggil API AI.</div></button>
+        <button type="button" id="dramaManualChoice" style="text-align:left;min-height:125px"><strong>✍️ Buat Storyboard Manual</strong><div class="drama-muted" style="margin-top:8px">Mulai dari editor kosong dan tulis prompt setiap scene sendiri.</div></button>
       </div>
-      <div class="drama-card drama-warning"><strong>Catatan biaya</strong><div class="drama-muted" style="color:#ffe4a3;margin-top:5px">Buat dan simpan proyek saat ini tidak menjalankan fal.ai. Pembuatan video sengaja belum aktif sampai skema kredit Seedance 2.5 disetujui.</div></div>
+      <div class="drama-card drama-warning"><strong>Catatan</strong><div class="drama-muted" style="color:#ffe4a3;margin-top:5px">Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.</div></div>
       <div class="drama-card"><strong>Proyek Drama</strong><div id="dramaProjectList" class="drama-muted" style="margin-top:8px">Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.</div></div>
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
-    page.querySelector("#dramaAIChoice").addEventListener("click", () => {
+    page.querySelector("#dramaStoryChoice").addEventListener("click", () => {
       clearTimeout(saveTimer); saveTimer = null; currentProjectId = null;
-      state = freshState(); state.mode = "ai-draft"; activeIndex = 0; showSetupScreen();
+      state = freshState(); state.mode = "story-import"; activeIndex = 0; showSetupScreen();
     });
     page.querySelector("#dramaManualChoice").addEventListener("click", () => {
       clearTimeout(saveTimer); saveTimer = null; currentProjectId = null;
@@ -106,38 +106,51 @@
   function showSetupScreen() {
     page.innerHTML = `
       <button type="button" id="dramaBackBtn">← Kembali</button>
-      <h2 style="margin-bottom:4px">✨ Rancang Cerita</h2>
-      <div class="drama-muted">Isi data cerita. Tombol di bawah membuat kerangka lokal sederhana sebagai titik awal, bukan panggilan ke model AI.</div>
+      <h2 style="margin-bottom:4px">📖 Masukkan Prompt Cerita</h2>
+      <div class="drama-muted">Buat cerita di tool pilihanmu, lalu salin dan tempel seluruh cerita di bawah. Movira akan membantu membaginya menjadi scene untuk diedit.</div>
       <div class="drama-card">
         <label for="dramaTitle">Nama drama</label><input id="dramaTitle" maxlength="100" value="Drama Baru">
         <label for="dramaGenre">Genre</label><select id="dramaGenre"><option>Petualangan</option><option>Komedi</option><option>Fantasi</option><option>Persahabatan</option><option>Misteri</option><option>Drama keluarga</option><option>Aksi</option></select>
-        <label for="dramaPremise">Ide atau premis cerita</label><textarea id="dramaPremise" rows="4" placeholder="Contoh: Sekelompok teman menemukan peta misterius di taman…"></textarea>
-        <label for="dramaContinuity">Panduan konsistensi karakter dan dunia (opsional)</label><textarea id="dramaContinuity" rows="3" placeholder="Deskripsi karakter, pakaian, lokasi, dan gaya visual. Disimpan terpisah dari prompt scene."></textarea>
-        <label for="dramaSceneCount">Jumlah adegan pada kerangka awal</label><select id="dramaSceneCount"><option value="3">3 adegan</option><option value="4" selected>4 adegan</option><option value="5">5 adegan</option><option value="6">6 adegan</option></select>
-        <div class="drama-actions"><button type="button" class="primary" id="dramaBuildOutlineBtn">Buat Kerangka Lokal</button><button type="button" id="dramaBlankEditorBtn">Lanjut ke editor kosong</button></div>
+        <label for="dramaPremise">Sinopsis / ringkasan cerita (opsional)</label><textarea id="dramaPremise" rows="3" placeholder="Ringkasan singkat cerita…"></textarea>
+        <label for="dramaContinuity">Panduan konsistensi karakter dan dunia (opsional)</label><textarea id="dramaContinuity" rows="3" placeholder="Deskripsi karakter, pakaian, lokasi, dan gaya visual."></textarea>
+        <label for="dramaStoryText">Tempel seluruh cerita atau prompt di sini</label><textarea id="dramaStoryText" rows="12" placeholder="Tempel cerita lengkap di sini. Jika ada judul Scene 1, Scene 2, dan seterusnya, Movira akan menggunakannya sebagai pemisah. Jika tidak, paragraf akan dijadikan scene."></textarea>
+        <div class="drama-actions"><button type="button" class="primary" id="dramaImportStoryBtn">Bagi Cerita Menjadi Scene</button><button type="button" id="dramaBlankEditorBtn">Buka Editor Kosong</button></div>
+        <div class="drama-muted" style="margin-top:8px">Setelah masuk editor, periksa dan edit prompt tiap scene. Kamu tetap bisa menambah atau menghapus scene.</div>
       </div>
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
     page.querySelector("#dramaBackBtn").addEventListener("click", showChoiceScreen);
     page.querySelector("#dramaBlankEditorBtn").addEventListener("click", () => { syncSetupFields(); showEditor(); });
-    page.querySelector("#dramaBuildOutlineBtn").addEventListener("click", () => {
+    page.querySelector("#dramaImportStoryBtn").addEventListener("click", () => {
       syncSetupFields();
-      const premise = state.premise.trim();
-      if (!premise) { setStatus("Isi ide atau premis cerita terlebih dahulu."); page.querySelector("#dramaPremise").focus(); return; }
-      const count = Number(page.querySelector("#dramaSceneCount").value);
-      const arc = [
-        ["Pembuka", `Perkenalkan dunia dan karakter utama dalam cerita: ${premise}. Bangun suasana ${state.genre.toLowerCase()} dan tunjukkan tujuan awal karakter.`],
-        ["Pemicu cerita", `Sebuah kejadian mengubah keadaan dalam cerita: ${premise}. Tunjukkan reaksi karakter dan alasan mereka harus bertindak.`],
-        ["Upaya dan tantangan", `Karakter mencoba menyelesaikan masalah dari cerita: ${premise}. Tampilkan tindakan yang jelas, hambatan, dan perkembangan emosi.`],
-        ["Titik balik", `Tunjukkan keputusan penting atau kejutan yang mengubah arah cerita: ${premise}. Jaga hubungan sebab-akibat dengan adegan sebelumnya.`],
-        ["Klimaks", `Karakter menghadapi tantangan terbesar yang berkaitan dengan: ${premise}. Tunjukkan aksi utama dan hasil yang bisa dipahami penonton.`],
-        ["Penutup", `Tutup cerita ${premise} dengan resolusi yang terasa tuntas, tunjukkan perubahan karakter, dan akhiri dengan gambar penutup yang kuat.`]
-      ];
-      state.scenes = arc.slice(0, count).map(item => ({ prompt: `${item[0]}: ${item[1]}`, duration: 10, ratio: "16:9", resolution: "480p", characterReferenceIds: [], locationReferenceIds: [] }));
+      const story = page.querySelector("#dramaStoryText").value.trim();
+      if (!story) { setStatus("Tempel cerita terlebih dahulu."); page.querySelector("#dramaStoryText").focus(); return; }
+      const hasHeadings = /(?:^|\n)\s*(?:\[?Scene|\[?Adegan)\s*\d+/i.test(story);
+      let chunks = [];
+      if (hasHeadings) {
+        const lines = story.split(/\r?\n/);
+        let current = "";
+        for (const line of lines) {
+          if (/^\s*(?:\[?Scene|\[?Adegan)\s*\d+/i.test(line)) {
+            if (current.trim()) chunks.push(current.trim());
+            current = line.trim();
+          } else {
+            current += (current ? "\n" : "") + line;
+          }
+        }
+        if (current.trim()) chunks.push(current.trim());
+      } else {
+        chunks = story.split(/\n\s*\n+/).map(part => part.trim()).filter(Boolean);
+      }
+      if (!chunks.length) chunks = [story];
+      state.scenes = chunks.map(prompt => ({
+        prompt, duration: 10, ratio: "16:9", resolution: "480p",
+        characterReferenceIds: [], locationReferenceIds: []
+      }));
       activeIndex = 0;
       showEditor();
-      setStatus("Kerangka lokal dibuat. Ini bukan hasil model AI; edit semua prompt sesuai kebutuhanmu.");
+      setStatus(`${chunks.length} scene dimasukkan dari cerita. Periksa dan edit setiap scene sebelum menyimpan.`);
     });
   }
   function syncSetupFields() {
