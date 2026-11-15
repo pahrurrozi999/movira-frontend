@@ -35,14 +35,14 @@
   function freshState() {
     return {
       mode: "manual", title: "Drama Baru", genre: "Petualangan", premise: "", continuity: "",
-      references: { character: "", location: "" },
-      scenes: [{ prompt: "", duration: 10, ratio: "16:9", resolution: "480p" }]
+      references: { character: [], location: [] },
+      scenes: [{ prompt: "", duration: 10, ratio: "16:9", resolution: "480p", characterReferenceIds: [], locationReferenceIds: [] }]
     };
   }
   function selectedText(el) { return el ? String(el.value || "") : ""; }
   function setStatus(message) { if (statusEl) statusEl.textContent = message; }
   function getActiveScene() {
-    if (!state.scenes.length) state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p" });
+    if (!state.scenes.length) state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] });
     activeIndex = Math.max(0, Math.min(activeIndex, state.scenes.length - 1));
     return state.scenes[activeIndex];
   }
@@ -64,6 +64,10 @@
     if (genre) state.genre = genre.value;
     if (premise) state.premise = premise.value;
     if (continuity) state.continuity = continuity.value;
+    for (const kind of ["character", "location"]) {
+      const selector = page.querySelector(`#dramaScene${kind === "character" ? "Character" : "Location"}Selections`);
+      if (selector) scene[kind === "character" ? "characterReferenceIds" : "locationReferenceIds"] = Array.from(selector.querySelectorAll("input[type=checkbox]:checked"), input => input.value);
+    }
   }
   function scheduleSave() {
     if (!currentProjectId) return;
@@ -148,18 +152,18 @@
       </div>
       <div class="drama-card">
         <strong>🖼️ Gambar Referensi</strong>
-        <div class="drama-muted" style="margin-top:5px">Unggah satu gambar karakter dan satu gambar lokasi. Gambar diperkecil sebelum disimpan bersama pengaturan proyek Drama ini.</div>
+        <div class="drama-muted" style="margin-top:5px">Unggah beberapa gambar karakter dan lokasi. Pilih gambar yang berlaku untuk setiap scene di bagian pengaturan scene.</div>
         <div class="drama-reference-grid">
           <div class="drama-reference-box">
             <label for="dramaCharacterReferenceInput">Gambar karakter</label>
-            <input id="dramaCharacterReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <input id="dramaCharacterReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
             <button type="button" id="dramaCharacterReferenceBtn" class="primary">＋ Upload Gambar Karakter</button>
             <div id="dramaCharacterReferenceEmpty" class="drama-reference-empty">Belum ada gambar karakter.</div>
             <div id="dramaCharacterReferencePreview" class="drama-reference-preview" hidden></div>
           </div>
           <div class="drama-reference-box">
             <label for="dramaLocationReferenceInput">Gambar lokasi</label>
-            <input id="dramaLocationReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <input id="dramaLocationReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
             <button type="button" id="dramaLocationReferenceBtn" class="primary">＋ Upload Gambar Lokasi</button>
             <div id="dramaLocationReferenceEmpty" class="drama-reference-empty">Belum ada gambar lokasi.</div>
             <div id="dramaLocationReferencePreview" class="drama-reference-preview" hidden></div>
@@ -170,6 +174,10 @@
       <div class="drama-card">
         <strong id="dramaActiveSceneTitle">Scene 1</strong>
         <label for="dramaScenePrompt">Prompt scene (tetap bisa kamu edit)</label><textarea id="dramaScenePrompt" rows="7" placeholder="Tulis prompt video untuk scene ini…"></textarea>
+        <div class="drama-reference-grid">
+          <div class="drama-reference-box"><strong>Karakter untuk scene ini</strong><div id="dramaSceneCharacterSelections" class="drama-muted" style="margin-top:8px"></div></div>
+          <div class="drama-reference-box"><strong>Lokasi untuk scene ini</strong><div id="dramaSceneLocationSelections" class="drama-muted" style="margin-top:8px"></div></div>
+        </div>
         <div class="drama-grid"><div><label for="dramaSceneDuration">Durasi</label><select id="dramaSceneDuration"><option value="10">10 detik</option><option value="15">15 detik</option><option value="30">30 detik</option></select></div><div><label for="dramaSceneRatio">Rasio</label><select id="dramaSceneRatio"><option value="16:9">16:9</option><option value="9:16">9:16</option></select></div><div><label for="dramaSceneResolution">Resolusi</label><select id="dramaSceneResolution"><option value="480p">480p</option><option value="720p">720p</option></select></div></div>
         <div id="dramaCostEstimate" class="drama-muted" style="margin-top:10px"></div>
         <div class="drama-actions"><button type="button" class="primary" id="dramaSaveBtn">Simpan ke Projects</button><button type="button" id="dramaSaveNewBtn">Simpan sebagai Proyek Baru</button><button type="button" id="dramaGenerateBtn" disabled title="Dinonaktifkan sampai endpoint dan biaya kredit disetujui">🔒 Buat Video (belum aktif)</button></div>
@@ -196,6 +204,7 @@
     bindReferenceUpload("location");
     renderReferencePreview("character");
     renderReferencePreview("location");
+    renderSceneReferenceSelections();
     page.querySelector("#dramaScenePrompt").value = getActiveScene().prompt;
     page.querySelector("#dramaSceneDuration").value = String(getActiveScene().duration || 10);
     page.querySelector("#dramaSceneRatio").value = getActiveScene().ratio || "16:9";
@@ -206,7 +215,7 @@
       autosaveEvents.forEach(type => el.addEventListener(type, () => { syncActiveEditor(); renderSceneTabs(); updateCostEstimate(); scheduleSave(); }));
     }
     page.querySelector("#dramaScenePrompt").addEventListener("input", () => { syncActiveEditor(); scheduleSave(); });
-    page.querySelector("#dramaAddSceneBtn").addEventListener("click", () => { syncActiveEditor(); state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p" }); activeIndex = state.scenes.length - 1; showEditor(); setStatus("Scene ditambahkan."); scheduleSave(); });
+    page.querySelector("#dramaAddSceneBtn").addEventListener("click", () => { syncActiveEditor(); state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }); activeIndex = state.scenes.length - 1; showEditor(); setStatus("Scene ditambahkan."); scheduleSave(); });
     page.querySelector("#dramaDeleteSceneBtn").addEventListener("click", () => {
       if (state.scenes.length <= 1) { setStatus("Drama harus memiliki minimal satu scene."); return; }
       syncActiveEditor(); state.scenes.splice(activeIndex, 1); activeIndex = Math.min(activeIndex, state.scenes.length - 1); showEditor(); setStatus("Scene dihapus dari draf. Simpan proyek untuk menerapkan perubahan."); scheduleSave();
@@ -238,31 +247,101 @@
     if (!box) return;
     box.textContent = "Tarif fal.ai/Seedance 2.5 dan biaya Kredit Movira belum diverifikasi. Durasi, rasio, dan resolusi di layar ini masih berupa pengaturan draf; tidak ada video yang dikirim.";
   }
+  function ensureReferenceState() {
+    state.references = state.references || {};
+    for (const kind of ["character", "location"]) {
+      const current = state.references[kind];
+      if (Array.isArray(current)) {
+        state.references[kind] = current.map((item, index) => typeof item === "string"
+          ? { id: makeReferenceId(kind, index), name: `${kind === "character" ? "Karakter" : "Lokasi"} ${index + 1}`, dataUrl: item }
+          : { id: String(item.id || makeReferenceId(kind, index)), name: String(item.name || `${kind === "character" ? "Karakter" : "Lokasi"} ${index + 1}`), dataUrl: String(item.dataUrl || item.data_url || "") }).filter(item => item.dataUrl);
+      } else if (typeof current === "string" && current) {
+        // Backward compatibility for projects saved with the previous single-image format.
+        state.references[kind] = [{ id: makeReferenceId(kind, 0), name: kind === "character" ? "Karakter 1" : "Lokasi 1", dataUrl: current }];
+      } else {
+        state.references[kind] = [];
+      }
+    }
+    state.scenes = (state.scenes || []).map(scene => ({
+      ...scene,
+      characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [],
+      locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : []
+    }));
+  }
+  function makeReferenceId(kind, index) {
+    return `${kind}-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`;
+  }
   function renderReferencePreview(kind) {
-    const preview = page?.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferencePreview`);
-    const empty = page?.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferenceEmpty`);
+    ensureReferenceState();
+    const prefix = kind === "character" ? "Character" : "Location";
+    const preview = page?.querySelector(`#drama${prefix}ReferencePreview`);
+    const empty = page?.querySelector(`#drama${prefix}ReferenceEmpty`);
     if (!preview || !empty) return;
     preview.replaceChildren();
-    const dataUrl = String(state.references?.[kind] || "");
-    preview.hidden = !dataUrl;
-    empty.hidden = Boolean(dataUrl);
-    if (!dataUrl) return;
-
-    const img = document.createElement("img");
-    img.src = dataUrl;
-    img.alt = kind === "character" ? "Gambar referensi karakter" : "Gambar referensi lokasi";
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.textContent = "Hapus Gambar";
-    remove.addEventListener("click", () => {
-      state.references[kind] = "";
-      const input = page.querySelector(`#drama${kind === "character" ? "Character" : "Location"}ReferenceInput`);
-      if (input) input.value = "";
-      renderReferencePreview(kind);
-      if (currentProjectId) scheduleSave();
-      setStatus(currentProjectId ? "Gambar referensi dihapus dari draf; perubahan akan disimpan otomatis." : "Gambar referensi dihapus dari draf.");
+    const items = state.references[kind];
+    preview.hidden = !items.length;
+    empty.hidden = Boolean(items.length);
+    if (!items.length) return;
+    items.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "drama-reference-box";
+      card.style.width = "100%";
+      const img = document.createElement("img");
+      img.src = item.dataUrl;
+      img.alt = item.name;
+      const name = document.createElement("div");
+      name.className = "drama-muted";
+      name.textContent = item.name;
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Hapus Gambar";
+      remove.addEventListener("click", () => {
+        state.references[kind] = state.references[kind].filter(ref => ref.id !== item.id);
+        for (const scene of state.scenes) {
+          const key = kind === "character" ? "characterReferenceIds" : "locationReferenceIds";
+          scene[key] = (scene[key] || []).filter(id => id !== item.id);
+        }
+        renderReferencePreview(kind);
+        renderSceneReferenceSelections();
+        if (currentProjectId) scheduleSave();
+        setStatus(currentProjectId ? "Gambar referensi dihapus; perubahan akan disimpan otomatis." : "Gambar referensi dihapus dari draf.");
+      });
+      card.append(img, name, remove);
+      preview.appendChild(card);
     });
-    preview.append(img, remove);
+  }
+  function renderSceneReferenceSelections() {
+    ensureReferenceState();
+    const scene = getActiveScene();
+    for (const kind of ["character", "location"]) {
+      const prefix = kind === "character" ? "Character" : "Location";
+      const box = page?.querySelector(`#dramaScene${prefix}Selections`);
+      if (!box) continue;
+      box.replaceChildren();
+      const refs = state.references[kind];
+      if (!refs.length) {
+        box.textContent = `Belum ada gambar ${kind === "character" ? "karakter" : "lokasi"}. Unggah gambar di bagian Gambar Referensi.`;
+        continue;
+      }
+      const selectedKey = kind === "character" ? "characterReferenceIds" : "locationReferenceIds";
+      refs.forEach(ref => {
+        const label = document.createElement("label");
+        label.style.cssText = "display:flex;align-items:center;gap:8px;margin:7px 0;";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = ref.id;
+        checkbox.checked = (scene[selectedKey] || []).includes(ref.id);
+        checkbox.style.width = "auto";
+        checkbox.addEventListener("change", () => {
+          scene[selectedKey] = Array.from(box.querySelectorAll("input[type=checkbox]:checked"), input => input.value);
+          scheduleSave();
+        });
+        const caption = document.createElement("span");
+        caption.textContent = ref.name;
+        label.append(checkbox, caption);
+        box.appendChild(label);
+      });
+    }
   }
 
   function compressReferenceImage(file) {
@@ -309,18 +388,23 @@
     input.dataset.bound = "true";
     button.addEventListener("click", () => input.click());
     input.addEventListener("change", async () => {
-      const file = input.files?.[0];
-      if (!file) return;
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
       button.disabled = true;
-      setStatus("Memproses gambar referensi...");
+      setStatus(`Memproses ${files.length} gambar referensi...`);
       try {
-        state.references = state.references || { character: "", location: "" };
-        state.references[kind] = await compressReferenceImage(file);
+        ensureReferenceState();
+        for (const file of files) {
+          const dataUrl = await compressReferenceImage(file);
+          const index = state.references[kind].length + 1;
+          state.references[kind].push({ id: makeReferenceId(kind, index), name: file.name || `${kind === "character" ? "Karakter" : "Lokasi"} ${index}`, dataUrl });
+        }
         input.value = "";
         renderReferencePreview(kind);
+        renderSceneReferenceSelections();
         if (currentProjectId) {
           scheduleSave();
-          setStatus("Gambar referensi siap. Perubahan akan disimpan otomatis.");
+          setStatus("Gambar referensi ditambahkan. Perubahan akan disimpan otomatis.");
         } else {
           setStatus("Gambar referensi ditambahkan ke draf. Tekan ‘Simpan ke Projects’ agar tersimpan permanen.");
         }
@@ -351,16 +435,17 @@
   }
   function buildSettings() {
     syncActiveEditor();
+    ensureReferenceState();
     return {
       ...(state.originalSettings || {}),
       dramaAI: {
         version: 1, mode: state.mode, genre: state.genre, premise: state.premise,
         continuity: state.continuity,
         referenceImages: {
-          character: String(state.references?.character || ""),
-          location: String(state.references?.location || "")
+          character: state.references.character.map(ref => ({ id: ref.id, name: ref.name, dataUrl: ref.dataUrl })),
+          location: state.references.location.map(ref => ({ id: ref.id, name: ref.name, dataUrl: ref.dataUrl }))
         },
-        scenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" }))
+        scenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p", characterReferenceIds: [...(scene.characterReferenceIds || [])], locationReferenceIds: [...(scene.locationReferenceIds || [])] }))
       },
       activeSceneIndex: activeIndex,
       workspaceScenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), settings: { duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" } }))
@@ -422,10 +507,10 @@
       mode: drama.mode || "manual", title: project.name || "Drama Baru", genre: drama.genre || "Petualangan",
       premise: drama.premise || "", continuity: drama.continuity || "", originalSettings: settings,
       references: {
-        character: String(drama.referenceImages?.character || ""),
-        location: String(drama.referenceImages?.location || "")
+        character: drama.referenceImages?.character ?? "",
+        location: drama.referenceImages?.location ?? ""
       },
-      scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" })) : [{ prompt: project.prompt || "", duration:10, ratio:"16:9", resolution:"480p" }]
+      scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p", characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [], locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : [] })) : [{ prompt: project.prompt || "", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }]
     };
     activeIndex = Math.max(0, Math.min(Number(settings.activeSceneIndex || 0), state.scenes.length - 1));
     showEditor(); setStatus(`Proyek dibuka: ${state.title}.`);
