@@ -108,6 +108,11 @@ min-width:0;
 .home-mode-card.mode-blue{background:linear-gradient(145deg,#24499b 0%,#172747 58%,#101b30 100%)}
 .home-mode-card.mode-green{background:linear-gradient(145deg,#087c70 0%,#13433f 55%,#10252f 100%)}
 .home-mode-card.mode-purple{background:linear-gradient(145deg,#7045ad 0%,#372652 58%,#171b31 100%)}
+.home-mode-card.mode-drama{grid-column:1/-1;min-height:112px;flex-direction:row;align-items:center;gap:16px;background:linear-gradient(115deg,#7138d8 0%,#a33acb 52%,#e34caa 100%)}
+.home-mode-card.mode-drama .home-mode-icon{font-size:38px;flex:0 0 auto}
+.home-mode-card.mode-drama .drama-home-copy{display:flex;flex-direction:column;gap:7px}
+.home-mode-card.mode-drama strong{font-size:20px}
+@media(max-width:900px){.home-mode-card.mode-drama{min-height:104px}}
 .home-mode-label{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#a9bad5;margin:4px 0 8px}
 .top-heading{min-width:0}
 #modeIntro{display:none;color:#9fb1c9;font-size:13px;line-height:1.5;margin-top:6px;max-width:680px}
@@ -653,6 +658,13 @@ MiniMax H3 Max Reframe Video
       <span data-i18n="videoModeDesc">Transform a source video with AI.</span>
     </button>
   </div>
+  <button type="button" class="home-mode-card mode-drama" onclick="document.querySelector('.nav button[data-i18n=drama]').click()" aria-label="Open Drama AI">
+    <span class="home-mode-icon" aria-hidden="true">🎭</span>
+    <span class="drama-home-copy">
+      <strong data-i18n="dramaHomeTitle">Drama AI</strong>
+      <span data-i18n="dramaHomeDesc">Buat cerita, atur adegan, dan simpan proyek drama dengan gambar referensi karakter serta lokasi.</span>
+    </span>
+  </button>
   <div class="home-mode-label" data-i18n="otherMenus">More menus</div>
  <div class="samplegrid">
   <div class="card"
@@ -788,6 +800,8 @@ storyDesc:"Gaya cerita film",
     projects: "📁 Proyek",
     drama: "🎬 Drama AI",
     dashboardTitle: "Beranda Movira AI",
+    dramaHomeTitle: "Drama AI",
+    dramaHomeDesc: "Buat cerita, atur adegan, dan simpan proyek drama dengan gambar referensi karakter serta lokasi.",
     otherMenus: "Menu lainnya",
     myProjects: "Proyek Saya",
     projectsDesc: "Kelola proyek dan prompt setiap scene.",
@@ -898,6 +912,8 @@ storyDesc:"Gaya cerita filem",
     projects: "📁 Projek",
     drama: "🎬 Drama AI",
     dashboardTitle: "Laman Utama Movira AI",
+    dramaHomeTitle: "Drama AI",
+    dramaHomeDesc: "Cipta cerita, susun adegan, dan simpan projek drama dengan imej rujukan watak serta lokasi.",
     otherMenus: "Menu lain",
     myProjects: "Projek Saya",
     projectsDesc: "Urus projek dan prompt setiap scene.",
@@ -1006,6 +1022,8 @@ storyDesc:"Film storytelling style",
     projects: "📁 Projects",
     drama: "🎬 Drama AI",
     dashboardTitle: "Movira AI Home",
+    dramaHomeTitle: "Drama AI",
+    dramaHomeDesc: "Create stories, arrange scenes, and save drama projects with character and location reference images.",
     otherMenus: "More menus",
     myProjects: "My Projects",
     projectsDesc: "Manage projects and each scene prompt.",
@@ -1970,8 +1988,6 @@ status.textContent="Backend Movira terhubung. Upload gambar untuk mulai.";
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
-  // Expose the same client for separately loaded feature scripts such as Drama AI.
-  window.moviraSupabase = moviraSupabase;
 
   console.log("Movira AI: Supabase siap.");
 </script><!-- Movira AI - Login & Credits -->
@@ -4474,6 +4490,6 @@ window.moviraProjectVideoContext = {
 })();
 // ===== AKHIR PROYEK + AUTO-SAVE =====
 </script>
-<script src="./drama-ai.js?v=20261029-2"></script>
+<script src="./drama-ai.js"></script>
 </body>
 </html>
