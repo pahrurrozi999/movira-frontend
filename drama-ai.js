@@ -1,6 +1,6 @@
 /* Movira AI - Drama AI workspace.
- * Story outlining here is a local scaffold, not an AI-model call. Video generation stays disabled
- * until Seedance 2.5 credit pricing is reviewed and explicitly enabled on the backend.
+ * Scene planning, model selection and reference selection are local/project features.
+ * Video generation remains intentionally locked pending integration and billing verification.
  */
 (() => {
   "use strict";
@@ -32,23 +32,82 @@
     #dramaPage .drama-scene-selected-card div { overflow-wrap:anywhere; margin-top:5px; }
     @media(max-width:520px){ #dramaPage .drama-actions button { flex:1 1 auto; } }
   `;
+  const DEFAULT_DRAMA_MODEL = "bytedance/seedance-2.5/flash/reference-to-video";
+  const DRAMA_MODELS = Object.freeze({
+    "bytedance/seedance-2.5/flash/reference-to-video": {
+      label: "Seedance 2.5 Flash · Reference-to-Video",
+      resolutions: ["480p", "720p"], defaultResolution: "480p", maxImages: 10,
+      durationMin: 4, durationMax: 30, durations: [10, 15, 30], pricing: "seedance"
+    },
+    "alibaba/wan-3.0/reference-to-video": {
+      label: "Wan 3.0 · Reference-to-Video",
+      resolutions: ["480p", "720p", "1080p"], defaultResolution: "480p", maxImages: 10,
+      durationMin: 2, durationMax: 30, durations: [10, 15, 30], pricing: { "480p": 0.05, "720p": 0.10, "1080p": 0.20 }
+    },
+    "alibaba/wan-3.0-prime/reference-to-video": {
+      label: "Wan 3.0 Prime · Reference-to-Video",
+      resolutions: ["480p", "720p", "1080p"], defaultResolution: "480p", maxImages: 10,
+      durationMin: 2, durationMax: 30, durations: [10, 15, 30], pricing: { "480p": 0.068, "720p": 0.14, "1080p": 0.28 }
+    },
+    "google/gemini-omni-flash/v1.1/reference-to-video": {
+      label: "Gemini Omni Flash 1.1 · Reference-to-Video",
+      resolutions: ["360p", "720p", "1080p"], defaultResolution: "360p", maxImages: 10,
+      durationMin: 10, durationMax: 10, durations: [10], pricing: { "360p": 0.03, "720p": 0.10, "1080p": 0.15 },
+      imageLimitNote: "Batas 10 gambar adalah batas aplikasi Drama AI; skema Gemini 1.1 yang diperiksa tidak mencantumkan batas maksimum gambar."
+    }
+  });
+
   let page, statusEl, currentProjectId = null, activeIndex = 0, saveTimer = null;
   let state = freshState();
   let loadedDramaProjects = [];
+
+  function modelConfig(modelId) {
+    return DRAMA_MODELS[modelId] || DRAMA_MODELS[DEFAULT_DRAMA_MODEL];
+  }
+  function countSelectedReferences(scene = getActiveScene()) {
+    ensureReferenceState();
+    const characterIds = new Set(scene.characterReferenceIds || []);
+    const locationIds = new Set(scene.locationReferenceIds || []);
+    return state.references.character.filter(ref => characterIds.has(ref.id)).length +
+      state.references.location.filter(ref => locationIds.has(ref.id)).length;
+  }
+  function estimateSceneCredits(modelId, resolution, duration, ratio) {
+    const config = modelConfig(modelId);
+    let usd;
+    if (config.pricing === "seedance") {
+      // Seedance 2.5 Flash: output pixels × seconds × 24 FPS / 1024 tokens.
+      // Images are the only references sent by Drama AI; fal documents image references as free.
+      // Endpoint-specific public price: USD 0.014 per 1,000 output tokens.
+      const pixels = resolution === "480p" ? 864 * 496 : 1280 * 720;
+      const tokens = Math.ceil((pixels * Number(duration) * 24) / 1024);
+      usd = (tokens / 1000) * 0.014;
+    } else {
+      const rate = config.pricing[resolution];
+      if (!Number.isFinite(rate)) return null;
+      usd = rate * Number(duration);
+    }
+    if (!Number.isFinite(usd) || usd <= 0) return null;
+    return Math.ceil(usd * 100 * 1.30);
+  }
 
   function freshState() {
     return {
       mode: "manual", title: "Drama Baru", genre: "Petualangan", premise: "", continuity: "",
       references: { character: [], location: [] },
-      scenes: [{ prompt: "", duration: 10, ratio: "16:9", resolution: "480p", characterReferenceIds: [], locationReferenceIds: [] }]
+      scenes: [{ prompt: "", model: DEFAULT_DRAMA_MODEL, duration: 10, ratio: "16:9", resolution: "480p", characterReferenceIds: [], locationReferenceIds: [] }]
     };
   }
   function selectedText(el) { return el ? String(el.value || "") : ""; }
   function setStatus(message) { if (statusEl) statusEl.textContent = message; }
   function getActiveScene() {
-    if (!state.scenes.length) state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] });
+    if (!state.scenes.length) state.scenes.push({ prompt:"", model: DEFAULT_DRAMA_MODEL, duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] });
     activeIndex = Math.max(0, Math.min(activeIndex, state.scenes.length - 1));
-    return state.scenes[activeIndex];
+    const scene = state.scenes[activeIndex];
+    if (!DRAMA_MODELS[scene.model]) scene.model = DEFAULT_DRAMA_MODEL;
+    if (!scene.duration) scene.duration = 10;
+    if (!scene.ratio) scene.ratio = "16:9";
+    if (!scene.resolution || !modelConfig(scene.model).resolutions.includes(scene.resolution)) scene.resolution = modelConfig(scene.model).defaultResolution;
+    return scene;
   }
   function syncActiveEditor() {
     const scene = getActiveScene();
@@ -56,7 +115,9 @@
     const duration = page.querySelector("#dramaSceneDuration");
     const ratio = page.querySelector("#dramaSceneRatio");
     const resolution = page.querySelector("#dramaSceneResolution");
+    const model = page.querySelector("#dramaSceneModel");
     if (prompt) scene.prompt = prompt.value;
+    if (model && DRAMA_MODELS[model.value]) scene.model = model.value;
     if (duration) scene.duration = Number(duration.value);
     if (ratio) scene.ratio = ratio.value;
     if (resolution) scene.resolution = resolution.value;
@@ -145,7 +206,7 @@
       }
       if (!chunks.length) chunks = [story];
       state.scenes = chunks.map(prompt => ({
-        prompt, duration: 10, ratio: "16:9", resolution: "480p",
+        prompt, model: DEFAULT_DRAMA_MODEL, duration: 10, ratio: "16:9", resolution: "480p",
         characterReferenceIds: [], locationReferenceIds: []
       }));
       activeIndex = 0;
@@ -191,6 +252,18 @@
       <div class="drama-card">
         <strong id="dramaActiveSceneTitle">Scene 1</strong>
         <label for="dramaScenePrompt">Prompt scene (tetap bisa kamu edit)</label><textarea id="dramaScenePrompt" rows="7" placeholder="Tulis prompt video untuk scene ini…"></textarea>
+        <label for="dramaSceneModel">Model video untuk Scene ini</label>
+        <select id="dramaSceneModel">
+          <option value="bytedance/seedance-2.5/flash/reference-to-video">Seedance 2.5 Flash · Reference-to-Video</option>
+          <option value="alibaba/wan-3.0/reference-to-video">Wan 3.0 · Reference-to-Video</option>
+          <option value="alibaba/wan-3.0-prime/reference-to-video">Wan 3.0 Prime · Reference-to-Video</option>
+          <option value="google/gemini-omni-flash/v1.1/reference-to-video">Gemini Omni Flash 1.1 · Reference-to-Video</option>
+        </select>
+        <div class="drama-card drama-warning" style="margin-top:10px">
+          <strong>Informasi Model dan Referensi</strong>
+          <div id="dramaModelInfo" class="drama-muted" style="color:#ffe4a3;margin-top:5px" role="status" aria-live="polite"></div>
+          <div id="dramaModelValidation" class="drama-muted" style="color:#ffe4a3;margin-top:5px"></div>
+        </div>
         <div class="drama-reference-grid">
           <div class="drama-reference-box">
             <strong>Karakter untuk scene ini</strong>
@@ -209,7 +282,7 @@
             <div id="dramaSceneLocationSelectedPreview" class="drama-scene-selected-grid"></div>
           </div>
         </div>
-        <div class="drama-grid"><div><label for="dramaSceneDuration">Durasi</label><select id="dramaSceneDuration"><option value="10">10 detik</option><option value="15">15 detik</option><option value="30">30 detik</option></select></div><div><label for="dramaSceneRatio">Rasio</label><select id="dramaSceneRatio"><option value="16:9">16:9</option><option value="9:16">9:16</option></select></div><div><label for="dramaSceneResolution">Resolusi</label><select id="dramaSceneResolution"><option value="480p">480p</option><option value="720p">720p</option></select></div></div>
+        <div class="drama-grid"><div><label for="dramaSceneDuration">Durasi</label><select id="dramaSceneDuration"><option value="10">10 detik</option><option value="15">15 detik</option><option value="30">30 detik</option></select></div><div><label for="dramaSceneRatio">Rasio</label><select id="dramaSceneRatio"><option value="16:9">16:9</option><option value="9:16">9:16</option></select></div><div><label for="dramaSceneResolution">Resolusi</label><select id="dramaSceneResolution"><option value="480p">480p</option><option value="720p">720p</option><option value="1080p">1080p</option><option value="360p">360p</option></select></div></div>
         <div id="dramaCostEstimate" class="drama-muted" style="margin-top:10px"></div>
         <div class="drama-actions"><button type="button" class="primary" id="dramaSaveBtn">Simpan ke Projects</button><button type="button" id="dramaSaveNewBtn">Simpan sebagai Proyek Baru</button><button type="button" id="dramaGenerateBtn" disabled title="Dinonaktifkan sampai endpoint dan biaya kredit disetujui">🔒 Buat Video (belum aktif)</button></div>
         <div class="drama-muted" style="margin-top:8px">Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.</div>
@@ -239,16 +312,27 @@
     renderReferencePreview("location");
     renderSceneReferenceSelections();
     page.querySelector("#dramaScenePrompt").value = getActiveScene().prompt;
+    page.querySelector("#dramaSceneModel").value = getActiveScene().model || DEFAULT_DRAMA_MODEL;
+    configureModelControls(true);
     page.querySelector("#dramaSceneDuration").value = String(getActiveScene().duration || 10);
     page.querySelector("#dramaSceneRatio").value = getActiveScene().ratio || "16:9";
-    page.querySelector("#dramaSceneResolution").value = getActiveScene().resolution || "480p";
+    page.querySelector("#dramaSceneResolution").value = getActiveScene().resolution || modelConfig(getActiveScene().model).defaultResolution;
     const autosaveEvents = ["input", "change"];
     for (const id of ["dramaTitle","dramaGenre","dramaPremise","dramaContinuity","dramaScenePrompt","dramaSceneDuration","dramaSceneRatio","dramaSceneResolution"]) {
       const el = page.querySelector(`#${id}`);
       autosaveEvents.forEach(type => el.addEventListener(type, () => { syncActiveEditor(); renderSceneTabs(); updateCostEstimate(); scheduleSave(); }));
     }
     page.querySelector("#dramaScenePrompt").addEventListener("input", () => { syncActiveEditor(); scheduleSave(); });
-    page.querySelector("#dramaAddSceneBtn").addEventListener("click", () => { syncActiveEditor(); state.scenes.push({ prompt:"", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }); activeIndex = state.scenes.length - 1; showEditor(); setStatus("Scene ditambahkan."); scheduleSave(); });
+    page.querySelector("#dramaSceneModel").addEventListener("change", () => {
+      const scene = getActiveScene();
+      scene.model = page.querySelector("#dramaSceneModel").value;
+      configureModelControls(true);
+      syncActiveEditor();
+      updateCostEstimate();
+      scheduleSave();
+      setStatus(`Model Scene ${activeIndex + 1} diubah. Pilihan gambar referensi tidak dihapus.`);
+    });
+    page.querySelector("#dramaAddSceneBtn").addEventListener("click", () => { syncActiveEditor(); state.scenes.push({ prompt:"", model: DEFAULT_DRAMA_MODEL, duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }); activeIndex = state.scenes.length - 1; showEditor(); setStatus("Scene ditambahkan."); scheduleSave(); });
     page.querySelector("#dramaDeleteSceneBtn").addEventListener("click", () => {
       if (state.scenes.length <= 1) { setStatus("Drama harus memiliki minimal satu scene."); return; }
       syncActiveEditor(); state.scenes.splice(activeIndex, 1); activeIndex = Math.min(activeIndex, state.scenes.length - 1); showEditor(); setStatus("Scene dihapus dari draf. Simpan proyek untuk menerapkan perubahan."); scheduleSave();
@@ -259,7 +343,7 @@
       currentProjectId = null;
       void saveProject(false);
     });
-    renderSceneTabs(); updateCostEstimate();
+    renderSceneTabs(); updateModelInfo(); updateCostEstimate();
     void loadDramaProjects();
   }
   function renderSceneTabs() {
@@ -275,10 +359,76 @@
     const activeTitle = page.querySelector("#dramaActiveSceneTitle");
     if (activeTitle) activeTitle.textContent = `Scene ${activeIndex + 1} dari ${state.scenes.length}`;
   }
+  function configureModelControls(preserveAllowed = true) {
+    const modelSelect = page?.querySelector("#dramaSceneModel");
+    const resolutionSelect = page?.querySelector("#dramaSceneResolution");
+    const durationSelect = page?.querySelector("#dramaSceneDuration");
+    if (!modelSelect || !resolutionSelect || !durationSelect) return;
+    const scene = getActiveScene();
+    const selectedModel = DRAMA_MODELS[modelSelect.value] ? modelSelect.value : DEFAULT_DRAMA_MODEL;
+    scene.model = selectedModel;
+    const config = modelConfig(selectedModel);
+    const previousResolution = preserveAllowed ? (scene.resolution || resolutionSelect.value) : "";
+    resolutionSelect.replaceChildren();
+    config.resolutions.forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      resolutionSelect.appendChild(option);
+    });
+    scene.resolution = config.resolutions.includes(previousResolution) ? previousResolution : config.defaultResolution;
+    resolutionSelect.value = scene.resolution;
+    const allowedDurations = config.durations || [10, 15, 30];
+    const previousDuration = Number(scene.duration || durationSelect.value || 10);
+    durationSelect.replaceChildren();
+    allowedDurations.forEach(value => {
+      const option = document.createElement("option");
+      option.value = String(value);
+      option.textContent = `${value} detik`;
+      durationSelect.appendChild(option);
+    });
+    scene.duration = allowedDurations.includes(previousDuration) ? previousDuration : allowedDurations[0];
+    durationSelect.value = String(scene.duration);
+    updateModelInfo();
+  }
+
+  function updateModelInfo() {
+    const info = page?.querySelector("#dramaModelInfo");
+    const validation = page?.querySelector("#dramaModelValidation");
+    const modelSelect = page?.querySelector("#dramaSceneModel");
+    if (!info || !validation || !modelSelect) return;
+    const scene = getActiveScene();
+    const config = modelConfig(modelSelect.value);
+    const count = countSelectedReferences(scene);
+    info.textContent = `${config.label}. Mendukung beberapa gambar referensi; batas aplikasi Drama AI: maksimal ${config.maxImages} gambar untuk satu Scene. ` +
+      (config.imageLimitNote || "Batas endpoint yang didokumentasikan: maksimal 10 gambar referensi.") +
+      " Video/audio referensi belum disediakan di editor Drama AI.";
+    if (count === 0) {
+      validation.textContent = "Pilih minimal satu gambar karakter atau lokasi untuk Scene ini sebelum generasi nanti diaktifkan.";
+    } else if (count > config.maxImages) {
+      validation.textContent = `Terlalu banyak gambar: ${count} dipilih, sedangkan batas Scene adalah ${config.maxImages}. Kurangi pilihan gambar sebelum generasi diaktifkan.`;
+    } else {
+      validation.textContent = `${count} gambar dipilih. Jumlah ini sesuai dengan batas Scene untuk model yang dipilih.`;
+    }
+  }
+
   function updateCostEstimate() {
     const box = page?.querySelector("#dramaCostEstimate");
     if (!box) return;
-    box.textContent = "Tarif fal.ai/Seedance 2.5 dan biaya Kredit Movira belum diverifikasi. Durasi, rasio, dan resolusi di layar ini masih berupa pengaturan draf; tidak ada video yang dikirim.";
+    const scene = getActiveScene();
+    const modelSelect = page?.querySelector("#dramaSceneModel");
+    const resolutionSelect = page?.querySelector("#dramaSceneResolution");
+    const durationSelect = page?.querySelector("#dramaSceneDuration");
+    const ratioSelect = page?.querySelector("#dramaSceneRatio");
+    const modelId = modelSelect?.value || scene.model || DEFAULT_DRAMA_MODEL;
+    const resolution = resolutionSelect?.value || scene.resolution;
+    const duration = Number(durationSelect?.value || scene.duration || 10);
+    const credits = estimateSceneCredits(modelId, resolution, duration, ratioSelect?.value || scene.ratio || "16:9");
+    if (!Number.isFinite(credits)) {
+      box.textContent = "Estimasi kredit belum tersedia untuk kombinasi pengaturan ini.";
+      return;
+    }
+    box.textContent = `Estimasi biaya output: sekitar ${credits.toLocaleString("id-ID")} Kredit untuk ${duration} detik ${resolution}. Perhitungan memakai biaya API yang dipublikasikan × 100 Kredit/USD × markup 30%; biaya aktual dapat berubah. Generator masih terkunci dan belum ada debit kredit.`;
   }
   function ensureReferenceState() {
     state.references = state.references || {};
@@ -338,6 +488,8 @@
         }
         renderReferencePreview(kind);
         renderSceneReferenceSelections();
+        updateModelInfo();
+        updateCostEstimate();
         if (currentProjectId) scheduleSave();
         setStatus(currentProjectId ? "Gambar referensi dihapus; perubahan akan disimpan otomatis." : "Gambar referensi dihapus dari draf.");
       });
@@ -370,8 +522,20 @@
           checkbox.checked = selectedIds.has(ref.id);
           checkbox.style.width = "auto";
           checkbox.addEventListener("change", () => {
-            scene[selectedKey] = Array.from(box.querySelectorAll("input[type=checkbox]:checked"), input => input.value);
+            const nextIds = Array.from(box.querySelectorAll("input[type=checkbox]:checked"), input => input.value);
+            const otherKey = kind === "character" ? "locationReferenceIds" : "characterReferenceIds";
+            const otherKind = kind === "character" ? "location" : "character";
+            const otherIds = new Set(scene[otherKey] || []);
+            const otherCount = state.references[otherKind].filter(ref => otherIds.has(ref.id)).length;
+            if (nextIds.length + otherCount > modelConfig(scene.model).maxImages) {
+              checkbox.checked = false;
+              setStatus(`Batas gambar untuk model ini maksimal ${modelConfig(scene.model).maxImages} per Scene.`);
+              return;
+            }
+            scene[selectedKey] = nextIds;
             renderSceneReferenceSelections();
+            updateModelInfo();
+            updateCostEstimate();
             scheduleSave();
           });
           const caption = document.createElement("span");
@@ -433,6 +597,8 @@
         input.value = "";
         renderReferencePreview(kind);
         renderSceneReferenceSelections();
+        updateModelInfo();
+        updateCostEstimate();
         if (currentProjectId) {
           scheduleSave();
           setStatus(`Gambar ditambahkan dan dipilih khusus untuk Scene ${targetSceneNumber}. Scene lain tidak diubah; perubahan akan disimpan otomatis.`);
@@ -506,6 +672,8 @@
         input.value = "";
         renderReferencePreview(kind);
         renderSceneReferenceSelections();
+        updateModelInfo();
+        updateCostEstimate();
         if (currentProjectId) {
           scheduleSave();
           setStatus("Gambar referensi ditambahkan. Perubahan akan disimpan otomatis.");
@@ -543,16 +711,16 @@
     return {
       ...(state.originalSettings || {}),
       dramaAI: {
-        version: 2, mode: state.mode, genre: state.genre, premise: state.premise,
+        version: 3, mode: state.mode, genre: state.genre, premise: state.premise,
         continuity: state.continuity,
         referenceImages: {
           character: state.references.character.map(ref => ({ id: ref.id, name: ref.name, dataUrl: ref.dataUrl })),
           location: state.references.location.map(ref => ({ id: ref.id, name: ref.name, dataUrl: ref.dataUrl }))
         },
-        scenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p", characterReferenceIds: [...(scene.characterReferenceIds || [])], locationReferenceIds: [...(scene.locationReferenceIds || [])] }))
+        scenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), model: DRAMA_MODELS[scene.model] ? scene.model : DEFAULT_DRAMA_MODEL, duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || modelConfig(scene.model).defaultResolution, characterReferenceIds: [...(scene.characterReferenceIds || [])], locationReferenceIds: [...(scene.locationReferenceIds || [])] }))
       },
       activeSceneIndex: activeIndex,
-      workspaceScenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), settings: { duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p" } }))
+      workspaceScenes: state.scenes.map(scene => ({ prompt: String(scene.prompt || ""), settings: { model: DRAMA_MODELS[scene.model] ? scene.model : DEFAULT_DRAMA_MODEL, duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || modelConfig(scene.model).defaultResolution } }))
     };
   }
   async function saveProject(automatic = false) {
@@ -614,7 +782,7 @@
         character: drama.referenceImages?.character ?? "",
         location: drama.referenceImages?.location ?? ""
       },
-      scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || "480p", characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [], locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : [] })) : [{ prompt: project.prompt || "", duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }]
+      scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), model: DRAMA_MODELS[scene.model] ? scene.model : DEFAULT_DRAMA_MODEL, duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || modelConfig(scene.model).defaultResolution, characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [], locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : [] })) : [{ prompt: project.prompt || "", model: DEFAULT_DRAMA_MODEL, duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }]
     };
     activeIndex = Math.max(0, Math.min(Number(settings.activeSceneIndex || 0), state.scenes.length - 1));
     showEditor(); setStatus(`Proyek dibuka: ${state.title}.`);
