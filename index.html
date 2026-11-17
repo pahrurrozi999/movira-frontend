@@ -475,7 +475,7 @@ Veo 3.1 Lite ⭐
 MiniMax H3 Max Turbo
 </button>
 <button type="button" data-value="google/gemini-omni-flash/image-to-video" data-mode="image">
-Gemini Omni Flash
+Gemini Omni Flash (sementara nonaktif)
 </button>
 <button type="button" data-value="wan/v2.6/reference-to-video/flash" data-mode="reference">
 Wan 2.6 Reference to Video Flash
@@ -493,7 +493,7 @@ Wan 2.2 A14B Video to Video
 Gemini Omni Flash 1.1 Edit
 </button>
 <button type="button" data-value="minimax/h3-max/reframe-video" data-mode="video">
-MiniMax H3 Max Reframe Video
+MiniMax H3 Max Reframe Video (sementara nonaktif)
 </button>
 </div>
 <br>
@@ -524,7 +524,10 @@ MiniMax H3 Max Reframe Video
 
 <button type="button" data-value="10" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='10'; updateCreditCost();">10 detik</button>
 
-<button type="button" data-value="15" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='15'; updateCreditCost();">15 detik</button> 
+<button type="button" data-value="15" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='15'; updateCreditCost();">15 detik</button>
+<button type="button" data-value="20" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='20'; updateCreditCost();">20 detik</button>
+<button type="button" data-value="25" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='25'; updateCreditCost();">25 detik</button>
+<button type="button" data-value="30" onclick="document.querySelectorAll('#durations button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); duration='30'; updateCreditCost();">30 detik</button> 
       </div>
       <div id="creditCostInfo" style="margin:10px 0;padding:10px 12px;border-radius:10px;background:#101d35;color:#b9c7e8;text-align:center;font-size:14px;">
   💰 Biaya sedang dihitung...
@@ -1421,55 +1424,23 @@ function getSelectedModelForMode(mode = getCurrentModeKey()) {
 function updateCreditCost(){
   const creditCosts = {
     "alibaba/wan-3.0/image-to-video": {
-      "480p": {5:23,10:45,15:68},
-      "720p": {5:45,10:90,15:135},
-      "1080p": {5:90,10:179,15:269}
+      "480p": {10:65,15:98,20:130,25:163,30:195},
+      "720p": {10:130,15:195,20:260,25:325,30:390},
+      "1080p": {10:260,15:390,20:520,25:650,30:780}
     },
     "alibaba/wan-3.0-prime/image-to-video": {
-      "480p": {5:31,10:61,15:92},
-      "720p": {5:63,10:126,15:188},
-      "1080p": {5:126,10:251,15:376}
+      "480p": {10:89,15:133,20:177,25:221,30:266},
+      "720p": {10:182,15:273,20:364,25:455,30:546},
+      "1080p": {10:364,15:546,20:728,25:910,30:1092}
     },
-    "wan/v2.6/image-to-video": {
-      "720p": {5:45,10:90,15:135},
-      "1080p": {5:68,10:135,15:202}
-    },
-    "fal-ai/veo3.1/lite/image-to-video": {
-      "720p": {4:20,6:30,8:40},
-      "1080p": {4:32,6:48,8:64}
-    },
-    "minimax/h3-max-turbo/image-to-video": {
-      "480p": {5:12,10:22,15:32},
-      "768p": {5:19,10:34,15:50},
-      "1080p": {5:37,10:68,15:100}
-    },
-    "google/gemini-omni-flash/image-to-video": {
-      "720p": {5:60,10:120}
-    },
-    "wan/v2.6/reference-to-video/flash": {
-      "720p": {5:50,10:100},
-      "1080p": {5:75,10:150}
-    },
-    "google/gemini-omni-flash/v1.1/reference-to-video": {
-      "360p": {5:13,10:26},
-      "720p": {5:42,10:84},
-      "1080p": {5:63,10:125}
-    },
-    "minimax/h3-max/reference-to-video": {
-      "480p": {5:25,10:50,15:75},
-      "768p": {5:40,10:80,15:120},
-      "1080p": {5:80,10:160,15:240}
-    },
-    "fal-ai/wan/v2.2-a14b/video-to-video": {
-      "480p": {5:20,10:40},
-      "580p": {5:25,10:50},
-      "720p": {5:35,10:70}
-    },
-    "google/gemini-omni-flash/v1.1/edit": {
-      "360p": {5:13,10:26},
-      "720p": {5:42,10:84},
-      "1080p": {5:63,10:125}
-    }
+    "wan/v2.6/image-to-video": {"720p":{5:65,10:130,15:195},"1080p":{5:98,10:195,15:293}},
+    "fal-ai/veo3.1/lite/image-to-video": {"720p":{4:26,6:39,8:52},"1080p":{4:42,6:63,8:84}},
+    "minimax/h3-max-turbo/image-to-video": {"480p":{5:17,10:33,15:49},"768p":{5:26,10:52,15:78},"1080p":{5:52,10:104,15:156}},
+    "wan/v2.6/reference-to-video/flash": {"720p":{5:65,10:130},"1080p":{5:98,10:195}},
+    "google/gemini-omni-flash/v1.1/reference-to-video": {"360p":{10:39},"720p":{10:130},"1080p":{10:195}},
+    "minimax/h3-max/reference-to-video": {"480p":{5:33,10:65,15:98},"768p":{5:52,10:104,15:156},"1080p":{5:104,10:208,15:312}},
+    "fal-ai/wan/v2.2-a14b/video-to-video": {"480p":{5:26,10:52},"580p":{5:39,10:78},"720p":{5:52,10:104}},
+    "google/gemini-omni-flash/v1.1/edit": {"360p":{5:20,10:39},"720p":{5:65,10:130},"1080p":{5:98,10:195}}
   };
 
   const selectedModel = getSelectedModelForMode();
@@ -1482,35 +1453,15 @@ function updateCreditCost(){
   let cost = creditCosts[model]?.[resolution]?.[Number(duration)];
   const costInfo = document.getElementById("creditCostInfo");
   const generateButton = document.getElementById("generate");
-  if (model === "minimax/h3-max/reframe-video") {
-    const seconds = Math.ceil(Number(sourceVideoDurationSeconds) || 0);
-    const perSecond = { "480p": 5, "768p": 8, "1080p": 16 }[resolution];
-    cost = seconds > 0 && perSecond ? seconds * perSecond : null;
-    if (cost && sourceVideoDurationSeconds > 15) {
-      costInfo.textContent = translations.reframeModelNotice || moviraTexts.en.reframeModelNotice;
-      costInfo.style.color = "#ffdf99";
-      generateButton.textContent = "✨ " + (translations.generateAction || moviraTexts.en.generateAction);
-      updateRatioWarning(model);
-      return;
-    }
-    if (!cost) {
-      costInfo.textContent = translations.uploadSourceForCost || moviraTexts.en.uploadSourceForCost;
-      costInfo.style.color = "#b9c7e8";
-      generateButton.textContent = "✨ " + (translations.generateAction || moviraTexts.en.generateAction);
-      updateRatioWarning(model);
-      return;
-    }
-    const template = translations.estimatedCost || moviraTexts.en.estimatedCost;
-    costInfo.textContent = template.replace("{seconds}", String(seconds)).replace("{cost}", String(cost));
-    if (model === "minimax/h3-max/reframe-video") {
-      costInfo.textContent += "\n" + (translations.reframeModelNotice || moviraTexts.en.reframeModelNotice);
-      costInfo.style.whiteSpace = "pre-line";
-    }
-    costInfo.style.color = "#b9c7e8";
-    generateButton.textContent = `✨ ${translations.generateAction || moviraTexts.en.generateAction} • ${cost} ${moviraLang === "en" ? "Credits" : "Kredit"}`;
+  if (model === "minimax/h3-max/reframe-video" || model === "google/gemini-omni-flash/image-to-video") {
+    costInfo.textContent = "Model dinonaktifkan sementara sampai biaya API aktual diverifikasi. Kredit tidak akan dipotong.";
+    costInfo.style.color = "#ffdf99";
+    generateButton.disabled = true;
+    generateButton.textContent = "Model sementara tidak tersedia";
     updateRatioWarning(model);
     return;
   }
+  generateButton.disabled = false;
   if(cost){
     costInfo.textContent = model === "google/gemini-omni-flash/v1.1/edit"
       ? (moviraLang === "en" ? `💰 Source video up to ${Number(duration)} seconds: ${cost} Credits` : moviraLang === "ms" ? `💰 Video sumber sehingga ${Number(duration)} saat: ${cost} Kredit` : `💰 Biaya untuk video sumber hingga ${Number(duration)} detik: ${cost} Kredit`)
@@ -1573,7 +1524,7 @@ function updateResolutionOptions(){
     "minimax/h3-max/reference-to-video": ["480p", "768p", "1080p"],
     "fal-ai/wan/v2.2-a14b/video-to-video": ["480p", "580p", "720p"],
     "google/gemini-omni-flash/v1.1/edit": ["360p", "720p", "1080p"],
-    "minimax/h3-max/reframe-video": ["480p", "768p", "1080p"]
+    "minimax/h3-max/reframe-video": ["480p", "768p"]
   };
   const allowedResolutions = resolutionOptions[selectedModel] || ["720p"];
   resolutionButtons.forEach(button => {
@@ -1618,8 +1569,10 @@ function updateResolutionOptions(){
   }
 
   const isMiniMaxReframe = selectedModel === "minimax/h3-max/reframe-video";
-  const durationOptions = isMiniMaxReframe
+  const durationOptions = isMiniMaxReframe || selectedModel === "google/gemini-omni-flash/image-to-video"
     ? []
+    : ["alibaba/wan-3.0/image-to-video", "alibaba/wan-3.0-prime/image-to-video"].includes(selectedModel)
+      ? ["10", "15", "20", "25", "30"]
     : selectedModel === "fal-ai/veo3.1/lite/image-to-video"
     ? ["4", "6", "8"]
     : selectedModel === "google/gemini-omni-flash/image-to-video"
@@ -1747,6 +1700,11 @@ function setVideo(url){
 
 async function generateRealVideo(){
 
+  const selectedModelGuard = getSelectedModelForMode();
+  if (["google/gemini-omni-flash/image-to-video", "minimax/h3-max/reframe-video"].includes(selectedModelGuard)) {
+    alert("Model ini dinonaktifkan sementara sampai biaya API aktual dapat diverifikasi.");
+    return;
+  }
   const prompt=document.getElementById("prompt").value.trim();
   if(prompt.length<3){alert("Tulis prompt terlebih dahulu.");return}
 const isReferenceMode =
