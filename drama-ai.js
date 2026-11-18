@@ -1,6 +1,6 @@
 /* Movira AI - Drama AI workspace.
  * Scene planning, model selection and reference selection are local/project features.
- * Video generation remains intentionally locked pending integration and billing verification.
+ * Video generation uses the authenticated batch endpoint and remains guarded by backend deployment flags.
  */
 (() => {
   "use strict";
@@ -19,6 +19,11 @@
     #dramaPage .drama-scene-tabs { display:flex; gap:7px; flex-wrap:wrap; }
     #dramaPage .drama-scene-tabs button[aria-pressed="true"] { background:#214b8a; border-color:#79aaff; }
     #dramaPage .drama-status { min-height:20px; margin-top:10px; color:#b8d2ff; font-size:13px; white-space:pre-wrap; }
+    #dramaPage .drama-generate-menu { display:flex; flex-wrap:wrap; gap:8px; margin-top:9px; padding:10px; border:1px solid #405a7f; border-radius:10px; background:#0a1729; }
+    #dramaPage .drama-generate-menu[hidden] { display:none!important; }
+    #dramaPage .drama-results { display:grid; gap:7px; margin-top:10px; }
+    #dramaPage .drama-result-link { color:#9ec5ff; overflow-wrap:anywhere; }
+
     #dramaPage .drama-warning { border-color:#7a5a22; background:#241e12; color:#ffe4a3; }
     #dramaPage .drama-reference-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:10px; }
     #dramaPage .drama-reference-box { min-width:0; border:1px dashed #405a7f; border-radius:10px; padding:10px; background:#0a1729; }
@@ -71,7 +76,7 @@
       "✍️ Buat Storyboard Manual": "✍️ Create a Manual Storyboard",
       "Mulai dari editor kosong dan tulis prompt setiap scene sendiri.": "Start with a blank editor and write each scene prompt yourself.",
       "Catatan": "Note",
-      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.": "Story writing happens outside Movira. Pasting a story and saving a project do not use paid APIs. Video generation remains locked.",
+      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Setelah proyek tersimpan, kamu dapat membuat video untuk semua Scene atau Scene aktif.": "Story writing happens outside Movira. Pasting a story and saving a project do not use paid APIs. Once saved, you can generate all scenes or only the active scene.",
       "Proyek Drama": "Drama Projects",
       "Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.": "Choose “Saved Drama Projects” to load projects from your account.",
       "← Kembali": "← Back",
@@ -123,9 +128,11 @@
       "Resolusi": "Resolution",
       "Simpan ke Projects": "Save to Projects",
       "Simpan sebagai Proyek Baru": "Save as New Project",
-      "🔒 Buat Video (belum aktif)": "🔒 Create Video (not available yet)",
-      "Dinonaktifkan sampai endpoint dan biaya kredit disetujui": "Disabled until endpoints and credit costs are approved",
-      "Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.": "Autosave starts after the project has an ID. Video generation is not active, so scenes will not send paid requests.",
+      "🎬 Buat Video": "🎬 Generate Video",
+      "Generate Semua Scene": "Generate All Scenes",
+      "Generate Scene Aktif": "Generate Active Scene",
+      "Pilih semua Scene atau hanya Scene aktif. Estimasi kredit ditampilkan sebelum konfirmasi.": "Choose all scenes or only the active scene. The credit estimate is shown before confirmation.",
+      "Periksa Status Generate Terakhir": "Check Last Generation Status",
       "Proyek Drama tersimpan": "Saved Drama Projects",
       "Memuat daftar proyek…": "Loading projects…",
       "Tekan ‘Simpan ke Projects’ agar tersimpan permanen.": "Choose ‘Save to Projects’ to save permanently.",
@@ -143,7 +150,6 @@
       "Estimasi biaya output: sekitar": "Estimated output cost: about",
       "Kredit untuk": "Credits for",
       "Total semua scene (pembulatan sekali):": "Total for all scenes (rounded once):",
-      "Biaya API publik × 100 Kredit/USD × margin 30%. Generator masih terkunci; belum ada debit kredit.": "Public API price × 100 credits/USD × 30% margin. Generation is still locked; no credits are deducted."
     },
     ms: {
       "MOVIRA AI · KHUSUS CERITA BERSERI": "MOVIRA AI · RUANG KERJA CERITA BERSIRI",
@@ -154,7 +160,7 @@
       "✍️ Buat Storyboard Manual": "✍️ Cipta Papan Cerita Manual",
       "Mulai dari editor kosong dan tulis prompt setiap scene sendiri.": "Mulakan dengan editor kosong dan tulis prompt setiap scene sendiri.",
       "Catatan": "Nota",
-      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.": "Penulisan cerita dilakukan di luar Movira. Menampal cerita dan menyimpan projek tidak menggunakan API berbayar. Butang Jana Video kekal dikunci.",
+      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Setelah proyek tersimpan, kamu dapat membuat video untuk semua Scene atau Scene aktif.": "Penulisan cerita dilakukan di luar Movira. Menampal cerita dan menyimpan projek tidak menggunakan API berbayar. Selepas disimpan, anda boleh menjana semua scene atau scene aktif sahaja.",
       "Proyek Drama": "Projek Drama",
       "Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.": "Tekan “Projek Drama Tersimpan” untuk memuatkan projek akaun anda.",
       "← Kembali": "← Kembali",
@@ -205,9 +211,7 @@
       "Resolusi": "Resolusi",
       "Simpan ke Projects": "Simpan ke Projects",
       "Simpan sebagai Proyek Baru": "Simpan sebagai Projek Baharu",
-      "🔒 Buat Video (belum aktif)": "🔒 Jana Video (belum aktif)",
       "Dinonaktifkan sampai endpoint dan biaya kredit disetujui": "Dinyahaktifkan sehingga endpoint dan kos kredit diluluskan",
-      "Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.": "Simpan automatik bermula selepas projek mempunyai ID. Penjanaan video belum aktif, jadi scene tidak akan menghantar permintaan berbayar.",
       "Proyek Drama tersimpan": "Projek Drama tersimpan",
       "Memuat daftar proyek…": "Memuatkan senarai projek…",
       "Tekan ‘Simpan ke Projects’ agar tersimpan permanen.": "Tekan ‘Simpan ke Projects’ untuk menyimpan secara kekal.",
@@ -225,7 +229,6 @@
       "Estimasi biaya output: sekitar": "Anggaran kos output: sekitar",
       "Kredit untuk": "Kredit untuk",
       "Total semua scene (pembulatan sekali):": "Jumlah semua scene (dibundarkan sekali):",
-      "Biaya API publik × 100 Kredit/USD × margin 30%. Generator masih terkunci; belum ada debit kredit.": "Harga API awam × 100 Kredit/USD × margin 30%. Penjana masih dikunci; tiada kredit ditolak."
     }
   };
 
@@ -322,16 +325,22 @@
     }
     return Number.isFinite(usd) && usd > 0 ? usd : null;
   }
+  function creditsFromUsd(totalUsd) {
+    // Subtract a tiny floating-point tolerance so values such as 0.14 × 10 × 130
+    // round to the mathematical result (182), not 183 due to binary precision.
+    return Math.ceil((Number(totalUsd) * 130) - 1e-9);
+  }
+
   function estimateSceneCredits(modelId, resolution, duration, ratio) {
     const usd = estimateSceneCostUsd(modelId, resolution, duration);
-    return Number.isFinite(usd) ? Math.ceil(usd * 130) : null;
+    return Number.isFinite(usd) ? creditsFromUsd(usd) : null;
   }
   function estimateProjectCredits() {
     const totalUsd = state.scenes.reduce((sum, scene) => {
       const usd = estimateSceneCostUsd(scene.model, scene.resolution, scene.duration);
       return Number.isFinite(usd) ? sum + usd : sum;
     }, 0);
-    return totalUsd > 0 ? Math.ceil(totalUsd * 130) : null;
+    return totalUsd > 0 ? creditsFromUsd(totalUsd) : null;
   }
 
   function freshState() {
@@ -394,7 +403,7 @@
         <button type="button" id="dramaStoryChoice" class="primary" style="text-align:left;min-height:125px"><strong>📖 Masukkan Prompt Cerita</strong><div class="drama-muted" style="margin-top:8px;color:#e6eaff">Tempel cerita yang sudah dibuat di ChatGPT, Gemini, atau tool lain. Movira tidak memanggil API AI.</div></button>
         <button type="button" id="dramaManualChoice" style="text-align:left;min-height:125px"><strong>✍️ Buat Storyboard Manual</strong><div class="drama-muted" style="margin-top:8px">Mulai dari editor kosong dan tulis prompt setiap scene sendiri.</div></button>
       </div>
-      <div class="drama-card drama-warning"><strong>Catatan</strong><div class="drama-muted" style="color:#ffe4a3;margin-top:5px">Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.</div></div>
+      <div class="drama-card"><strong>Catatan</strong><div class="drama-muted" style="margin-top:5px">Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Setelah proyek tersimpan, kamu dapat membuat video untuk semua Scene atau Scene aktif.</div></div>
       <div class="drama-card"><strong>Proyek Drama</strong><div id="dramaProjectList" class="drama-muted" style="margin-top:8px">Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.</div></div>
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
@@ -533,8 +542,14 @@
         </div>
         <div class="drama-grid"><div><label for="dramaSceneDuration">Durasi</label><select id="dramaSceneDuration"><option value="10">10 detik</option><option value="15">15 detik</option><option value="30">30 detik</option></select></div><div><label for="dramaSceneRatio">Rasio</label><select id="dramaSceneRatio"><option value="16:9">16:9</option><option value="9:16">9:16</option></select></div><div><label for="dramaSceneResolution">Resolusi</label><select id="dramaSceneResolution"><option value="480p">480p</option><option value="720p">720p</option><option value="1080p">1080p</option><option value="360p">360p</option></select></div></div>
         <div id="dramaCostEstimate" class="drama-muted" style="margin-top:10px"></div>
-        <div class="drama-actions"><button type="button" class="primary" id="dramaSaveBtn">Simpan ke Projects</button><button type="button" id="dramaSaveNewBtn">Simpan sebagai Proyek Baru</button><button type="button" id="dramaGenerateBtn" disabled title="Dinonaktifkan sampai endpoint dan biaya kredit disetujui">🔒 Buat Video (belum aktif)</button></div>
-        <div class="drama-muted" style="margin-top:8px">Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.</div>
+        <div class="drama-actions"><button type="button" class="primary" id="dramaSaveBtn">Simpan ke Projects</button><button type="button" id="dramaSaveNewBtn">Simpan sebagai Proyek Baru</button><button type="button" class="primary" id="dramaGenerateBtn">🎬 Buat Video</button></div>
+        <div id="dramaGenerateChoices" class="drama-generate-menu" hidden>
+          <button type="button" class="primary" id="dramaGenerateAllBtn">Generate Semua Scene</button>
+          <button type="button" id="dramaGenerateActiveBtn">Generate Scene Aktif</button>
+        </div>
+        <div class="drama-muted" style="margin-top:8px">Pilih semua Scene atau hanya Scene aktif. Estimasi kredit ditampilkan sebelum konfirmasi.</div>
+        <div class="drama-actions"><button type="button" id="dramaCheckBatchBtn" hidden>Periksa Status Generate Terakhir</button></div>
+        <div id="dramaGenerationResults" class="drama-results" aria-live="polite"></div>
       </div>
       <div class="drama-card"><strong>Proyek Drama tersimpan</strong><div id="dramaProjectList" class="drama-muted" style="margin-top:8px">Memuat daftar proyek…</div></div>
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
@@ -588,6 +603,18 @@
       syncActiveEditor(); state.scenes.splice(activeIndex, 1); activeIndex = Math.min(activeIndex, state.scenes.length - 1); showEditor(); setStatus("Scene dihapus dari draf. Simpan proyek untuk menerapkan perubahan."); scheduleSave();
     });
     page.querySelector("#dramaSaveBtn").addEventListener("click", () => saveProject(false));
+    page.querySelector("#dramaGenerateBtn").addEventListener("click", () => {
+      const choices = page.querySelector("#dramaGenerateChoices");
+      if (choices) choices.hidden = !choices.hidden;
+    });
+    page.querySelector("#dramaGenerateAllBtn").addEventListener("click", () => startDramaGeneration("all"));
+    page.querySelector("#dramaGenerateActiveBtn").addEventListener("click", () => startDramaGeneration("active"));
+    page.querySelector("#dramaCheckBatchBtn").addEventListener("click", checkLastDramaBatch);
+    try {
+      lastDramaBatchId = localStorage.getItem(`moviraDramaBatch:${currentProjectId}`) || null;
+      page.querySelector("#dramaCheckBatchBtn").hidden = !lastDramaBatchId;
+    } catch { lastDramaBatchId = null; }
+
     page.querySelector("#dramaSaveNewBtn").addEventListener("click", () => {
       clearTimeout(saveTimer); saveTimer = null;
       currentProjectId = null;
@@ -686,13 +713,224 @@
     const sceneLabel = lang === "en" ? "Active scene estimate" : lang === "ms" ? "Anggaran scene aktif" : "Estimasi scene aktif";
     const allLabel = lang === "en" ? "Total for all scenes (rounded once)" : lang === "ms" ? "Jumlah semua scene (dibundarkan sekali)" : "Total semua scene (pembulatan sekali)";
     const sceneUnit = lang === "en" ? "Credits" : "Kredit";
-    const detail = lang === "en"
-      ? "Public API price × 100 credits/USD × 30% margin. Generation remains locked; no credits are deducted."
-      : lang === "ms"
-      ? "Harga API awam × 100 Kredit/USD × margin 30%. Penjanaan kekal dikunci; tiada kredit ditolak."
-      : "Harga API publik × 100 Kredit/USD × margin 30%. Generator tetap terkunci; belum ada kredit yang dipotong.";
-    box.textContent = `${sceneLabel}: ${credits.toLocaleString(locale)} ${sceneUnit} · ${duration}s ${resolution}. ${allLabel}: ${projectCredits?.toLocaleString(locale) ?? "—"} ${sceneUnit} (${state.scenes.length} scene). ${detail}`;
+    box.textContent = `${sceneLabel}: ${credits.toLocaleString(locale)} ${sceneUnit} · ${duration}s ${resolution}. ${allLabel}: ${projectCredits?.toLocaleString(locale) ?? "—"} ${sceneUnit} (${state.scenes.length} scene).`;
   }
+
+  let dramaGenerationBusy = false;
+  let lastDramaBatchId = null;
+
+  function selectedSceneIndexes(mode) {
+    return mode === "active" ? [activeIndex] : state.scenes.map((_, index) => index);
+  }
+
+  function validateDramaGeneration(mode) {
+    syncActiveEditor();
+    ensureReferenceState();
+    const indexes = selectedSceneIndexes(mode);
+    const selected = [];
+    let totalUsd = 0;
+    for (const index of indexes) {
+      const scene = state.scenes[index];
+      if (!scene || !String(scene.prompt || "").trim()) throw new Error(`Prompt Scene ${index + 1} masih kosong.`);
+      const config = DRAMA_MODELS[scene.model];
+      if (!config) throw new Error(`Model Scene ${index + 1} tidak valid.`);
+      const referenceCount = countSelectedReferences(scene);
+      if (referenceCount < 1 || referenceCount > config.maxImages) {
+        throw new Error(`Scene ${index + 1} harus memilih 1–${config.maxImages} gambar referensi.`);
+      }
+      if (!config.resolutions.includes(scene.resolution) || !config.durations.includes(Number(scene.duration))) {
+        throw new Error(`Resolusi atau durasi Scene ${index + 1} belum sesuai dengan model.`);
+      }
+      if (!["16:9", "9:16"].includes(scene.ratio)) throw new Error(`Rasio Scene ${index + 1} harus 16:9 atau 9:16.`);
+      const usd = estimateSceneCostUsd(scene.model, scene.resolution, scene.duration);
+      if (!Number.isFinite(usd) || usd <= 0) throw new Error(`Biaya Scene ${index + 1} belum tersedia.`);
+      totalUsd += usd;
+      selected.push({ index, scene });
+    }
+    const credits = creditsFromUsd(totalUsd);
+    if (!Number.isInteger(credits) || credits < 1) throw new Error("Estimasi total kredit tidak valid.");
+    return { selected, totalUsd, credits };
+  }
+
+  function renderDramaBatchResults(data) {
+    const box = page?.querySelector("#dramaGenerationResults");
+    if (!box) return;
+    box.replaceChildren();
+    const scenes = Array.isArray(data?.scenes) ? data.scenes : [];
+    const succeeded = scenes.filter(item => item.status === "succeeded").length;
+    const title = document.createElement("div");
+    title.className = "drama-muted";
+    const status = data?.batch?.status || "processing";
+    const labels = dramaLanguage() === "en"
+      ? { succeeded: "completed", partial: "partially completed", failed: "failed", unknown: "needs review", processing: "processing" }
+      : dramaLanguage() === "ms"
+      ? { succeeded: "selesai", partial: "sebahagiannya selesai", failed: "gagal", unknown: "perlu disemak", processing: "sedang diproses" }
+      : { succeeded: "selesai", partial: "selesai sebagian", failed: "gagal", unknown: "perlu diperiksa", processing: "sedang diproses" };
+    const statusLabel = status === "succeeded" ? labels.succeeded : status === "partially_succeeded" ? labels.partial : status === "failed_confirmed" ? labels.failed : status === "unknown" ? labels.unknown : labels.processing;
+    title.textContent = `${dramaLanguage() === "en" ? "Batch status" : dramaLanguage() === "ms" ? "Status batch" : "Status batch"}: ${statusLabel} · ${succeeded}/${scenes.length} ${dramaLanguage() === "en" ? "scenes completed" : "scene berhasil"}`;
+    box.appendChild(title);
+    for (const scene of scenes) {
+      const row = document.createElement("div");
+      row.className = "drama-muted";
+      const label = document.createElement("span");
+      const stateText = scene.status === "succeeded" ? "✓ berhasil" : scene.status === "failed_confirmed" ? "Gagal terkonfirmasi" : scene.status === "unknown" ? "Status belum pasti" : scene.status === "not_submitted" ? "Belum dikirim" : "Sedang diproses";
+      label.textContent = `Scene ${scene.scene_number}: ${stateText}`;
+      row.appendChild(label);
+      if (scene.video_url) {
+        const link = document.createElement("a");
+        link.className = "drama-result-link";
+        link.href = scene.video_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = dramaLanguage() === "en" ? "Open generated video" : dramaLanguage() === "ms" ? "Buka video yang dijana" : "Buka video hasil";
+        row.append(document.createTextNode(" · "), link);
+      }
+      box.appendChild(row);
+    }
+    if (data?.batch?.refund_status === "error") {
+      const warning = document.createElement("div");
+      warning.className = "drama-muted";
+      warning.textContent = "Pengembalian kredit perlu pemeriksaan manual. Jangan ulangi Generate untuk batch ini.";
+      box.appendChild(warning);
+    }
+  }
+
+  async function getDramaAccessToken() {
+    const client = getSupabaseClient();
+    const { data, error } = await client.auth.getSession();
+    if (error) throw error;
+    const token = data?.session?.access_token;
+    if (!token) throw new Error("Silakan login terlebih dahulu.");
+    return token;
+  }
+
+  async function fetchDramaBatch(batchId, token) {
+    const response = await fetch(`${window.MOVIRA_API_BASE || "https://movira-backend-1.onrender.com"}/api/drama-generate-batch/${encodeURIComponent(batchId)}`, {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Gagal memeriksa status batch Drama AI.");
+    return data;
+  }
+
+  async function pollDramaBatch(batchId, token) {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 30 * 60 * 1000) {
+      const data = await fetchDramaBatch(batchId, token);
+      renderDramaBatchResults(data);
+      if (data.done) {
+        const status = data.batch?.status;
+        setStatus(status === "succeeded" ? "Semua Scene berhasil dibuat." : status === "partially_succeeded" ? "Sebagian Scene berhasil. Periksa hasil dan status kredit di bawah." : status === "failed_confirmed" ? "Semua Scene gagal dan pengembalian kredit telah diproses jika terkonfirmasi." : "Batch selesai dengan status yang perlu diperiksa. Kredit untuk status tidak pasti tidak dikembalikan otomatis.");
+        return data;
+      }
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+    setStatus("Batch masih diproses. Gunakan tombol Periksa Status untuk melanjutkan pemeriksaan; jangan kirim Generate ulang.");
+    return null;
+  }
+
+  function makeDramaClientRequestId() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    const bytes = new Uint8Array(16);
+    if (window.crypto?.getRandomValues) window.crypto.getRandomValues(bytes);
+    else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = Array.from(bytes, value => value.toString(16).padStart(2, "0")).join("");
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+  }
+
+  async function startDramaGeneration(mode) {
+    if (dramaGenerationBusy) return;
+    const menu = page?.querySelector("#dramaGenerateChoices");
+    if (menu) menu.hidden = true;
+    let details;
+    try {
+      details = validateDramaGeneration(mode);
+    } catch (error) {
+      setStatus(error.message || "Periksa pengaturan semua Scene terlebih dahulu.");
+      return;
+    }
+    const isEnglish = dramaLanguage() === "en";
+    const isMalay = dramaLanguage() === "ms";
+    const scope = mode === "all" ? (isEnglish ? "all scenes" : isMalay ? "semua scene" : "semua Scene") : (isEnglish ? "the active scene" : isMalay ? "scene aktif" : "Scene aktif");
+    const confirmText = isEnglish
+      ? `Generate ${scope} (${details.selected.length} scene)? Estimated total: ${details.credits.toLocaleString("en-US")} credits. Credits are deducted once for this batch.`
+      : isMalay
+      ? `Jana ${scope} (${details.selected.length} scene)? Anggaran jumlah: ${details.credits.toLocaleString("ms-MY")} kredit. Kredit ditolak sekali untuk batch ini.`
+      : `Buat ${scope} (${details.selected.length} Scene)? Estimasi total: ${details.credits.toLocaleString("id-ID")} kredit. Kredit dipotong satu kali untuk batch ini.`;
+    if (!window.confirm(confirmText)) return;
+
+    dramaGenerationBusy = true;
+    const generateButton = page.querySelector("#dramaGenerateBtn");
+    if (generateButton) generateButton.disabled = true;
+    setStatus("Menyimpan proyek dan menyiapkan batch. Jangan tutup halaman dulu.");
+    try {
+      const saved = await saveProject(true);
+      if (!saved || !currentProjectId) throw new Error("Proyek belum berhasil disimpan. Coba simpan proyek terlebih dahulu.");
+      const token = await getDramaAccessToken();
+      const pendingKey = `moviraDramaPending:${currentProjectId}`;
+      let clientRequestId = null;
+      try {
+        clientRequestId = localStorage.getItem(pendingKey);
+        if (!clientRequestId) {
+          clientRequestId = makeDramaClientRequestId();
+          localStorage.setItem(pendingKey, clientRequestId);
+        }
+      } catch {
+        throw new Error("Browser tidak dapat menyimpan ID permintaan dengan aman. Aktifkan penyimpanan situs lalu muat ulang halaman.");
+      }
+      const response = await fetch(`${window.MOVIRA_API_BASE || "https://movira-backend-1.onrender.com"}/api/drama-generate-batch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ project_id: currentProjectId, mode, active_scene_index: activeIndex, client_request_id: clientRequestId })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (data.batch_id) {
+          lastDramaBatchId = data.batch_id;
+          try {
+            localStorage.setItem(`moviraDramaBatch:${currentProjectId}`, lastDramaBatchId);
+            localStorage.removeItem(pendingKey);
+          } catch {}
+          const statusButton = page.querySelector("#dramaCheckBatchBtn");
+          if (statusButton) statusButton.hidden = false;
+        }
+        throw new Error(data.error || "Permintaan Generate Drama AI gagal disiapkan.");
+      }
+      lastDramaBatchId = data.batch_id;
+      try {
+        localStorage.setItem(`moviraDramaBatch:${currentProjectId}`, lastDramaBatchId);
+        localStorage.removeItem(pendingKey);
+      } catch {}
+      const statusButton = page.querySelector("#dramaCheckBatchBtn");
+      if (statusButton) statusButton.hidden = false;
+      renderDramaBatchResults(data);
+      setStatus(`Batch diterima. ${details.selected.length} Scene sedang diproses. Kredit batch: ${Number(data.credit_amount || details.credits).toLocaleString(isEnglish ? "en-US" : isMalay ? "ms-MY" : "id-ID")}.`);
+      await pollDramaBatch(lastDramaBatchId, token);
+    } catch (error) {
+      setStatus(error.message || "Terjadi kesalahan saat memulai Generate Drama AI.");
+    } finally {
+      dramaGenerationBusy = false;
+      if (generateButton) generateButton.disabled = false;
+    }
+  }
+
+  async function checkLastDramaBatch() {
+    if (!currentProjectId) return;
+    let batchId = lastDramaBatchId;
+    try { batchId = batchId || localStorage.getItem(`moviraDramaBatch:${currentProjectId}`); } catch {}
+    if (!batchId) { setStatus("Belum ada batch Generate untuk proyek ini."); return; }
+    try {
+      const token = await getDramaAccessToken();
+      const data = await fetchDramaBatch(batchId, token);
+      renderDramaBatchResults(data);
+      if (!data.done) await pollDramaBatch(batchId, token);
+    } catch (error) {
+      setStatus(error.message || "Gagal memeriksa batch terakhir.");
+    }
+  }
+
   function ensureReferenceState() {
     state.references = state.references || {};
     for (const kind of ["character", "location"]) {
