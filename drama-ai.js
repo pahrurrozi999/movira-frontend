@@ -61,6 +61,240 @@
   let state = freshState();
   let loadedDramaProjects = [];
 
+  const DRAMA_COPY = {
+    en: {
+      "MOVIRA AI · KHUSUS CERITA BERSERI": "MOVIRA AI · SERIAL STORY WORKSPACE",
+      "Masukkan cerita dari tool pilihanmu, susun menjadi scene, lalu pilih referensi karakter dan lokasi untuk setiap scene.": "Paste a story from your preferred tool, split it into scenes, then choose character and location references for each scene.",
+      "📁 Proyek Drama Tersimpan": "📁 Saved Drama Projects",
+      "📖 Masukkan Prompt Cerita": "📖 Import a Story Prompt",
+      "Tempel cerita yang sudah dibuat di ChatGPT, Gemini, atau tool lain. Movira tidak memanggil API AI.": "Paste a story created in ChatGPT, Gemini, or another tool. Movira does not call an AI writing API.",
+      "✍️ Buat Storyboard Manual": "✍️ Create a Manual Storyboard",
+      "Mulai dari editor kosong dan tulis prompt setiap scene sendiri.": "Start with a blank editor and write each scene prompt yourself.",
+      "Catatan": "Note",
+      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.": "Story writing happens outside Movira. Pasting a story and saving a project do not use paid APIs. Video generation remains locked.",
+      "Proyek Drama": "Drama Projects",
+      "Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.": "Choose “Saved Drama Projects” to load projects from your account.",
+      "← Kembali": "← Back",
+      "Buat cerita di tool pilihanmu, lalu salin dan tempel seluruh cerita di bawah. Movira akan membantu membaginya menjadi scene untuk diedit.": "Write a story in your preferred tool, then paste it below. Movira will split it into editable scenes.",
+      "Nama drama": "Drama title",
+      "Nama drama / proyek": "Drama / project title",
+      "Genre": "Genre",
+      "Petualangan": "Adventure", "Komedi": "Comedy", "Fantasi": "Fantasy", "Persahabatan": "Friendship", "Misteri": "Mystery", "Drama keluarga": "Family drama", "Aksi": "Action",
+      "Sinopsis / ringkasan cerita (opsional)": "Synopsis / story summary (optional)",
+      "Sinopsis / premis": "Synopsis / premise",
+      "Ringkasan singkat cerita…": "A short story summary…",
+      "Panduan konsistensi karakter dan dunia (opsional)": "Character and world consistency guide (optional)",
+      "Deskripsi karakter, pakaian, lokasi, dan gaya visual.": "Describe characters, clothing, locations, and visual style.",
+      "Referensi konsistensi karakter dan dunia": "Character and world consistency references",
+      "Karakter, pakaian, lokasi, gaya visual. Kolom ini terpisah dan tidak mengubah prompt adegan.": "Characters, clothing, locations, and visual style. This field is separate and does not change scene prompts.",
+      "Tempel seluruh cerita atau prompt di sini": "Paste the full story or prompt here",
+      "Tempel cerita lengkap di sini. Jika ada judul Scene 1, Scene 2, dan seterusnya, Movira akan menggunakannya sebagai pemisah. Jika tidak, paragraf akan dijadikan scene.": "Paste the complete story here. If it contains Scene 1, Scene 2, and similar headings, Movira will use them as separators. Otherwise, paragraphs become scenes.",
+      "Bagi Cerita Menjadi Scene": "Split Story into Scenes",
+      "Buka Editor Kosong": "Open Blank Editor",
+      "Setelah masuk editor, periksa dan edit prompt tiap scene. Kamu tetap bisa menambah atau menghapus scene.": "In the editor, review and edit each scene prompt. You can still add or remove scenes.",
+      "DRAMA WORKSPACE": "DRAMA WORKSPACE",
+      "Editor Adegan": "Scene Editor",
+      "← Beranda Drama AI": "← Drama AI Home",
+      "Ringkasan cerita": "Story summary",
+      "Karakter, pakaian, lokasi, gaya visual. Kolom ini terpisah dan tidak mengubah prompt adegan.": "Characters, clothing, locations, and visual style. This field is separate from scene prompts.",
+      "🖼️ Gambar Referensi": "🖼️ Reference Images",
+      "Pustaka gambar proyek. Gambar di sini dapat dipakai ulang, tetapi pilihan karakter dan lokasi disimpan secara terpisah untuk setiap scene.": "Project image library. Images can be reused, while character and location selections are saved separately for each scene.",
+      "Gambar karakter": "Character images",
+      "＋ Upload Gambar Karakter": "＋ Upload Character Images",
+      "Belum ada gambar karakter.": "No character images yet.",
+      "Gambar lokasi": "Location images",
+      "＋ Upload Gambar Lokasi": "＋ Upload Location Images",
+      "Belum ada gambar lokasi.": "No location images yet.",
+      "Daftar adegan": "Scene List",
+      "＋ Tambah Scene": "＋ Add Scene",
+      "Hapus Scene Aktif": "Delete Active Scene",
+      "Prompt scene (tetap bisa kamu edit)": "Scene prompt (you can still edit it)",
+      "Tulis prompt video untuk scene ini…": "Write the video prompt for this scene…",
+      "Model video untuk Scene ini": "Video model for this scene",
+      "Informasi Model dan Referensi": "Model and Reference Information",
+      "Karakter untuk scene ini": "Characters for this scene",
+      "Centang gambar dari pustaka, atau unggah gambar khusus untuk scene aktif. Pilihan scene lain tidak ikut berubah.": "Select images from the library or upload images for the active scene. Other scenes will not be changed.",
+      "＋ Upload khusus scene ini": "＋ Upload for this scene only",
+      "Gambar terpilih di Scene ini:": "Images selected for this scene:",
+      "Lokasi untuk scene ini": "Locations for this scene",
+      "Durasi": "Duration",
+      "10 detik": "10 seconds", "15 detik": "15 seconds", "30 detik": "30 seconds",
+      "Rasio": "Aspect ratio",
+      "Resolusi": "Resolution",
+      "Simpan ke Projects": "Save to Projects",
+      "Simpan sebagai Proyek Baru": "Save as New Project",
+      "🔒 Buat Video (belum aktif)": "🔒 Create Video (not available yet)",
+      "Dinonaktifkan sampai endpoint dan biaya kredit disetujui": "Disabled until endpoints and credit costs are approved",
+      "Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.": "Autosave starts after the project has an ID. Video generation is not active, so scenes will not send paid requests.",
+      "Proyek Drama tersimpan": "Saved Drama Projects",
+      "Memuat daftar proyek…": "Loading projects…",
+      "Tekan ‘Simpan ke Projects’ agar tersimpan permanen.": "Choose ‘Save to Projects’ to save permanently.",
+      "Hapus Gambar": "Remove Image",
+      "Belum ada gambar yang dipilih untuk scene ini.": "No images selected for this scene yet.",
+      "Belum ada gambar karakter. Unggah gambar proyek atau gambar khusus scene ini.": "No character images yet. Upload project images or images for this scene.",
+      "Belum ada gambar lokasi. Unggah gambar proyek atau gambar khusus scene ini.": "No location images yet. Upload project images or images for this scene.",
+      "Buka Proyek": "Open Project",
+      "Belum ada proyek Drama tersimpan.": "No saved Drama projects yet.",
+      "Gagal memuat proyek Drama.": "Failed to load Drama projects.",
+      "tanggal tidak tersedia": "date unavailable",
+      "Tekan minimal satu gambar karakter atau lokasi untuk Scene ini sebelum generasi nanti diaktifkan.": "Select at least one character or location image for this scene before generation is enabled.",
+      "Video/audio referensi belum disediakan di editor Drama AI.": "Reference video/audio is not available in the Drama AI editor.",
+      "Batas endpoint yang didokumentasikan: maksimal 10 gambar referensi.": "Documented endpoint limit: up to 10 reference images.",
+      "Estimasi biaya output: sekitar": "Estimated output cost: about",
+      "Kredit untuk": "Credits for",
+      "Total semua scene (pembulatan sekali):": "Total for all scenes (rounded once):",
+      "Biaya API publik × 100 Kredit/USD × margin 30%. Generator masih terkunci; belum ada debit kredit.": "Public API price × 100 credits/USD × 30% margin. Generation is still locked; no credits are deducted."
+    },
+    ms: {
+      "MOVIRA AI · KHUSUS CERITA BERSERI": "MOVIRA AI · RUANG KERJA CERITA BERSIRI",
+      "Masukkan cerita dari tool pilihanmu, susun menjadi scene, lalu pilih referensi karakter dan lokasi untuk setiap scene.": "Masukkan cerita daripada alat pilihan anda, bahagikan kepada scene, kemudian pilih rujukan watak dan lokasi bagi setiap scene.",
+      "📁 Proyek Drama Tersimpan": "📁 Projek Drama Tersimpan",
+      "📖 Masukkan Prompt Cerita": "📖 Masukkan Prompt Cerita",
+      "Tempel cerita yang sudah dibuat di ChatGPT, Gemini, atau tool lain. Movira tidak memanggil API AI.": "Tampal cerita yang dibuat di ChatGPT, Gemini atau alat lain. Movira tidak memanggil API penulisan AI.",
+      "✍️ Buat Storyboard Manual": "✍️ Cipta Papan Cerita Manual",
+      "Mulai dari editor kosong dan tulis prompt setiap scene sendiri.": "Mulakan dengan editor kosong dan tulis prompt setiap scene sendiri.",
+      "Catatan": "Nota",
+      "Pembuatan cerita dilakukan di luar Movira. Menempel cerita dan menyimpan proyek tidak memakai API berbayar. Tombol Buat Video tetap terkunci.": "Penulisan cerita dilakukan di luar Movira. Menampal cerita dan menyimpan projek tidak menggunakan API berbayar. Butang Jana Video kekal dikunci.",
+      "Proyek Drama": "Projek Drama",
+      "Tekan “Proyek Drama Tersimpan” untuk memuat proyek milik akunmu.": "Tekan “Projek Drama Tersimpan” untuk memuatkan projek akaun anda.",
+      "← Kembali": "← Kembali",
+      "Buat cerita di tool pilihanmu, lalu salin dan tempel seluruh cerita di bawah. Movira akan membantu membaginya menjadi scene untuk diedit.": "Cipta cerita dalam alat pilihan anda, kemudian salin dan tampal keseluruhan cerita di bawah. Movira akan membahagikannya kepada scene untuk diedit.",
+      "Nama drama": "Nama drama",
+      "Nama drama / proyek": "Nama drama / projek",
+      "Genre": "Genre",
+      "Petualangan": "Pengembaraan", "Komedi": "Komedi", "Fantasi": "Fantasi", "Persahabatan": "Persahabatan", "Misteri": "Misteri", "Drama keluarga": "Drama keluarga", "Aksi": "Aksi",
+      "Sinopsis / ringkasan cerita (opsional)": "Sinopsis / ringkasan cerita (pilihan)",
+      "Sinopsis / premis": "Sinopsis / premis",
+      "Ringkasan singkat cerita…": "Ringkasan pendek cerita…",
+      "Panduan konsistensi karakter dan dunia (opsional)": "Panduan konsistensi watak dan dunia (pilihan)",
+      "Deskripsi karakter, pakaian, lokasi, dan gaya visual.": "Huraikan watak, pakaian, lokasi dan gaya visual.",
+      "Referensi konsistensi karakter dan dunia": "Rujukan konsistensi watak dan dunia",
+      "Karakter, pakaian, lokasi, gaya visual. Kolom ini terpisah dan tidak mengubah prompt adegan.": "Watak, pakaian, lokasi dan gaya visual. Ruangan ini berasingan dan tidak mengubah prompt scene.",
+      "Tempel seluruh cerita atau prompt di sini": "Tampal keseluruhan cerita atau prompt di sini",
+      "Tempel cerita lengkap di sini. Jika ada judul Scene 1, Scene 2, dan seterusnya, Movira akan menggunakannya sebagai pemisah. Jika tidak, paragraf akan dijadikan scene.": "Tampal cerita lengkap di sini. Jika terdapat tajuk Scene 1, Scene 2 dan seterusnya, Movira akan menggunakannya sebagai pemisah. Jika tiada, perenggan akan dijadikan scene.",
+      "Bagi Cerita Menjadi Scene": "Bahagikan Cerita kepada Scene",
+      "Buka Editor Kosong": "Buka Editor Kosong",
+      "Setelah masuk editor, periksa dan edit prompt tiap scene. Kamu tetap bisa menambah atau menghapus scene.": "Selepas masuk ke editor, semak dan edit prompt setiap scene. Anda masih boleh menambah atau memadam scene.",
+      "DRAMA WORKSPACE": "RUANG KERJA DRAMA",
+      "Editor Adegan": "Editor Scene",
+      "← Beranda Drama AI": "← Laman Utama Drama AI",
+      "Ringkasan cerita": "Ringkasan cerita",
+      "🖼️ Gambar Referensi": "🖼️ Imej Rujukan",
+      "Pustaka gambar proyek. Gambar di sini dapat dipakai ulang, tetapi pilihan karakter dan lokasi disimpan secara terpisah untuk setiap scene.": "Pustaka imej projek. Imej boleh digunakan semula, tetapi pilihan watak dan lokasi disimpan secara berasingan bagi setiap scene.",
+      "Gambar karakter": "Imej watak",
+      "＋ Upload Gambar Karakter": "＋ Muat Naik Imej Watak",
+      "Belum ada gambar karakter.": "Belum ada imej watak.",
+      "Gambar lokasi": "Imej lokasi",
+      "＋ Upload Gambar Lokasi": "＋ Muat Naik Imej Lokasi",
+      "Belum ada gambar lokasi.": "Belum ada imej lokasi.",
+      "Daftar adegan": "Senarai scene",
+      "＋ Tambah Scene": "＋ Tambah Scene",
+      "Hapus Scene Aktif": "Padam Scene Aktif",
+      "Prompt scene (tetap bisa kamu edit)": "Prompt scene (masih boleh diedit)",
+      "Tulis prompt video untuk scene ini…": "Tulis prompt video untuk scene ini…",
+      "Model video untuk Scene ini": "Model video untuk scene ini",
+      "Informasi Model dan Referensi": "Maklumat Model dan Rujukan",
+      "Karakter untuk scene ini": "Watak untuk scene ini",
+      "Centang gambar dari pustaka, atau unggah gambar khusus untuk scene aktif. Pilihan scene lain tidak ikut berubah.": "Tandakan imej daripada pustaka atau muat naik imej khas untuk scene aktif. Pilihan scene lain tidak berubah.",
+      "＋ Upload khusus scene ini": "＋ Muat Naik untuk scene ini sahaja",
+      "Gambar terpilih di Scene ini:": "Imej yang dipilih untuk scene ini:",
+      "Lokasi untuk scene ini": "Lokasi untuk scene ini",
+      "Durasi": "Tempoh",
+      "10 detik": "10 saat", "15 detik": "15 saat", "30 detik": "30 saat",
+      "Rasio": "Nisbah aspek",
+      "Resolusi": "Resolusi",
+      "Simpan ke Projects": "Simpan ke Projects",
+      "Simpan sebagai Proyek Baru": "Simpan sebagai Projek Baharu",
+      "🔒 Buat Video (belum aktif)": "🔒 Jana Video (belum aktif)",
+      "Dinonaktifkan sampai endpoint dan biaya kredit disetujui": "Dinyahaktifkan sehingga endpoint dan kos kredit diluluskan",
+      "Simpan otomatis aktif sesudah proyek memiliki ID. Generasi video belum aktif sehingga adegan tidak akan mengirim permintaan berbayar.": "Simpan automatik bermula selepas projek mempunyai ID. Penjanaan video belum aktif, jadi scene tidak akan menghantar permintaan berbayar.",
+      "Proyek Drama tersimpan": "Projek Drama tersimpan",
+      "Memuat daftar proyek…": "Memuatkan senarai projek…",
+      "Tekan ‘Simpan ke Projects’ agar tersimpan permanen.": "Tekan ‘Simpan ke Projects’ untuk menyimpan secara kekal.",
+      "Hapus Gambar": "Padam Imej",
+      "Belum ada gambar yang dipilih untuk scene ini.": "Belum ada imej dipilih untuk scene ini.",
+      "Belum ada gambar karakter. Unggah gambar proyek atau gambar khusus scene ini.": "Belum ada imej watak. Muat naik imej projek atau imej khas untuk scene ini.",
+      "Belum ada gambar lokasi. Unggah gambar proyek atau gambar khusus scene ini.": "Belum ada imej lokasi. Muat naik imej projek atau imej khas untuk scene ini.",
+      "Buka Proyek": "Buka Projek",
+      "Belum ada proyek Drama tersimpan.": "Belum ada projek Drama tersimpan.",
+      "Gagal memuat proyek Drama.": "Gagal memuatkan projek Drama.",
+      "tanggal tidak tersedia": "tarikh tidak tersedia",
+      "Tekan minimal satu gambar karakter atau lokasi untuk Scene ini sebelum generasi nanti diaktifkan.": "Pilih sekurang-kurangnya satu imej watak atau lokasi untuk scene ini sebelum penjanaan diaktifkan.",
+      "Video/audio referensi belum disediakan di editor Drama AI.": "Video/audio rujukan belum disediakan dalam editor Drama AI.",
+      "Batas endpoint yang didokumentasikan: maksimal 10 gambar referensi.": "Had endpoint yang didokumenkan: maksimum 10 imej rujukan.",
+      "Estimasi biaya output: sekitar": "Anggaran kos output: sekitar",
+      "Kredit untuk": "Kredit untuk",
+      "Total semua scene (pembulatan sekali):": "Jumlah semua scene (dibundarkan sekali):",
+      "Biaya API publik × 100 Kredit/USD × margin 30%. Generator masih terkunci; belum ada debit kredit.": "Harga API awam × 100 Kredit/USD × margin 30%. Penjana masih dikunci; tiada kredit ditolak."
+    }
+  };
+
+  function dramaLanguage() {
+    return ["en", "id", "ms"].includes(window.moviraLang) ? window.moviraLang : "en";
+  }
+  function dramaText(source) {
+    if (dramaLanguage() === "id") return source;
+    return DRAMA_COPY[dramaLanguage()]?.[source] || source;
+  }
+  function applyDramaLanguage() {
+    if (!page) return;
+    const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const original = node.nodeValue || "";
+      const trimmed = original.trim();
+      if (!trimmed) return;
+      const translated = dramaText(trimmed);
+      if (translated !== trimmed) {
+        const leading = original.match(/^\s*/)?.[0] || "";
+        const trailing = original.match(/\s*$/)?.[0] || "";
+        node.nodeValue = leading + translated + trailing;
+      }
+    });
+    page.querySelectorAll("[placeholder], [title]").forEach(el => {
+      for (const attr of ["placeholder", "title"]) {
+        const value = el.getAttribute(attr);
+        if (value) el.setAttribute(attr, dramaText(value));
+      }
+    });
+  }
+  function localizeDramaMessage(message) {
+    const text = String(message || "");
+    const lang = dramaLanguage();
+    if (lang === "id") return text;
+    const fixed = dramaText(text);
+    if (fixed !== text) return fixed;
+    let m;
+    if ((m = text.match(/^(\d+) scene dimasukkan dari cerita\. Periksa dan edit setiap scene sebelum menyimpan\.$/))) return lang === "en" ? `${m[1]} scenes were imported. Review and edit each scene before saving.` : `${m[1]} scene diimport daripada cerita. Semak dan edit setiap scene sebelum menyimpan.`;
+    if ((m = text.match(/^Model Scene (\d+) diubah\. Pilihan gambar referensi tidak dihapus\.$/))) return lang === "en" ? `Model for Scene ${m[1]} changed. Reference image selections were kept.` : `Model untuk Scene ${m[1]} ditukar. Pilihan imej rujukan dikekalkan.`;
+    if ((m = text.match(/^Scene (\d+) dari (\d+)$/))) return lang === "en" ? `Scene ${m[1]} of ${m[2]}` : `Scene ${m[1]} daripada ${m[2]}`;
+    if ((m = text.match(/^Proyek Drama tersimpan: (.+)\.$/))) return lang === "en" ? `Drama project saved: ${m[1]}.` : `Projek Drama disimpan: ${m[1]}.`;
+    if ((m = text.match(/^Proyek dibuka: (.+)\.$/))) return lang === "en" ? `Project opened: ${m[1]}.` : `Projek dibuka: ${m[1]}.`;
+    if ((m = text.match(/^Gagal menyimpan proyek: (.+)$/))) return lang === "en" ? `Failed to save project: ${m[1]}` : `Gagal menyimpan projek: ${m[1]}`;
+    if ((m = text.match(/^Memproses (\d+) gambar khusus untuk Scene (\d+)\.\.\.$/))) return lang === "en" ? `Processing ${m[1]} scene-specific images for Scene ${m[2]}...` : `Memproses ${m[1]} imej khas untuk Scene ${m[2]}...`;
+    if ((m = text.match(/^Gambar ditambahkan dan dipilih khusus untuk Scene (\d+)\. Scene lain tidak diubah; perubahan akan disimpan otomatis\.$/))) return lang === "en" ? `Images added and selected for Scene ${m[1]} only. Other scenes were not changed; updates will autosave.` : `Imej ditambah dan dipilih untuk Scene ${m[1]} sahaja. Scene lain tidak berubah; perubahan akan disimpan secara automatik.`;
+    if ((m = text.match(/^Gambar ditambahkan dan dipilih khusus untuk Scene (\d+)\. Tekan ‘Simpan ke Projects’ agar tersimpan permanen\.$/))) return lang === "en" ? `Images added and selected for Scene ${m[1]} only. Choose ‘Save to Projects’ to keep them permanently.` : `Imej ditambah dan dipilih untuk Scene ${m[1]} sahaja. Tekan ‘Simpan ke Projects’ untuk menyimpannya secara kekal.`;
+    const common = {
+      "Scene ditambahkan.": ["Scene added.", "Scene ditambah."],
+      "Proyek Drama tersimpan.": ["Drama project saved.", "Projek Drama disimpan."],
+      "Tempel cerita terlebih dahulu.": ["Paste a story first.", "Tampal cerita terlebih dahulu."],
+      "Scene ditambahkan.": ["Scene added.", "Scene ditambah."],
+      "Drama harus memiliki minimal satu scene.": ["A drama must have at least one scene.", "Drama mesti mempunyai sekurang-kurangnya satu scene."],
+      "Scene dihapus dari draf. Simpan proyek untuk menerapkan perubahan.": ["Scene removed from the draft. Save the project to apply the change.", "Scene dipadam daripada draf. Simpan projek untuk menerapkan perubahan."],
+      "Perubahan Drama tersimpan otomatis.": ["Drama changes saved automatically.", "Perubahan Drama disimpan secara automatik."],
+      "Gambar referensi ditambahkan. Perubahan akan disimpan otomatis.": ["Reference images added. Changes will be saved automatically.", "Imej rujukan ditambah. Perubahan akan disimpan secara automatik."],
+      "Gambar referensi ditambahkan ke draf. Tekan ‘Simpan ke Projects’ agar tersimpan permanen.": ["Reference images added to the draft. Choose ‘Save to Projects’ to save permanently.", "Imej rujukan ditambah ke draf. Tekan ‘Simpan ke Projects’ untuk menyimpannya secara kekal."],
+      "Gambar referensi dihapus; perubahan akan disimpan otomatis.": ["Reference image removed; changes will autosave.", "Imej rujukan dipadam; perubahan akan disimpan secara automatik."],
+      "Gambar referensi dihapus dari draf.": ["Reference image removed from the draft.", "Imej rujukan dipadam daripada draf."],
+      "Proyek tidak ditemukan atau bukan milik akun ini.": ["Project not found or does not belong to this account.", "Projek tidak ditemui atau bukan milik akaun ini."],
+      "Proyek ini bukan proyek Drama AI.": ["This is not a Drama AI project.", "Ini bukan projek Drama AI."],
+      "Klien Supabase belum tersedia. Muat ulang halaman, lalu coba lagi.": ["Supabase client is not available. Reload the page and try again.", "Klien Supabase belum tersedia. Muat semula halaman dan cuba lagi."],
+      "Silakan login terlebih dahulu untuk menyimpan proyek Drama.": ["Please log in to save a Drama project.", "Sila log masuk untuk menyimpan projek Drama."]
+    };
+    return common[text]?.[lang === "en" ? 0 : 1] || text;
+  }
+
   function modelConfig(modelId) {
     return DRAMA_MODELS[modelId] || DRAMA_MODELS[DEFAULT_DRAMA_MODEL];
   }
@@ -71,14 +305,14 @@
     return state.references.character.filter(ref => characterIds.has(ref.id)).length +
       state.references.location.filter(ref => locationIds.has(ref.id)).length;
   }
-  function estimateSceneCredits(modelId, resolution, duration, ratio) {
+  function estimateSceneCostUsd(modelId, resolution, duration) {
     const config = modelConfig(modelId);
     let usd;
     if (config.pricing === "seedance") {
-      // Seedance 2.5 Flash: output pixels × seconds × 24 FPS / 1024 tokens.
-      // Images are the only references sent by Drama AI; fal documents image references as free.
-      // Endpoint-specific public price: USD 0.014 per 1,000 output tokens.
-      const pixels = resolution === "480p" ? 864 * 496 : 1280 * 720;
+      // Both supported aspect ratios use the same output pixel count for a given resolution.
+      // Seedance 2.5 Flash endpoint price: USD 0.014 per 1,000 output tokens.
+      const pixels = resolution === "480p" ? 864 * 496 : resolution === "720p" ? 1280 * 720 : null;
+      if (!pixels) return null;
       const tokens = Math.ceil((pixels * Number(duration) * 24) / 1024);
       usd = (tokens / 1000) * 0.014;
     } else {
@@ -86,8 +320,18 @@
       if (!Number.isFinite(rate)) return null;
       usd = rate * Number(duration);
     }
-    if (!Number.isFinite(usd) || usd <= 0) return null;
-    return Math.ceil(usd * 100 * 1.30);
+    return Number.isFinite(usd) && usd > 0 ? usd : null;
+  }
+  function estimateSceneCredits(modelId, resolution, duration, ratio) {
+    const usd = estimateSceneCostUsd(modelId, resolution, duration);
+    return Number.isFinite(usd) ? Math.ceil(usd * 130) : null;
+  }
+  function estimateProjectCredits() {
+    const totalUsd = state.scenes.reduce((sum, scene) => {
+      const usd = estimateSceneCostUsd(scene.model, scene.resolution, scene.duration);
+      return Number.isFinite(usd) ? sum + usd : sum;
+    }, 0);
+    return totalUsd > 0 ? Math.ceil(totalUsd * 130) : null;
   }
 
   function freshState() {
@@ -98,7 +342,7 @@
     };
   }
   function selectedText(el) { return el ? String(el.value || "") : ""; }
-  function setStatus(message) { if (statusEl) statusEl.textContent = message; }
+  function setStatus(message) { if (statusEl) statusEl.textContent = localizeDramaMessage(message); }
   function getActiveScene() {
     if (!state.scenes.length) state.scenes.push({ prompt:"", model: DEFAULT_DRAMA_MODEL, duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] });
     activeIndex = Math.max(0, Math.min(activeIndex, state.scenes.length - 1));
@@ -140,6 +384,7 @@
     saveTimer = setTimeout(() => { void saveProject(true); }, 1300);
   }
   function showChoiceScreen() {
+    page.dataset.screen = "choice";
     page.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div><div class="drama-muted">MOVIRA AI · KHUSUS CERITA BERSERI</div><h2 style="margin:6px 0">🎬 Drama AI</h2><div class="drama-muted">Masukkan cerita dari tool pilihanmu, susun menjadi scene, lalu pilih referensi karakter dan lokasi untuk setiap scene.</div></div>
@@ -154,6 +399,7 @@
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
+    applyDramaLanguage();
     page.querySelector("#dramaStoryChoice").addEventListener("click", () => {
       clearTimeout(saveTimer); saveTimer = null; currentProjectId = null;
       state = freshState(); state.mode = "story-import"; activeIndex = 0; showSetupScreen();
@@ -165,13 +411,14 @@
     page.querySelector("#dramaLoadProjectsBtn").addEventListener("click", loadDramaProjects);
   }
   function showSetupScreen() {
+    page.dataset.screen = "setup";
     page.innerHTML = `
       <button type="button" id="dramaBackBtn">← Kembali</button>
       <h2 style="margin-bottom:4px">📖 Masukkan Prompt Cerita</h2>
       <div class="drama-muted">Buat cerita di tool pilihanmu, lalu salin dan tempel seluruh cerita di bawah. Movira akan membantu membaginya menjadi scene untuk diedit.</div>
       <div class="drama-card">
         <label for="dramaTitle">Nama drama</label><input id="dramaTitle" maxlength="100" value="Drama Baru">
-        <label for="dramaGenre">Genre</label><select id="dramaGenre"><option>Petualangan</option><option>Komedi</option><option>Fantasi</option><option>Persahabatan</option><option>Misteri</option><option>Drama keluarga</option><option>Aksi</option></select>
+        <label for="dramaGenre">Genre</label><select id="dramaGenre"><option value="Petualangan">Petualangan</option><option value="Komedi">Komedi</option><option value="Fantasi">Fantasi</option><option value="Persahabatan">Persahabatan</option><option value="Misteri">Misteri</option><option value="Drama keluarga">Drama keluarga</option><option value="Aksi">Aksi</option></select>
         <label for="dramaPremise">Sinopsis / ringkasan cerita (opsional)</label><textarea id="dramaPremise" rows="3" placeholder="Ringkasan singkat cerita…"></textarea>
         <label for="dramaContinuity">Panduan konsistensi karakter dan dunia (opsional)</label><textarea id="dramaContinuity" rows="3" placeholder="Deskripsi karakter, pakaian, lokasi, dan gaya visual."></textarea>
         <label for="dramaStoryText">Tempel seluruh cerita atau prompt di sini</label><textarea id="dramaStoryText" rows="12" placeholder="Tempel cerita lengkap di sini. Jika ada judul Scene 1, Scene 2, dan seterusnya, Movira akan menggunakannya sebagai pemisah. Jika tidak, paragraf akan dijadikan scene."></textarea>
@@ -181,6 +428,7 @@
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
+    applyDramaLanguage();
     page.querySelector("#dramaBackBtn").addEventListener("click", showChoiceScreen);
     page.querySelector("#dramaBlankEditorBtn").addEventListener("click", () => { syncSetupFields(); showEditor(); });
     page.querySelector("#dramaImportStoryBtn").addEventListener("click", () => {
@@ -221,10 +469,11 @@
     state.continuity = page.querySelector("#dramaContinuity")?.value || "";
   }
   function showEditor() {
+    page.dataset.screen = "editor";
     page.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><div class="drama-muted">DRAMA WORKSPACE</div><h2 style="margin:4px 0">Editor Adegan</h2></div><button type="button" id="dramaBackHomeBtn">← Beranda Drama AI</button></div>
       <div class="drama-card">
-        <div class="drama-grid"><div><label for="dramaTitle">Nama drama / proyek</label><input id="dramaTitle" maxlength="100"></div><div><label for="dramaGenre">Genre</label><select id="dramaGenre"><option>Petualangan</option><option>Komedi</option><option>Fantasi</option><option>Persahabatan</option><option>Misteri</option><option>Drama keluarga</option><option>Aksi</option></select></div></div>
+        <div class="drama-grid"><div><label for="dramaTitle">Nama drama / proyek</label><input id="dramaTitle" maxlength="100"></div><div><label for="dramaGenre">Genre</label><select id="dramaGenre"><option value="Petualangan">Petualangan</option><option value="Komedi">Komedi</option><option value="Fantasi">Fantasi</option><option value="Persahabatan">Persahabatan</option><option value="Misteri">Misteri</option><option value="Drama keluarga">Drama keluarga</option><option value="Aksi">Aksi</option></select></div></div>
         <label for="dramaPremise">Sinopsis / premis</label><textarea id="dramaPremise" rows="3" placeholder="Ringkasan cerita"></textarea>
         <label for="dramaContinuity">Referensi konsistensi karakter dan dunia</label><textarea id="dramaContinuity" rows="3" placeholder="Karakter, pakaian, lokasi, gaya visual. Kolom ini terpisah dan tidak mengubah prompt adegan."></textarea>
       </div>
@@ -291,6 +540,7 @@
       <div class="drama-status" id="dramaStatus" role="status" aria-live="polite"></div>
     `;
     statusEl = page.querySelector("#dramaStatus");
+    applyDramaLanguage();
     page.querySelector("#dramaBackHomeBtn").addEventListener("click", async () => {
       clearTimeout(saveTimer); saveTimer = null;
       if (currentProjectId) {
@@ -384,7 +634,7 @@
     allowedDurations.forEach(value => {
       const option = document.createElement("option");
       option.value = String(value);
-      option.textContent = `${value} detik`;
+      option.textContent = `${value} ${dramaLanguage() === "en" ? "seconds" : dramaLanguage() === "ms" ? "saat" : "detik"}`;
       durationSelect.appendChild(option);
     });
     scene.duration = allowedDurations.includes(previousDuration) ? previousDuration : allowedDurations[0];
@@ -400,15 +650,17 @@
     const scene = getActiveScene();
     const config = modelConfig(modelSelect.value);
     const count = countSelectedReferences(scene);
-    info.textContent = `${config.label}. Mendukung beberapa gambar referensi; batas aplikasi Drama AI: maksimal ${config.maxImages} gambar untuk satu Scene. ` +
-      (config.imageLimitNote || "Batas endpoint yang didokumentasikan: maksimal 10 gambar referensi.") +
-      " Video/audio referensi belum disediakan di editor Drama AI.";
+    const lang = dramaLanguage();
+    const limitText = lang === "en" ? `Drama AI app limit: up to ${config.maxImages} images per scene.` : lang === "ms" ? `Had aplikasi Drama AI: maksimum ${config.maxImages} imej bagi setiap scene.` : `Batas aplikasi Drama AI: maksimal ${config.maxImages} gambar untuk satu Scene.`;
+    const endpointText = lang === "en" ? "Documented endpoint limit: up to 10 reference images." : lang === "ms" ? "Had endpoint yang didokumenkan: maksimum 10 imej rujukan." : "Batas endpoint yang didokumentasikan: maksimal 10 gambar referensi.";
+    const mediaText = lang === "en" ? "Drama AI editor accepts image references only; audio is generated from the prompt." : lang === "ms" ? "Editor Drama AI menerima imej rujukan sahaja; audio dijana berdasarkan prompt." : "Editor Drama AI hanya menerima gambar referensi; audio dihasilkan mengikuti prompt.";
+    info.textContent = `${config.label}. ${limitText} ${config.imageLimitNote || endpointText} ${mediaText}`;
     if (count === 0) {
-      validation.textContent = "Pilih minimal satu gambar karakter atau lokasi untuk Scene ini sebelum generasi nanti diaktifkan.";
+      validation.textContent = dramaLanguage() === "en" ? "Select at least one character or location image for this scene before generation is enabled." : dramaLanguage() === "ms" ? "Pilih sekurang-kurangnya satu imej watak atau lokasi untuk scene ini sebelum penjanaan diaktifkan." : "Pilih minimal satu gambar karakter atau lokasi untuk Scene ini sebelum generasi nanti diaktifkan.";
     } else if (count > config.maxImages) {
-      validation.textContent = `Terlalu banyak gambar: ${count} dipilih, sedangkan batas Scene adalah ${config.maxImages}. Kurangi pilihan gambar sebelum generasi diaktifkan.`;
+      validation.textContent = dramaLanguage() === "en" ? `Too many images: ${count} selected; the scene limit is ${config.maxImages}. Remove some images before generation is enabled.` : dramaLanguage() === "ms" ? `Terlalu banyak imej: ${count} dipilih; had scene ialah ${config.maxImages}. Kurangkan pilihan sebelum penjanaan diaktifkan.` : `Terlalu banyak gambar: ${count} dipilih, sedangkan batas Scene adalah ${config.maxImages}. Kurangi pilihan gambar sebelum generasi diaktifkan.`;
     } else {
-      validation.textContent = `${count} gambar dipilih. Jumlah ini sesuai dengan batas Scene untuk model yang dipilih.`;
+      validation.textContent = dramaLanguage() === "en" ? `${count} images selected. This is within the selected model's scene limit.` : dramaLanguage() === "ms" ? `${count} imej dipilih. Jumlah ini dalam had scene model yang dipilih.` : `${count} gambar dipilih. Jumlah ini sesuai dengan batas Scene untuk model yang dipilih.`;
     }
   }
 
@@ -425,10 +677,21 @@
     const duration = Number(durationSelect?.value || scene.duration || 10);
     const credits = estimateSceneCredits(modelId, resolution, duration, ratioSelect?.value || scene.ratio || "16:9");
     if (!Number.isFinite(credits)) {
-      box.textContent = "Estimasi kredit belum tersedia untuk kombinasi pengaturan ini.";
+      box.textContent = dramaLanguage() === "en" ? "Credit estimate is not available for this combination." : dramaLanguage() === "ms" ? "Anggaran kredit tidak tersedia untuk gabungan ini." : "Estimasi kredit belum tersedia untuk kombinasi pengaturan ini.";
       return;
     }
-    box.textContent = `Estimasi biaya output: sekitar ${credits.toLocaleString("id-ID")} Kredit untuk ${duration} detik ${resolution}. Perhitungan memakai biaya API yang dipublikasikan × 100 Kredit/USD × markup 30%; biaya aktual dapat berubah. Generator masih terkunci dan belum ada debit kredit.`;
+    const projectCredits = estimateProjectCredits();
+    const lang = dramaLanguage();
+    const locale = lang === "en" ? "en-US" : lang === "ms" ? "ms-MY" : "id-ID";
+    const sceneLabel = lang === "en" ? "Active scene estimate" : lang === "ms" ? "Anggaran scene aktif" : "Estimasi scene aktif";
+    const allLabel = lang === "en" ? "Total for all scenes (rounded once)" : lang === "ms" ? "Jumlah semua scene (dibundarkan sekali)" : "Total semua scene (pembulatan sekali)";
+    const sceneUnit = lang === "en" ? "Credits" : "Kredit";
+    const detail = lang === "en"
+      ? "Public API price × 100 credits/USD × 30% margin. Generation remains locked; no credits are deducted."
+      : lang === "ms"
+      ? "Harga API awam × 100 Kredit/USD × margin 30%. Penjanaan kekal dikunci; tiada kredit ditolak."
+      : "Harga API publik × 100 Kredit/USD × margin 30%. Generator tetap terkunci; belum ada kredit yang dipotong.";
+    box.textContent = `${sceneLabel}: ${credits.toLocaleString(locale)} ${sceneUnit} · ${duration}s ${resolution}. ${allLabel}: ${projectCredits?.toLocaleString(locale) ?? "—"} ${sceneUnit} (${state.scenes.length} scene). ${detail}`;
   }
   function ensureReferenceState() {
     state.references = state.references || {};
@@ -479,7 +742,7 @@
       name.textContent = item.name;
       const remove = document.createElement("button");
       remove.type = "button";
-      remove.textContent = "Hapus Gambar";
+      remove.textContent = dramaLanguage() === "en" ? "Remove Image" : dramaLanguage() === "ms" ? "Padam Imej" : "Hapus Gambar";
       remove.addEventListener("click", () => {
         state.references[kind] = state.references[kind].filter(ref => ref.id !== item.id);
         for (const scene of state.scenes) {
@@ -511,7 +774,7 @@
       const selectedKey = kind === "character" ? "characterReferenceIds" : "locationReferenceIds";
       const selectedIds = new Set(scene[selectedKey] || []);
       if (!refs.length) {
-        box.textContent = `Belum ada gambar ${kind === "character" ? "karakter" : "lokasi"}. Unggah gambar proyek atau gambar khusus scene ini.`;
+        box.textContent = dramaLanguage() === "en" ? `No ${kind} images yet. Upload project images or images for this scene.` : dramaLanguage() === "ms" ? `Belum ada imej ${kind === "character" ? "watak" : "lokasi"}. Muat naik imej projek atau imej khas untuk scene ini.` : `Belum ada gambar ${kind === "character" ? "karakter" : "lokasi"}. Unggah gambar proyek atau gambar khusus scene ini.`;
       } else {
         refs.forEach(ref => {
           const label = document.createElement("label");
@@ -549,7 +812,7 @@
         if (!chosen.length) {
           const empty = document.createElement("div");
           empty.className = "drama-muted";
-          empty.textContent = "Belum ada gambar yang dipilih untuk scene ini.";
+          empty.textContent = dramaLanguage() === "en" ? "No images selected for this scene yet." : dramaLanguage() === "ms" ? "Belum ada imej dipilih untuk scene ini." : "Belum ada gambar yang dipilih untuk scene ini.";
           preview.appendChild(empty);
         } else {
           chosen.forEach(ref => {
@@ -758,17 +1021,19 @@
       if (error) throw error;
       loadedDramaProjects = (data || []).filter(project => project.settings && project.settings.dramaAI && Array.isArray(project.settings.dramaAI.scenes));
       list.replaceChildren();
-      if (!loadedDramaProjects.length) { list.textContent = "Belum ada proyek Drama tersimpan."; return; }
+      if (!loadedDramaProjects.length) { list.textContent = dramaLanguage() === "en" ? "No saved Drama projects yet." : dramaLanguage() === "ms" ? "Belum ada projek Drama tersimpan." : "Belum ada proyek Drama tersimpan."; return; }
       loadedDramaProjects.forEach(project => {
         const row = document.createElement("div"); row.className = "drama-card"; row.style.marginTop = "8px";
         const title = document.createElement("strong"); title.textContent = project.name || "Drama Baru";
-        const meta = document.createElement("div"); meta.className = "drama-muted"; meta.textContent = `${project.settings.dramaAI.scenes.length} scene · ${project.updated_at ? new Date(project.updated_at).toLocaleString("id-ID") : "tanggal tidak tersedia"}`;
-        const open = document.createElement("button"); open.type = "button"; open.className = "primary"; open.textContent = "Buka Proyek"; open.style.marginTop = "8px";
+        const locale = dramaLanguage() === "en" ? "en-US" : dramaLanguage() === "ms" ? "ms-MY" : "id-ID";
+        const sceneWord = dramaLanguage() === "en" ? "scenes" : "scene";
+        const meta = document.createElement("div"); meta.className = "drama-muted"; meta.textContent = `${project.settings.dramaAI.scenes.length} ${sceneWord} · ${project.updated_at ? new Date(project.updated_at).toLocaleString(locale) : (dramaLanguage() === "en" ? "date unavailable" : dramaLanguage() === "ms" ? "tarikh tidak tersedia" : "tanggal tidak tersedia")}`;
+        const open = document.createElement("button"); open.type = "button"; open.className = "primary"; open.textContent = dramaLanguage() === "en" ? "Open Project" : dramaLanguage() === "ms" ? "Buka Projek" : "Buka Proyek"; open.style.marginTop = "8px";
         open.addEventListener("click", () => openDramaProject(project));
         row.append(title, meta, open); list.appendChild(row);
       });
     } catch (error) {
-      list.textContent = error.message || "Gagal memuat proyek Drama.";
+      list.textContent = error.message || (dramaLanguage() === "en" ? "Failed to load Drama projects." : dramaLanguage() === "ms" ? "Gagal memuatkan projek Drama." : "Gagal memuat proyek Drama.");
     }
   }
   function openDramaProject(project) {
@@ -826,6 +1091,20 @@
     main.appendChild(page);
     showChoiceScreen();
   }
+  window.addEventListener("movira:languagechange", () => {
+    if (!page) return;
+    const screen = page.dataset.screen || "choice";
+    if (screen === "editor") {
+      syncActiveEditor();
+      showEditor();
+    } else if (screen === "setup") {
+      syncSetupFields();
+      showSetupScreen();
+    } else {
+      showChoiceScreen();
+      if (loadedDramaProjects.length) void loadDramaProjects();
+    }
+  });
   window.moviraDramaAI = {
     onOpen() { if (page?.querySelector("#dramaProjectList")) void loadDramaProjects(); },
     openProjectById
