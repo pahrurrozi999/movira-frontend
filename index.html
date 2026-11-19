@@ -318,6 +318,19 @@ body {
 .ratio-warning{display:none;margin:9px 0 0;padding:10px 12px;border:1px solid #7c5b20;border-radius:10px;background:#2b2110;color:#ffdf99;font-size:13px;line-height:1.45}
 .ratio-warning[hidden]{display:none}
 @media(max-width:520px){.home-header-row{align-items:flex-start}.language-picker{margin-left:0}}
+/* Mobile: keep Upgrade accessible in the compact top bar. */
+@media (max-width: 900px) {
+  .sidebar > .upgrade {
+    display: block !important;
+    width: auto !important;
+    flex: 0 0 auto;
+    margin: 0 0 0 auto !important;
+    padding: 9px 13px !important;
+    border-radius: 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+}
 </style>
 </head>
 <body>
