@@ -358,7 +358,7 @@
     const scene = state.scenes[activeIndex];
     if (!DRAMA_MODELS[scene.model]) scene.model = DEFAULT_DRAMA_MODEL;
     if (!scene.duration) scene.duration = 10;
-    if (!scene.ratio) scene.ratio = "16:9";
+    if (!["16:9", "9:16"].includes(scene.ratio)) scene.ratio = "16:9";
     if (!scene.resolution || !modelConfig(scene.model).resolutions.includes(scene.resolution)) scene.resolution = modelConfig(scene.model).defaultResolution;
     return scene;
   }
@@ -372,7 +372,7 @@
     if (prompt) scene.prompt = prompt.value;
     if (model && DRAMA_MODELS[model.value]) scene.model = model.value;
     if (duration) scene.duration = Number(duration.value);
-    if (ratio) scene.ratio = ratio.value;
+    if (ratio) scene.ratio = ["16:9", "9:16"].includes(ratio.value) ? ratio.value : "16:9";
     if (resolution) scene.resolution = resolution.value;
     const title = page.querySelector("#dramaTitle");
     const genre = page.querySelector("#dramaGenre");
@@ -580,7 +580,7 @@
     page.querySelector("#dramaSceneModel").value = getActiveScene().model || DEFAULT_DRAMA_MODEL;
     configureModelControls(true);
     page.querySelector("#dramaSceneDuration").value = String(getActiveScene().duration || 10);
-    page.querySelector("#dramaSceneRatio").value = getActiveScene().ratio || "16:9";
+    page.querySelector("#dramaSceneRatio").value = ["16:9", "9:16"].includes(getActiveScene().ratio) ? getActiveScene().ratio : "16:9";
     page.querySelector("#dramaSceneResolution").value = getActiveScene().resolution || modelConfig(getActiveScene().model).defaultResolution;
     const autosaveEvents = ["input", "change"];
     for (const id of ["dramaTitle","dramaGenre","dramaPremise","dramaContinuity","dramaScenePrompt","dramaSceneDuration","dramaSceneRatio","dramaSceneResolution"]) {
@@ -1278,6 +1278,22 @@
     const settings = project.settings || {};
     const drama = settings.dramaAI || {};
     currentProjectId = project.id;
+    const sourceScenes = Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes : [{ prompt: project.prompt || "", model: DEFAULT_DRAMA_MODEL, duration: 10, ratio: "16:9", resolution: "480p", characterReferenceIds: [], locationReferenceIds: [] }];
+    let adjustedLegacyRatios = 0;
+    const normalizedScenes = sourceScenes.map(scene => {
+      const savedRatio = scene.ratio;
+      const normalizedRatio = ["16:9", "9:16"].includes(savedRatio) ? savedRatio : "16:9";
+      if (savedRatio !== normalizedRatio) adjustedLegacyRatios += 1;
+      return {
+        prompt: String(scene.prompt || ""),
+        model: DRAMA_MODELS[scene.model] ? scene.model : DEFAULT_DRAMA_MODEL,
+        duration: Number(scene.duration || 10),
+        ratio: normalizedRatio,
+        resolution: scene.resolution || modelConfig(scene.model).defaultResolution,
+        characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [],
+        locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : []
+      };
+    });
     state = {
       mode: drama.mode || "manual", title: project.name || "Drama Baru", genre: drama.genre || "Petualangan",
       premise: drama.premise || "", continuity: drama.continuity || "", originalSettings: settings,
@@ -1285,10 +1301,18 @@
         character: drama.referenceImages?.character ?? "",
         location: drama.referenceImages?.location ?? ""
       },
-      scenes: Array.isArray(drama.scenes) && drama.scenes.length ? drama.scenes.map(scene => ({ prompt: String(scene.prompt || ""), model: DRAMA_MODELS[scene.model] ? scene.model : DEFAULT_DRAMA_MODEL, duration: Number(scene.duration || 10), ratio: scene.ratio || "16:9", resolution: scene.resolution || modelConfig(scene.model).defaultResolution, characterReferenceIds: Array.isArray(scene.characterReferenceIds) ? scene.characterReferenceIds.map(String) : [], locationReferenceIds: Array.isArray(scene.locationReferenceIds) ? scene.locationReferenceIds.map(String) : [] })) : [{ prompt: project.prompt || "", model: DEFAULT_DRAMA_MODEL, duration:10, ratio:"16:9", resolution:"480p", characterReferenceIds: [], locationReferenceIds: [] }]
+      scenes: normalizedScenes
     };
     activeIndex = Math.max(0, Math.min(Number(settings.activeSceneIndex || 0), state.scenes.length - 1));
-    showEditor(); setStatus(`Proyek dibuka: ${state.title}.`);
+    showEditor();
+    if (adjustedLegacyRatios > 0) {
+      const notice = `Proyek dibuka. ${adjustedLegacyRatios} Scene memakai rasio lama selain 16:9/9:16; rasio tersebut disesuaikan ke 16:9.`;
+      void saveProject(true).then(saved => {
+        setStatus(saved ? `${notice} Perubahan sudah disimpan.` : `${notice} Penyimpanan otomatis gagal; tekan Simpan Proyek.`);
+      });
+    } else {
+      setStatus(`Proyek dibuka: ${state.title}.`);
+    }
   }
   async function openProjectById(projectId) {
     const user = await getSession();
