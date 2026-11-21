@@ -481,9 +481,9 @@ Wan 3.0
 <button type="button" data-value="wan/v2.6/image-to-video" data-mode="image">
 Wan 2.6
 </button>
- <button type="button" data-value="fal-ai/veo3.1/lite/image-to-video" data-mode="image" data-unavailable="true" disabled aria-disabled="true" title="Endpoint retired on November 17, 2026">
-<span data-i18n="veoDeprecated">Veo 3.1 Lite (endpoint retired)</span>
- </button>
+<button type="button" data-value="fal-ai/veo3.1/lite/image-to-video" data-mode="image">
+Veo 3.1 Lite
+</button>
 <button type="button" data-value="minimax/h3-max-turbo/image-to-video" data-mode="image">
 MiniMax H3 Max Turbo
 </button>
@@ -888,7 +888,6 @@ storyDesc:"Gaya cerita film",
     addVideoAction: "+ Tambah Video",
     generateAction: "Buat Video",
     upgradeLabel: "Upgrade",
-    veoDeprecated: "Veo 3.1 Lite (endpoint dihentikan)"
   },
 
   ms: {
@@ -999,7 +998,6 @@ storyDesc:"Gaya cerita filem",
     addVideoAction: "+ Tambah Video",
     generateAction: "Jana Video",
     upgradeLabel: "Naik Taraf",
-    veoDeprecated: "Veo 3.1 Lite (endpoint ditamatkan)"
   },
 
   en: {
@@ -1110,7 +1108,6 @@ storyDesc:"Film storytelling style",
     addVideoAction: "+ Add Video",
     generateAction: "Generate Video",
     upgradeLabel: "Upgrade",
-    veoDeprecated: "Veo 3.1 Lite (endpoint retired)"
   }
 };
 
@@ -1360,9 +1357,9 @@ file.onchange=e=>{
     thumb.style.display="block";
     uploadText.style.display="none";
     clearImageBtn.hidden=false;
-    if (getSelectedModelForMode() === "minimax/h3-max-turbo/image-to-video") {
+    if (["fal-ai/veo3.1/lite/image-to-video", "minimax/h3-max-turbo/image-to-video"].includes(getSelectedModelForMode())) {
       thumb.onload = () => {
-        if (getSelectedModelForMode() === "minimax/h3-max-turbo/image-to-video") {
+        if (["fal-ai/veo3.1/lite/image-to-video", "minimax/h3-max-turbo/image-to-video"].includes(getSelectedModelForMode())) {
           setRatioFromDimensions(thumb.naturalWidth, thumb.naturalHeight);
         }
       };
@@ -1470,6 +1467,7 @@ function updateCreditCost(){
       "1080p": {10:364,15:546,20:728,25:910,30:1092}
     },
     "wan/v2.6/image-to-video": {"720p":{5:65,10:130,15:195},"1080p":{5:98,10:195,15:293}},
+    "fal-ai/veo3.1/lite/image-to-video": {"720p":{4:26,6:39,8:52},"1080p":{4:42,6:63,8:84}},
     "minimax/h3-max-turbo/image-to-video": {"480p":{5:17,10:33,15:49},"768p":{5:26,10:52,15:78},"1080p":{5:52,10:104,15:156}},
     "wan/v2.6/reference-to-video/flash": {"720p":{5:65,10:130},"1080p":{5:98,10:195}},
     "google/gemini-omni-flash/v1.1/image-to-video": {"360p":{5:20,10:39},"720p":{5:65,10:130},"1080p":{5:98,10:195}},
@@ -1549,7 +1547,7 @@ function updateRatioWarning(selectedModel = getSelectedModelForMode()) {
   if (!warning) return;
   const t = moviraTexts[moviraLang] || moviraTexts.en;
   let message = "";
-  if (selectedModel === "minimax/h3-max-turbo/image-to-video") {
+  if (["fal-ai/veo3.1/lite/image-to-video", "minimax/h3-max-turbo/image-to-video"].includes(selectedModel)) {
     message = t.ratioFollowsImage || moviraTexts.en.ratioFollowsImage;
   } else if (["google/gemini-omni-flash/v1.1/edit", "fal-ai/wan/v2.2-a14b/video-to-video"].includes(selectedModel)) {
     message = t.ratioFollowsVideo || moviraTexts.en.ratioFollowsVideo;
@@ -1573,6 +1571,7 @@ function updateResolutionOptions(){
     "alibaba/wan-3.0/image-to-video": ["480p", "720p", "1080p"],
     "alibaba/wan-3.0-prime/image-to-video": ["480p", "720p", "1080p"],
     "wan/v2.6/image-to-video": ["720p", "1080p"],
+    "fal-ai/veo3.1/lite/image-to-video": ["720p", "1080p"],
     "minimax/h3-max-turbo/image-to-video": ["480p", "768p", "1080p"],
     "google/gemini-omni-flash/v1.1/image-to-video": ["360p", "720p", "1080p"],
     "wan/v2.6/reference-to-video/flash": ["720p", "1080p"],
@@ -1585,9 +1584,12 @@ function updateResolutionOptions(){
   const allowedResolutions = resolutionOptions[selectedModel] || ["720p"];
   resolutionButtons.forEach(button => {
     const allowed = allowedResolutions.includes(button.dataset.value);
+    button.hidden = !allowed;
+    button.style.display = allowed ? "" : "none";
     button.disabled = !allowed;
-    button.style.opacity = allowed ? "1" : "0.35";
-    button.style.cursor = allowed ? "pointer" : "not-allowed";
+    button.style.opacity = "1";
+    button.style.cursor = allowed ? "pointer" : "default";
+    button.setAttribute("aria-hidden", String(!allowed));
   });
   if (!allowedResolutions.includes(resolution)) {
     resolution = allowedResolutions.includes("720p") ? "720p" : allowedResolutions[0];
@@ -1595,11 +1597,12 @@ function updateResolutionOptions(){
   }
 
   const autoRatioModel = [
+    "fal-ai/veo3.1/lite/image-to-video",
     "minimax/h3-max-turbo/image-to-video",
     "google/gemini-omni-flash/v1.1/edit",
     "fal-ai/wan/v2.2-a14b/video-to-video"
   ].includes(selectedModel);
-  if (selectedModel === "minimax/h3-max-turbo/image-to-video" && thumb.naturalWidth && thumb.naturalHeight) {
+  if (["fal-ai/veo3.1/lite/image-to-video", "minimax/h3-max-turbo/image-to-video"].includes(selectedModel) && thumb.naturalWidth && thumb.naturalHeight) {
     setRatioFromDimensions(thumb.naturalWidth, thumb.naturalHeight);
   }
   if (["google/gemini-omni-flash/v1.1/edit", "fal-ai/wan/v2.2-a14b/video-to-video"].includes(selectedModel) && sourceVideoDimensions) {
@@ -1624,6 +1627,8 @@ function updateResolutionOptions(){
   const isMiniMaxReframe = selectedModel === "minimax/h3-max/reframe-video";
   const durationOptions = isMiniMaxReframe
     ? []
+    : selectedModel === "fal-ai/veo3.1/lite/image-to-video"
+      ? ["4", "6", "8"]
     : selectedModel === "google/gemini-omni-flash/v1.1/image-to-video"
       ? ["5", "10"]
     : selectedModel === "google/gemini-omni-flash/v1.1/reference-to-video"
