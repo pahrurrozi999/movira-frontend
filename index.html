@@ -302,7 +302,7 @@ body {
   .videoBox{width:100%;aspect-ratio:16/9;overflow:hidden}
   .options button{font-size:12px}
 } 
-.videoBox.ratio-916{aspect-ratio:9/16}.videoBox.ratio-169{aspect-ratio:16/9}.videoBox.ratio-11{aspect-ratio:1/1}
+.videoBox.ratio-916{aspect-ratio:9/16}.videoBox.ratio-169{aspect-ratio:16/9}
 #resultVideo{object-fit:cover}
 @media(max-width:900px){.videoBox{width:100%}}
 .downloadNote{font-size:12px;color:#8fa4bf;margin-top:8px;text-align:center}.downloadNote{display:none}@media(max-width:900px){.downloadNote{display:block}} 
@@ -527,7 +527,7 @@ MiniMax H3 Max Reframe Video (sementara nonaktif)
         
 <button type="button" data-value="9:16" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='9:16'; updateCreditCost();">9:16<br><small>Shorts</small></button>
 
-<button type="button" data-value="1:1" onclick="document.querySelectorAll('#ratios button').forEach(x=>x.classList.remove('selected')); this.classList.add('selected'); ratio='1:1'; updateCreditCost();">1:1<br><small>Square</small></button> 
+
       </div>
       <div id="ratioWarning" class="ratio-warning" role="status" aria-live="polite" hidden></div>
       <br>
@@ -839,8 +839,8 @@ storyDesc:"Gaya cerita film",
     noCostYet: "⚠️ Kombinasi pilihan belum tersedia",
     uploadSourceForCost: "Unggah video sumber untuk menghitung biaya.",
     estimatedCost: "💰 Perkiraan biaya untuk video sumber {seconds} detik: {cost} Kredit",
-    ratioFollowsImage: "Peringatan: Rasio MiniMax H3 Max Turbo mengikuti gambar yang diunggah. Pilihan rasio dinonaktifkan.",
-    ratioFollowsVideo: "Peringatan: Rasio Gemini Omni Flash 1.1 Edit mengikuti video sumber. Pilihan rasio dinonaktifkan.",
+    ratioFollowsImage: "Model ini tidak menyediakan pengaturan rasio manual. Rasio keluaran ditentukan oleh model.",
+    ratioFollowsVideo: "Model ini tidak menyediakan pengaturan rasio manual. Rasio keluaran ditentukan oleh model.",
     ratioSquareUnsupported: "Peringatan: Rasio 1:1 tidak didukung model ini dan dinonaktifkan.",
     ratiosDisabled: "Rasio yang redup tidak didukung oleh model yang dipilih.",
 
@@ -849,7 +849,7 @@ storyDesc:"Gaya cerita film",
     pleaseLoginCredits: "Silakan login untuk melihat kredit.",
     creditLoadFailed: "Gagal memuat kredit",
     balancePrefix: "Saldo kamu: ",
-    minimaxRefCostWarning: "Harga di atas adalah biaya dasar video. Kredit tambahan untuk gambar/video referensi dihitung dari jumlah, ukuran, resolusi, dan durasinya sebelum permintaan dikirim.",
+    minimaxRefCostWarning: "Harga di atas adalah biaya dasar. Sebelum dikirim, Movira akan menampilkan konfirmasi jumlah akhir termasuk biaya gambar/video referensi.",
     reframeModelNotice: "MiniMax H3 Max Reframe mengubah rasio kanvas sambil mempertahankan audio dan garis masa. Skema API mencantumkan 480p, 768p, dan 1080p; video sumber dibatasi maksimal 15 detik.",
     clickUploadImage: "Klik untuk upload gambar",
     imageFileLimit: "PNG, JPG, WEBP • maks. 10 MB",
@@ -952,15 +952,15 @@ storyDesc:"Gaya cerita filem",
     noCostYet: "⚠️ Gabungan pilihan belum tersedia",
     uploadSourceForCost: "Muat naik video sumber untuk mengira kos.",
     estimatedCost: "💰 Anggaran kos untuk video sumber {seconds} saat: {cost} Kredit",
-    ratioFollowsImage: "Amaran: Nisbah MiniMax H3 Max Turbo mengikut gambar yang dimuat naik. Pilihan nisbah dinyahaktifkan.",
-    ratioFollowsVideo: "Amaran: Nisbah Gemini Omni Flash 1.1 Edit mengikut video sumber. Pilihan nisbah dinyahaktifkan.",
+    ratioFollowsImage: "Model ini tidak menyediakan tetapan nisbah manual. Nisbah output ditentukan oleh model.",
+    ratioFollowsVideo: "Model ini tidak menyediakan tetapan nisbah manual. Nisbah output ditentukan oleh model.",
     ratioSquareUnsupported: "Amaran: Nisbah 1:1 tidak disokong model ini dan dinyahaktifkan.",
     ratiosDisabled: "Nisbah yang malap tidak disokong oleh model yang dipilih.",
     creditLoading: "Kredit sedang dimuat...",
     pleaseLoginCredits: "Log masuk untuk melihat kredit.",
     creditLoadFailed: "Gagal memuatkan kredit",
     balancePrefix: "Baki anda: ",
-    minimaxRefCostWarning: "Harga di atas ialah kos asas video. Kredit tambahan untuk imej/video rujukan dikira berdasarkan bilangan, saiz, resolusi dan tempohnya sebelum permintaan dihantar.",
+    minimaxRefCostWarning: "Harga di atas ialah kos asas. Sebelum dihantar, Movira akan memaparkan pengesahan jumlah akhir termasuk kos imej/video rujukan.",
     reframeModelNotice: "MiniMax H3 Max Reframe mengubah nisbah kanvas sambil mengekalkan audio dan garis masa. Skema API menyenaraikan 480p, 768p dan 1080p; video sumber dihadkan kepada maksimum 15 saat.",
     clickUploadImage: "Klik untuk memuat naik imej",
     imageFileLimit: "PNG, JPG, WEBP • maks. 10 MB",
@@ -1063,15 +1063,15 @@ storyDesc:"Film storytelling style",
     noCostYet: "⚠️ This combination is not available yet",
     uploadSourceForCost: "Upload a source video to calculate the cost.",
     estimatedCost: "💰 Estimated cost for a {seconds}-second source video: {cost} Credits",
-    ratioFollowsImage: "Notice: MiniMax H3 Max Turbo follows the uploaded image's aspect ratio. Ratio choices are disabled.",
-    ratioFollowsVideo: "Notice: Gemini Omni Flash 1.1 Edit follows the source video's aspect ratio. Ratio choices are disabled.",
+    ratioFollowsImage: "This model does not expose manual aspect-ratio selection. The model determines the output aspect ratio.",
+    ratioFollowsVideo: "This model does not expose manual aspect-ratio selection. The model determines the output aspect ratio.",
     ratioSquareUnsupported: "Notice: The 1:1 ratio is not supported by this model and has been disabled.",
     ratiosDisabled: "Dimmed ratio choices are not supported by the selected model.",
     creditLoading: "Loading credits...",
     pleaseLoginCredits: "Please log in to view credits.",
     creditLoadFailed: "Failed to load credits",
     balancePrefix: "Your balance: ",
-    minimaxRefCostWarning: "The amount above is the base video cost. Extra credits for image/video references are calculated from their number, size, resolution, and duration before submission.",
+    minimaxRefCostWarning: "The amount above is the base cost. Before submission, Movira will show a confirmation with the final total including image/video reference costs.",
     reframeModelNotice: "MiniMax H3 Max Reframe changes the canvas ratio while preserving source audio and timing. The API schema lists 480p, 768p, and 1080p; source videos are limited to 15 seconds.",
     clickUploadImage: "Click to upload an image",
     imageFileLimit: "PNG, JPG, WEBP • max. 10 MB",
@@ -1190,10 +1190,11 @@ if (languageToggle && languageMenu) {
 applyMoviraLanguage();
   
 let imageData = "";
+let mainImageFile = null;
 let referenceImages = [];
 let referenceVideos = [];
 let selectedReferenceVideoFiles = [];
-let sourceVideo = "";
+let sourceVideo = null;
 let sourceVideoDimensions = null;
 let sourceVideoDurationSeconds = 0;
 let model = "alibaba/wan-3.0-prime/image-to-video";
@@ -1210,7 +1211,7 @@ const sourceVideoFile = document.getElementById("sourceVideoFile");
 sourceVideoFile.addEventListener("change", async () => {
   const file = sourceVideoFile.files[0];
   if (!file) {
-    sourceVideo = "";
+    sourceVideo = null;
     sourceVideoDurationSeconds = 0;
     sourceVideoDimensions = null;
     updateCreditCost();
@@ -1220,27 +1221,36 @@ sourceVideoFile.addEventListener("change", async () => {
   if (file.size > 100 * 1024 * 1024) {
     alert("Ukuran video maksimal 100 MB.");
     sourceVideoFile.value = "";
-    sourceVideo = "";
+    sourceVideo = null;
     sourceVideoDurationSeconds = 0;
     sourceVideoDimensions = null;
     updateCreditCost();
     return;
   }
 
-  sourceVideo = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Gagal membaca video."));
-    reader.readAsDataURL(file);
-  });
+  sourceVideo = file;
   sourceVideoDimensions = await readVideoDimensions(file);
   sourceVideoDurationSeconds = Number(sourceVideoDimensions?.duration) || 0;
-  if (getSelectedModelForMode() === "google/gemini-omni-flash/v1.1/edit" && sourceVideoDimensions) {
+  if (["google/gemini-omni-flash/v1.1/edit", "fal-ai/wan/v2.2-a14b/video-to-video"].includes(getSelectedModelForMode()) && sourceVideoDimensions) {
     setRatioFromDimensions(sourceVideoDimensions.width, sourceVideoDimensions.height);
   }
   updateCreditCost();
 });
   
+async function uploadMoviraMedia(file, accessToken) {
+  if (!(file instanceof File)) throw new Error("File media tidak valid.");
+  const formData = new FormData();
+  formData.append("file", file, file.name || "movira-media");
+  const response = await fetch(`${API_BASE}/api/upload-media`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: formData
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.upload_id) throw new Error(data.error || "Gagal mengunggah file media.");
+  return data.upload_id;
+}
+
 function readReferenceFiles(input) {
   return Promise.all(
     Array.from(input.files || []).map(file =>
@@ -1328,11 +1338,21 @@ if (initialNav) initialNav.click();
 file.onchange=e=>{
   const f=e.target.files[0];
   if(!f)return;
-  if(f.size>10*1024*1024){alert("Ukuran gambar maksimal 10 MB.");return}
-  if(!["image/png","image/jpeg","image/webp"].includes(f.type)){
-    alert("Format gambar harus PNG, JPG, atau WEBP.");
+  if(f.size>10*1024*1024){
+    alert("Ukuran gambar maksimal 10 MB.");
+    mainImageFile = null;
+    imageData = "";
+    file.value = "";
     return;
   }
+  if(!["image/png","image/jpeg","image/webp"].includes(f.type)){
+    alert("Format gambar harus PNG, JPG, atau WEBP.");
+    mainImageFile = null;
+    imageData = "";
+    file.value = "";
+    return;
+  }
+  mainImageFile = f;
   const r=new FileReader();
   r.onload=()=>{
     imageData=r.result;
@@ -1357,6 +1377,7 @@ clearImageBtn.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
   imageData = "";
+  mainImageFile = null;
   file.value = "";
   thumb.removeAttribute("src");
   thumb.style.display = "none";
@@ -1369,10 +1390,6 @@ document.getElementById("menuBtn").onclick=()=>document.querySelector(".nav").cl
 
 document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   if (b.disabled) return;
-  if (model === "fal-ai/veo3.1/lite/image-to-video" && b.dataset.value === "1:1") {
-    return;
-  }
-
   document.querySelectorAll("#ratios button").forEach(x => x.classList.remove("selected"));
   b.classList.add("selected");
   ratio = b.dataset.value;
@@ -1380,7 +1397,7 @@ document.querySelectorAll("#ratios button").forEach(b => b.onclick = () => {
   
 function setRatioFromDimensions(width, height) {
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return;
-  ratio = width === height ? "1:1" : width > height ? "16:9" : "9:16";
+  ratio = width >= height ? "16:9" : "9:16";
   document.querySelectorAll("#ratios button").forEach(button => {
     button.classList.toggle("selected", button.dataset.value === ratio);
   });
@@ -1534,15 +1551,8 @@ function updateRatioWarning(selectedModel = getSelectedModelForMode()) {
   let message = "";
   if (selectedModel === "minimax/h3-max-turbo/image-to-video") {
     message = t.ratioFollowsImage || moviraTexts.en.ratioFollowsImage;
-  } else if (selectedModel === "google/gemini-omni-flash/v1.1/edit") {
+  } else if (["google/gemini-omni-flash/v1.1/edit", "fal-ai/wan/v2.2-a14b/video-to-video"].includes(selectedModel)) {
     message = t.ratioFollowsVideo || moviraTexts.en.ratioFollowsVideo;
-  } else {
-    const noSquare = [
-      "google/gemini-omni-flash/v1.1/image-to-video",
-      "wan/v2.6/reference-to-video/flash",
-      "google/gemini-omni-flash/v1.1/reference-to-video"
-    ].includes(selectedModel);
-    if (noSquare) message = t.ratioSquareUnsupported || moviraTexts.en.ratioSquareUnsupported;
   }
   warning.textContent = message;
   warning.hidden = !message;
@@ -1586,32 +1596,30 @@ function updateResolutionOptions(){
 
   const autoRatioModel = [
     "minimax/h3-max-turbo/image-to-video",
-    "google/gemini-omni-flash/v1.1/edit"
+    "google/gemini-omni-flash/v1.1/edit",
+    "fal-ai/wan/v2.2-a14b/video-to-video"
   ].includes(selectedModel);
   if (selectedModel === "minimax/h3-max-turbo/image-to-video" && thumb.naturalWidth && thumb.naturalHeight) {
     setRatioFromDimensions(thumb.naturalWidth, thumb.naturalHeight);
   }
-  if (selectedModel === "google/gemini-omni-flash/v1.1/edit" && sourceVideoDimensions) {
+  if (["google/gemini-omni-flash/v1.1/edit", "fal-ai/wan/v2.2-a14b/video-to-video"].includes(selectedModel) && sourceVideoDimensions) {
     setRatioFromDimensions(sourceVideoDimensions.width, sourceVideoDimensions.height);
   }
 
-  const squareButton = document.querySelector('#ratios button[data-value="1:1"]');
-  const noSquare = [
-    "google/gemini-omni-flash/v1.1/image-to-video",
-    "wan/v2.6/reference-to-video/flash",
-    "google/gemini-omni-flash/v1.1/reference-to-video"
-  ].includes(selectedModel);
+  const ratioOptions = document.getElementById("ratios");
+  const ratioStep = ratioOptions?.previousElementSibling;
+  if (ratioOptions) ratioOptions.style.display = autoRatioModel ? "none" : "";
+  if (ratioStep) ratioStep.style.display = autoRatioModel ? "none" : "";
+  if (!["16:9", "9:16"].includes(ratio)) ratio = "16:9";
   document.querySelectorAll("#ratios button").forEach(button => {
-    const disable = autoRatioModel || (noSquare && button.dataset.value === "1:1");
-    button.disabled = disable;
-    button.style.opacity = disable ? "0.35" : "1";
-    button.style.cursor = disable ? "not-allowed" : "pointer";
-    button.title = disable ? ((moviraTexts[moviraLang] || moviraTexts.en).ratiosDisabled || moviraTexts.en.ratiosDisabled) : "";
+    const allowed = ["16:9", "9:16"].includes(button.dataset.value);
+    button.disabled = !allowed;
+    button.style.display = allowed ? "" : "none";
+    button.style.opacity = allowed ? "1" : "0.35";
+    button.style.cursor = allowed ? "pointer" : "not-allowed";
+    button.title = "";
+    button.classList.toggle("selected", button.dataset.value === ratio);
   });
-  if (!autoRatioModel && noSquare && ratio === "1:1") {
-    ratio = "16:9";
-    document.querySelectorAll('#ratios button').forEach(button => button.classList.toggle("selected", button.dataset.value === ratio));
-  }
 
   const isMiniMaxReframe = selectedModel === "minimax/h3-max/reframe-video";
   const durationOptions = isMiniMaxReframe
@@ -1737,8 +1745,8 @@ function setVideo(url){
     return;
   }
   resultVideo.src=generatedUrl;
-  videoBox.classList.remove("ratio-916","ratio-169","ratio-11");
-  videoBox.classList.add(ratio==="9:16"?"ratio-916":ratio==="1:1"?"ratio-11":"ratio-169");
+  videoBox.classList.remove("ratio-916","ratio-169");
+  videoBox.classList.add(ratio === "9:16" ? "ratio-916" : "ratio-169");
   resultVideo.style.display="block";
   placeholder.style.display="none";
 }
@@ -1759,6 +1767,8 @@ const isVideoToVideoMode =
   document.querySelectorAll(".mode-card")[2]?.classList.contains("selected");
 
 const selectedModel = getSelectedModelForMode();
+let selectedReferenceImageFiles = [];
+let selectedReferenceVideoFiles = [];
 const isReferenceModelClient = [
   "wan/v2.6/reference-to-video/flash",
   "google/gemini-omni-flash/v1.1/reference-to-video",
@@ -1770,19 +1780,18 @@ const isVideoToVideoModelClient = [
   "minimax/h3-max/reframe-video"
 ].includes(selectedModel);
 if (isReferenceModelClient) {
-  referenceImages = await readReferenceFiles(referenceImageFiles);
-  referenceVideos = await readReferenceFiles(referenceVideoFiles);
-  
-  if (referenceImages.length + referenceVideos.length === 0) {
+  selectedReferenceImageFiles = Array.from(referenceImageFiles.files || []);
+  selectedReferenceVideoFiles = Array.from(referenceVideoFiles.files || []);
+  if (selectedReferenceImageFiles.length + selectedReferenceVideoFiles.length === 0) {
     alert("Pilih minimal satu gambar atau video referensi.");
     return;
   }
 
-  if (referenceImages.length + referenceVideos.length > 5) {
+  if (selectedReferenceImageFiles.length + selectedReferenceVideoFiles.length > 5) {
     alert("Maksimal 5 file referensi gabungan.");
     return;
   }
-} else if (!isReferenceModelClient && !isVideoToVideoModelClient && !imageData) {
+} else if (!isReferenceModelClient && !isVideoToVideoModelClient && (!imageData || !mainImageFile)) {
   alert("Upload gambar terlebih dahulu.");
   return;
                             }
@@ -1814,11 +1823,62 @@ if (!creditResponse.ok) {
 if (Number(creditData.credits) <= 0) {
 throw new Error("Kredit kamu sudah habis. Silakan tambah kredit untuk membuat video.");
 }
-    const projectVideoContext =
-  window.moviraProjectVideoContext || null;
+    const projectVideoContext = window.moviraProjectVideoContext || null;
+    window.moviraProjectVideoContext = null;
 
-window.moviraProjectVideoContext = null;
-    
+    let imageUploadId = null;
+    let referenceImageUploadIds = [];
+    let referenceVideoUploadIds = [];
+    let sourceVideoUploadId = null;
+    if (isReferenceModelClient) {
+      status.textContent = "Mengunggah file referensi ke penyimpanan aman...";
+      for (const mediaFile of selectedReferenceImageFiles) {
+        referenceImageUploadIds.push(await uploadMoviraMedia(mediaFile, session.access_token));
+      }
+      for (const mediaFile of selectedReferenceVideoFiles) {
+        referenceVideoUploadIds.push(await uploadMoviraMedia(mediaFile, session.access_token));
+      }
+      if (selectedModel === "minimax/h3-max/reference-to-video") {
+        status.textContent = "Menghitung biaya akhir gambar dan video referensi...";
+        const quoteResponse = await fetch(`${API_BASE}/api/generate/quote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            model: selectedModel,
+            resolution,
+            duration: Number(duration),
+            referenceImageUploadIds,
+            referenceVideoUploadIds
+          })
+        });
+        const quote = await quoteResponse.json().catch(() => ({}));
+        if (!quoteResponse.ok || !Number.isInteger(Number(quote.total_credits))) {
+          throw new Error(quote.error || "Biaya akhir referensi MiniMax belum dapat dihitung.");
+        }
+        const finalCredits = Number(quote.total_credits);
+        const baseCredits = Number(quote.base_credits) || 0;
+        const additionalCredits = Number(quote.additional_reference_credits) || 0;
+        if (finalCredits > Number(creditData.credits)) {
+          throw new Error(`Kredit tidak cukup. Saldo: ${Number(creditData.credits).toLocaleString("id-ID")}; estimasi akhir: ${finalCredits.toLocaleString("id-ID")} kredit.`);
+        }
+        const confirmText = moviraLang === "en"
+          ? `Final estimated cost: ${finalCredits.toLocaleString("en-US")} credits\nBase video: ${baseCredits.toLocaleString("en-US")} credits\nReference media: +${additionalCredits.toLocaleString("en-US")} credits\nContinue?`
+          : moviraLang === "ms"
+          ? `Anggaran kos akhir: ${finalCredits.toLocaleString("ms-MY")} kredit\nVideo asas: ${baseCredits.toLocaleString("ms-MY")} kredit\nMedia rujukan: +${additionalCredits.toLocaleString("ms-MY")} kredit\nTeruskan?`
+          : `Estimasi biaya akhir: ${finalCredits.toLocaleString("id-ID")} kredit\nVideo dasar: ${baseCredits.toLocaleString("id-ID")} kredit\nMedia referensi: +${additionalCredits.toLocaleString("id-ID")} kredit\nLanjutkan?`;
+        if (!window.confirm(confirmText)) return;
+      }
+    } else if (isVideoToVideoModelClient) {
+      status.textContent = "Mengunggah video sumber ke penyimpanan aman...";
+      sourceVideoUploadId = await uploadMoviraMedia(sourceVideo, session.access_token);
+    } else {
+      status.textContent = "Mengunggah gambar ke penyimpanan aman...";
+      imageUploadId = await uploadMoviraMedia(mainImageFile, session.access_token);
+    }
+
 const response=await fetch(`${API_BASE}/api/generate`,{
   method:"POST",
   headers:{
@@ -1833,10 +1893,10 @@ const response=await fetch(`${API_BASE}/api/generate`,{
   : Number(duration), 
   resolution,
 model: selectedModel,
-imageData,
-referenceImages,
-referenceVideos,
-sourceVideo,
+imageUploadId,
+referenceImageUploadIds,
+referenceVideoUploadIds,
+sourceVideoUploadId,
 audio: true,
 project_id: projectVideoContext?.project_id || null,
 scene_number: projectVideoContext?.scene_number || null
@@ -1872,7 +1932,7 @@ document.getElementById("again").onclick=()=>{
   resultVideo.load();
   generatedUrl="";
   resultVideo.style.display="none";
-  videoBox.classList.remove("ratio-916","ratio-169","ratio-11");
+  videoBox.classList.remove("ratio-916","ratio-169");
   videoBox.classList.add("ratio-169");
   placeholder.style.display="flex";
   status.textContent="Siap membuat video baru.";
@@ -3195,7 +3255,10 @@ if (inputId === "sourceVideoFile") {
   if (!file.type.startsWith("video/")) {
     alert("Pilih file video yang valid.");
     input.value = "";
-    sourceVideo = "";
+    sourceVideo = null;
+    sourceVideoDurationSeconds = 0;
+    sourceVideoDimensions = null;
+    updateCreditCost();
     return;
   }
   
@@ -3324,7 +3387,7 @@ removeBtn.style.cssText =
     URL.revokeObjectURL(videoUrl);
 
     input.value = "";
-    sourceVideo = "";
+    sourceVideo = null;
     sourceVideoDurationSeconds = 0;
     sourceVideoDimensions = null;
     previewBox.remove();
